@@ -924,7 +924,7 @@
   };
 
   // ── INIT ─────────────────────────────────────────────────────────────────────
-  if (parseToken()) {
+  if (await parseToken()) {
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     loadData();
