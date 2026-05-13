@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LSB Maintainer — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:         #0e1117;
+      --surface:    #161b24;
+      --surface2:   #1d2535;
+      --border:     #2a3347;
+      --accent:     #e8a020;
+      --accent2:    #c0392b;
+      --accent3:    #27ae60;
+      --accent4:    #2980b9;
+      --text:       #e8eaf0;
+      --text2:      #8892a4;
+      --text3:      #555f73;
+      --overdue:    #c0392b;
+      --warning:    #e67e22;
+      --ok:         #27ae60;
+      --font-head:  'Barlow Condensed', sans-serif;
+      --font-body:  'Barlow', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--accent);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .logo {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .logo span { color: var(--text2); font-weight: 400; }
+    .last-updated {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+    }
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 12px;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+    /* ── SUMMARY CARDS ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s;
+      cursor: pointer;
+    }
+    .card:hover { transform: translateY(-2px); }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .card.overdue::before  { background: var(--overdue); }
+    .card.warning::before  { background: var(--warning); }
+    .card.upcoming::before { background: var(--accent4); }
+    .card.complete::before { background: var(--ok); }
+
+    .card-label {
+      font-family: var(--font-head);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 10px;
+    }
+    .card-value {
+      font-family: var(--font-head);
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .card.overdue  .card-value { color: var(--overdue); }
+    .card.warning  .card-value { color: var(--warning); }
+    .card.upcoming .card-value { color: var(--accent4); }
+    .card.complete .card-value { color: var(--ok); }
+    .card-sub {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    /* ── FILTERS ── */
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-family: var(--font-head);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+    .filter-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-select:focus { border-color: var(--accent); }
+    .search-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      flex: 1;
+      min-width: 200px;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text3); }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: var(--text3);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-count {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tab.active .tab-count { background: var(--accent); color: #000; }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-family: var(--font-head);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 12px 16px;
+      text-align: left;
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+    }
+    th:hover { color: var(--text); }
+    th .sort-icon { opacity: 0.4; margin-left: 4px; }
+    th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    td {
+      padding: 12px 16px;
+      vertical-align: middle;
+    }
+
+    .td-equipment { min-width: 160px; }
+    .equip-name {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .equip-vessel {
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .td-task { max-width: 280px; }
+    .task-text {
+      color: var(--text2);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .area-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-family: var(--font-head);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .days-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .days-badge.overdue   { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+    .days-badge.due-soon  { background: rgba(230,126,34,0.15); color: #e67e22; border: 1px solid rgba(230,126,34,0.3); }
+    .days-badge.upcoming  { background: rgba(41,128,185,0.15); color: #3498db; border: 1px solid rgba(41,128,185,0.3); }
+    .days-badge.no-date   { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+
+    .food-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--ok);
+      margin-left: 6px;
+      vertical-align: middle;
+      title: 'Food Contact';
+    }
+
+    .responsible-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text2);
+    }
+    .resp-avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #000;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-head);
+      font-size: 10px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* ── LOADING / EMPTY ── */
+    .state-box {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--text3);
+    }
+    .state-box .icon { font-size: 36px; margin-bottom: 12px; }
+    .state-box p { font-size: 14px; }
+    .loader {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    /* ── DETAIL MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 6px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(16px);
+      transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .modal-title {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text3);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 20px 24px; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .detail-field label {
+      font-family: var(--font-head);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .detail-field value {
+      font-size: 14px;
+      color: var(--text);
+      display: block;
+    }
+    .detail-task {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 0 4px 4px 0;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* ── ERROR BANNER ── */
+    .error-banner {
+      background: rgba(192,57,43,0.1);
+      border: 1px solid rgba(192,57,43,0.3);
+      color: #e74c3c;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+    }
+
+    /* ── AUTH SCREEN ── */
+    .auth-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 20px;
+      padding: 20px;
+    }
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .auth-logo {
+      font-family: var(--font-head);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .auth-sub {
+      color: var(--text3);
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+    .auth-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 4px;
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.15s;
+    }
+    .auth-btn:hover { opacity: 0.85; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .td-task { display: none; }
+    }
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: 1fr 1fr; }
+      .container { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">LSB Maintainer</div>
+    <div class="auth-sub">Last Spike Brewery — Maintenance Dashboard</div>
+    <button class="auth-btn" onclick="signIn()">Sign in with Microsoft</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">LSB <span>Maintainer</span></div>
+      <div class="last-updated" id="lastUpdated">Loading...</div>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+      <svg id="refreshIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M23 4v6h-6M1 20v-6h6"/>
+        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+      </svg>
+      Refresh
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="error-banner" id="errorBanner"></div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards">
+      <div class="card overdue" onclick="setTab('overdue')">
+        <div class="card-label">Overdue</div>
+        <div class="card-value" id="countOverdue">—</div>
+        <div class="card-sub">tasks past due date</div>
+      </div>
+      <div class="card warning" onclick="setTab('month')">
+        <div class="card-label">Due This Month</div>
+        <div class="card-value" id="countMonth">—</div>
+        <div class="card-sub">tasks in next 30 days</div>
+      </div>
+      <div class="card upcoming" onclick="setTab('upcoming')">
+        <div class="card-label">Upcoming</div>
+        <div class="card-value" id="countUpcoming">—</div>
+        <div class="card-sub">tasks in next 90 days</div>
+      </div>
+      <div class="card complete" onclick="setTab('all')">
+        <div class="card-label">Work Orders</div>
+        <div class="card-value" id="countWO">—</div>
+        <div class="card-sub">logged this month</div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <span class="filter-label">Filter</span>
+      <select class="filter-select" id="filterArea" onchange="renderTable()">
+        <option value="">All Areas</option>
+      </select>
+      <select class="filter-select" id="filterResp" onchange="renderTable()">
+        <option value="">All Responsible</option>
+      </select>
+      <select class="filter-select" id="filterFreq" onchange="renderTable()">
+        <option value="">All Frequencies</option>
+      </select>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search equipment or task..." oninput="renderTable()">
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" id="tab-overdue"  onclick="setTab('overdue')">Overdue   <span class="tab-count" id="tc-overdue">0</span></div>
+      <div class="tab"        id="tab-month"    onclick="setTab('month')">Due This Month <span class="tab-count" id="tc-month">0</span></div>
+      <div class="tab"        id="tab-upcoming" onclick="setTab('upcoming')">Upcoming 90d <span class="tab-count" id="tc-upcoming">0</span></div>
+      <div class="tab"        id="tab-all"      onclick="setTab('all')">All Tasks <span class="tab-count" id="tc-all">0</span></div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="state-box" id="loadingState">
+        <div class="loader"></div>
+        <p>Loading maintenance data...</p>
+      </div>
+      <div id="emptyState" class="state-box hidden">
+        <div class="icon">✓</div>
+        <p>No tasks match the current filter</p>
+      </div>
+      <table id="mainTable" class="hidden">
+        <thead>
+          <tr>
+            <th onclick="sortBy('Title')">Equipment <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('Area')">Area <span class="sort-icon">↕</span></th>
+            <th class="td-task">Task</th>
+            <th onclick="sortBy('Frequency')">Frequency <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('Responsible')">Responsible <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('ProposedDate')">Proposed Date <span class="sort-icon">↕</span></th>
+            <th onclick="sortBy('_daysFromNow')">Status <span class="sort-icon">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div style="color:var(--text3);font-size:12px;margin-top:4px;" id="modalSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-task" id="modalTask"></div>
+      <div class="detail-grid" id="modalGrid"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ── CONFIG ──────────────────────────────────────────────────────────────────
+  const TENANT_ID   = '468160ba-331c-4b5c-af62-2e65ddb636a8';
+  const CLIENT_ID   = 'bc62066b-c94b-403d-b09a-2ef808847acf';
+  const SITE_ID     = 'lastspike.sharepoint.com,6892318a-a5f7-49e8-8185-29e312333002,4adb6650-80ef-4044-82f7-025578446597';
+  const PM_LIST_ID  = 'c6ef9477-536d-4415-92f2-a9cdc4d9c772';
+  const WO_LIST_ID  = 'b3cf8490-af6a-4bd8-ac00-98d999640196';
+  const GRAPH       = 'https://graph.microsoft.com/v1.0';
+
+  // ── AUTH (MSAL implicit / token cache) ──────────────────────────────────────
+  let accessToken = null;
+
+  window.signIn = async () => {
+    const authUrl = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/authorize`
+      + `?client_id=${CLIENT_ID}`
+      + `&response_type=token`
+      + `&redirect_uri=${encodeURIComponent(location.href.split('#')[0])}`
+      + `&scope=${encodeURIComponent('https://graph.microsoft.com/Sites.Read.All')}`
+      + `&response_mode=fragment`;
+    location.href = authUrl;
+  };
+
+  function parseToken() {
+    const hash = location.hash.substring(1);
+    const params = Object.fromEntries(new URLSearchParams(hash));
+    if (params.access_token) {
+      accessToken = params.access_token;
+      history.replaceState(null, '', location.pathname);
+      return true;
+    }
+    return false;
+  }
+
+  // ── DATA ─────────────────────────────────────────────────────────────────────
+  let allTasks = [];
+  let allWOs   = [];
+  let currentTab  = 'overdue';
+  let sortField   = 'ProposedDate';
+  let sortAsc     = true;
+
+  async function graphGet(url) {
+    let items = [];
+    while (url) {
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!res.ok) throw new Error(`Graph error ${res.status}: ${await res.text()}`);
+      const data = await res.json();
+      items = items.concat(data.value || []);
+      url = data['@odata.nextLink'] || null;
+    }
+    return items;
+  }
+
+  window.loadData = async () => {
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.add('spinning');
+    document.getElementById('loadingState').classList.remove('hidden');
+    document.getElementById('mainTable').classList.add('hidden');
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('errorBanner').style.display = 'none';
+
+    try {
+      const [taskItems, woItems] = await Promise.all([
+        graphGet(`${GRAPH}/sites/${SITE_ID}/lists/${PM_LIST_ID}/items?$expand=fields&$top=500`),
+        graphGet(`${GRAPH}/sites/${SITE_ID}/lists/${WO_LIST_ID}/items?$expand=fields&$top=500`)
+      ]);
+
+      const today = new Date(); today.setHours(0,0,0,0);
+
+      allTasks = taskItems.map(i => {
+        const f = i.fields || {};
+        let daysFromNow = null;
+        if (f.ProposedDate) {
+          const d = new Date(f.ProposedDate.substring(0,10));
+          daysFromNow = Math.round((d - today) / 86400000);
+        }
+        return { ...f, _id: i.id, _daysFromNow: daysFromNow };
+      });
+
+      allWOs = woItems.map(i => i.fields || {});
+
+      // Build WO lookup: PMTaskRef -> statuses
+      const woRefs = new Set(
+        allWOs
+          .filter(w => ['completed','in progress'].includes((w.WOStatus||'').toLowerCase()))
+          .map(w => w.PMTaskRef)
+          .filter(Boolean)
+      );
+
+      // Count WOs logged this month
+      const thisMonth = today.getMonth();
+      const thisYear  = today.getFullYear();
+      const woThisMonth = allWOs.filter(w => {
+        if (!w.DateOpened) return false;
+        const d = new Date(w.DateOpened);
+        return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+      }).length;
+
+      // Categorise tasks
+      const overdue  = allTasks.filter(t => t._daysFromNow !== null && t._daysFromNow < 0 && !woRefs.has(t._id));
+      const month    = allTasks.filter(t => t._daysFromNow !== null && t._daysFromNow >= 0 && t._daysFromNow <= 30);
+      const upcoming = allTasks.filter(t => t._daysFromNow !== null && t._daysFromNow > 30 && t._daysFromNow <= 90);
+
+      // Summary cards
+      document.getElementById('countOverdue').textContent  = overdue.length;
+      document.getElementById('countMonth').textContent    = month.length;
+      document.getElementById('countUpcoming').textContent = upcoming.length;
+      document.getElementById('countWO').textContent       = woThisMonth;
+
+      // Tab counts
+      document.getElementById('tc-overdue').textContent  = overdue.length;
+      document.getElementById('tc-month').textContent    = month.length;
+      document.getElementById('tc-upcoming').textContent = upcoming.length;
+      document.getElementById('tc-all').textContent      = allTasks.length;
+
+      // Populate filters
+      populateFilters();
+
+      // Timestamp
+      document.getElementById('lastUpdated').textContent =
+        'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+      renderTable();
+
+    } catch (err) {
+      console.error(err);
+      const eb = document.getElementById('errorBanner');
+      eb.style.display = 'block';
+      eb.textContent = `Failed to load data: ${err.message}`;
+      document.getElementById('loadingState').classList.add('hidden');
+    } finally {
+      btn.classList.remove('spinning');
+    }
+  };
+
+  function populateFilters() {
+    const areas  = [...new Set(allTasks.map(t => t.Area).filter(Boolean))].sort();
+    const resps  = [...new Set(allTasks.map(t => t.Responsible).filter(Boolean))].sort();
+    const freqs  = [...new Set(allTasks.map(t => t.Frequency).filter(Boolean))].sort();
+
+    const setOpts = (id, vals) => {
+      const sel = document.getElementById(id);
+      const cur = sel.value;
+      sel.innerHTML = `<option value="">All ${id.replace('filter','')}</option>`;
+      vals.forEach(v => sel.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`));
+      sel.value = cur;
+    };
+    setOpts('filterArea', areas);
+    setOpts('filterResp', resps);
+    setOpts('filterFreq', freqs);
+  }
+
+  window.setTab = (tab) => {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    renderTable();
+  };
+
+  window.sortBy = (field) => {
+    if (sortField === field) sortAsc = !sortAsc;
+    else { sortField = field; sortAsc = true; }
+    document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+    renderTable();
+  };
+
+  function getTabTasks() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    switch (currentTab) {
+      case 'overdue':  return allTasks.filter(t => t._daysFromNow !== null && t._daysFromNow < 0);
+      case 'month':    return allTasks.filter(t => t._daysFromNow !== null && t._daysFromNow >= 0 && t._daysFromNow <= 30);
+      case 'upcoming': return allTasks.filter(t => t._daysFromNow !== null && t._daysFromNow > 30 && t._daysFromNow <= 90);
+      default:         return allTasks;
+    }
+  }
+
+  window.renderTable = () => {
+    const area   = document.getElementById('filterArea').value;
+    const resp   = document.getElementById('filterResp').value;
+    const freq   = document.getElementById('filterFreq').value;
+    const search = document.getElementById('searchInput').value.toLowerCase();
+
+    let tasks = getTabTasks().filter(t =>
+      (!area   || t.Area        === area) &&
+      (!resp   || t.Responsible === resp) &&
+      (!freq   || t.Frequency   === freq) &&
+      (!search || (t.Title||'').toLowerCase().includes(search) || (t.Task||'').toLowerCase().includes(search))
+    );
+
+    // Sort
+    tasks.sort((a, b) => {
+      let av = a[sortField] ?? '', bv = b[sortField] ?? '';
+      if (sortField === '_daysFromNow') { av = a._daysFromNow ?? 9999; bv = b._daysFromNow ?? 9999; }
+      const cmp = typeof av === 'number' ? av - bv : String(av).localeCompare(String(bv));
+      return sortAsc ? cmp : -cmp;
+    });
+
+    document.getElementById('loadingState').classList.add('hidden');
+
+    if (tasks.length === 0) {
+      document.getElementById('emptyState').classList.remove('hidden');
+      document.getElementById('mainTable').classList.add('hidden');
+      return;
+    }
+
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('mainTable').classList.remove('hidden');
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = tasks.map(t => {
+      const days = t._daysFromNow;
+      let badgeClass, badgeText;
+      if (days === null) {
+        badgeClass = 'no-date'; badgeText = 'No date set';
+      } else if (days < 0) {
+        badgeClass = 'overdue'; badgeText = `${Math.abs(days)}d overdue`;
+      } else if (days <= 7) {
+        badgeClass = 'due-soon'; badgeText = `Due in ${days}d`;
+      } else {
+        badgeClass = 'upcoming'; badgeText = t.ProposedDate ? t.ProposedDate.substring(0,10) : '';
+      }
+
+      const initials = (t.Responsible||'?').split('/')[0].trim().substring(0,2).toUpperCase();
+      const food = t.FoodContact === 'Y' ? '<span class="food-dot" title="Food Contact"></span>' : '';
+
+      return `<tr onclick="showDetail('${t._id}')">
+        <td class="td-equipment">
+          <div class="equip-name">${t.Title || ''}${food}</div>
+          ${t.VesselID ? `<div class="equip-vessel">${t.VesselID}</div>` : ''}
+        </td>
+        <td><span class="area-badge">${t.Area || '—'}</span></td>
+        <td class="td-task"><div class="task-text">${t.Task || ''}</div></td>
+        <td style="color:var(--text2);white-space:nowrap;">${t.Frequency || '—'}</td>
+        <td>
+          <div class="responsible-chip">
+            <div class="resp-avatar">${initials}</div>
+            ${(t.Responsible||'—').split('/')[0].trim()}
+          </div>
+        </td>
+        <td style="color:var(--text2);white-space:nowrap;">${t.ProposedDate ? t.ProposedDate.substring(0,10) : '—'}</td>
+        <td><span class="days-badge ${badgeClass}">${badgeText}</span></td>
+      </tr>`;
+    }).join('');
+  };
+
+  window.showDetail = (id) => {
+    const t = allTasks.find(x => x._id === id);
+    if (!t) return;
+    document.getElementById('modalTitle').textContent = t.Title || '';
+    document.getElementById('modalSub').textContent = `${t.Area || ''} · ${t.Frequency || ''}`;
+    document.getElementById('modalTask').textContent = t.Task || 'No task description';
+
+    const fields = [
+      ['Type',           t.Type0],
+      ['Responsible',    t.Responsible],
+      ['Food Contact',   t.FoodContact === 'Y' ? '✓ Yes' : 'No'],
+      ['Proposed Date',  t.ProposedDate ? t.ProposedDate.substring(0,10) : '—'],
+      ['Performed Date', t.PerformedDate ? t.PerformedDate.substring(0,10) : '—'],
+      ['Internal / Outsourced', t.InternalOrOutsourced],
+      ['Outsourced To',  t.OutsourcedTo || '—'],
+      ['Status',         t.Status || '—'],
+      ['Vessel ID',      t.VesselID || '—'],
+      ['Comments',       t.Comments || '—'],
+    ];
+
+    document.getElementById('modalGrid').innerHTML = fields.map(([label, val]) => `
+      <div class="detail-field">
+        <label>${label}</label>
+        <value>${val || '—'}</value>
+      </div>
+    `).join('');
+
+    document.getElementById('modalOverlay').classList.add('open');
+  };
+
+  window.closeModal = (e) => {
+    if (e && e.target !== document.getElementById('modalOverlay')) return;
+    document.getElementById('modalOverlay').classList.remove('open');
+  };
+
+  // ── INIT ─────────────────────────────────────────────────────────────────────
+  if (parseToken()) {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    loadData();
+  } else {
+    document.getElementById('authScreen').classList.remove('hidden');
+    document.getElementById('dashboard').classList.add('hidden');
+  }
+</script>
+</body>
+</html>
