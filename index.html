@@ -42,11 +42,11 @@
     .filter-select:focus{border-color:var(--accent)}
     .search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:4px;font-size:13px;outline:none;flex:1;min-width:200px}
     .search-input:focus{border-color:var(--accent)}.search-input::placeholder{color:var(--text3)}
-    .tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
-    .tab{font-family:var(--font-head);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:8px}
-    .tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-    .tab-count{background:var(--surface2);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700}
-    .tab.active .tab-count{background:var(--accent);color:#000}
+    .nav-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+    .nav-tab{font-family:var(--font-head);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:8px}
+    .nav-tab:hover{color:var(--text)}.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .nav-tab-count{background:var(--surface2);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700}
+    .nav-tab.active .nav-tab-count{background:var(--accent);color:#000}
     .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
     table{width:100%;border-collapse:collapse}
     thead tr{background:var(--surface2);border-bottom:1px solid var(--border)}
@@ -92,7 +92,57 @@
     .auth-btn:hover{opacity:.85}
     .auth-error{color:#e74c3c;font-size:13px;margin-top:12px;display:none}
     .hidden{display:none!important}
-    @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.td-task{display:none}}
+
+    /* CALENDAR */
+    .cal-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+    .cal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+    .cal-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text)}
+    .cal-controls{display:flex;align-items:center;gap:8px}
+    .cal-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase;transition:all .15s}
+    .cal-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .cal-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+    .cal-nav{background:none;border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:4px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .cal-nav:hover{border-color:var(--accent);color:var(--accent)}
+    .cal-legend{display:flex;gap:16px;padding:12px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .cal-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+    .cal-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .freq-weekly{background:#2980b9}.freq-monthly{background:#e8a020}.freq-quarterly{background:#8e44ad}
+    .freq-annual{background:#27ae60}.freq-3year{background:#c0392b}
+    /* Month grid */
+    .cal-grid-head{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
+    .cal-day-name{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:10px 0;text-align:center}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+    .cal-cell{min-height:90px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px;vertical-align:top;position:relative}
+    .cal-cell:nth-child(7n){border-right:none}
+    .cal-cell.other-month .cal-date{color:var(--text3)}
+    .cal-cell.today{background:rgba(232,160,32,.05)}
+    .cal-cell.today .cal-date{background:var(--accent);color:#000;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+    .cal-date{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+    .cal-event{font-size:10px;padding:2px 5px;border-radius:2px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;transition:opacity .15s}
+    .cal-event:hover{opacity:.8}
+    .cal-more{font-size:10px;color:var(--text3);cursor:pointer;padding:1px 4px}
+    .cal-more:hover{color:var(--accent)}
+    /* Week grid */
+    .cal-week-grid{display:grid;grid-template-columns:60px repeat(7,1fr);border-top:1px solid var(--border)}
+    .cal-week-head{display:grid;grid-template-columns:60px repeat(7,1fr);border-bottom:1px solid var(--border)}
+    .cal-week-day-head{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:10px 8px;text-align:center;border-left:1px solid var(--border)}
+    .cal-week-day-head:first-child{border-left:none}
+    .cal-week-day-head.today-col{color:var(--accent)}
+    .cal-time-col{font-size:10px;color:var(--text3);padding:4px 8px 0;text-align:right;border-right:1px solid var(--border);position:relative}
+    .cal-week-cell{border-left:1px solid var(--border);border-bottom:1px solid var(--border);min-height:48px;padding:3px;position:relative}
+    .cal-week-cell.today-col{background:rgba(232,160,32,.03)}
+    .cal-week-event{font-size:10px;padding:2px 5px;border-radius:2px;margin-bottom:2px;cursor:pointer;color:#fff;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cal-week-event:hover{opacity:.8}
+    /* Cal event popup */
+    .cal-popup{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;min-width:240px;max-width:300px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none}
+    .cal-popup.open{display:block}
+    .cal-popup-title{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .cal-popup-sub{font-size:11px;color:var(--text3);margin-bottom:10px}
+    .cal-popup-row{font-size:12px;color:var(--text2);margin-bottom:4px}
+    .cal-popup-row strong{color:var(--text);font-weight:600}
+    .cal-popup-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+
+    @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.td-task{display:none}.cal-cell{min-height:60px}}
     @media(max-width:600px){.cards{grid-template-columns:1fr 1fr}.container{padding:12px}}
   </style>
 </head>
@@ -101,7 +151,7 @@
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">LSB Maintainer</div>
-    <div class="auth-version">v5 &mdash; client 14755f84</div>
+    <div class="auth-version">v6 &mdash; client 14755f84</div>
     <div class="auth-sub">Last Spike Brewery &mdash; Maintenance Dashboard</div>
     <button class="auth-btn" id="signInBtn">Sign in with Microsoft</button>
     <div class="auth-error" id="authError"></div>
@@ -114,54 +164,88 @@
       <div class="logo">LSB <span>Maintainer</span></div>
       <div class="last-updated" id="lastUpdated">Loading...</div>
     </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M23 4v6h-6M1 20v-6h6"/>
-        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
-      </svg>
-      Refresh
-    </button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M23 4v6h-6M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+        </svg>
+        Refresh
+      </button>
+      <button class="refresh-btn" id="calViewBtn" onclick="switchView('calendar')" style="display:none">&#128197; Calendar</button>
+      <button class="refresh-btn" id="listViewBtn" onclick="switchView('list')" style="display:none">&#9776; List</button>
+    </div>
   </div>
+
   <div class="container">
     <div class="error-banner" id="errorBanner"></div>
     <div class="cards">
-      <div class="card overdue" onclick="setTab('overdue')"><div class="card-label">Overdue</div><div class="card-value" id="countOverdue">-</div><div class="card-sub">tasks past due date</div></div>
-      <div class="card warning" onclick="setTab('month')"><div class="card-label">Due This Month</div><div class="card-value" id="countMonth">-</div><div class="card-sub">tasks in next 30 days</div></div>
-      <div class="card upcoming" onclick="setTab('upcoming')"><div class="card-label">Upcoming</div><div class="card-value" id="countUpcoming">-</div><div class="card-sub">tasks in next 90 days</div></div>
-      <div class="card complete" onclick="setTab('all')"><div class="card-label">Work Orders</div><div class="card-value" id="countWO">-</div><div class="card-sub">logged this month</div></div>
+      <div class="card overdue" onclick="switchView('list');setTab('overdue')"><div class="card-label">Overdue</div><div class="card-value" id="countOverdue">-</div><div class="card-sub">tasks past due date</div></div>
+      <div class="card warning" onclick="switchView('list');setTab('month')"><div class="card-label">Due This Month</div><div class="card-value" id="countMonth">-</div><div class="card-sub">tasks in next 30 days</div></div>
+      <div class="card upcoming" onclick="switchView('list');setTab('upcoming')"><div class="card-label">Upcoming</div><div class="card-value" id="countUpcoming">-</div><div class="card-sub">tasks in next 90 days</div></div>
+      <div class="card complete" onclick="switchView('list');setTab('all')"><div class="card-label">Work Orders</div><div class="card-value" id="countWO">-</div><div class="card-sub">logged this month</div></div>
     </div>
-    <div class="filters">
-      <span class="filter-label">Filter</span>
-      <select class="filter-select" id="filterArea" onchange="renderTable()"><option value="">All Areas</option></select>
-      <select class="filter-select" id="filterResp" onchange="renderTable()"><option value="">All Responsible</option></select>
-      <select class="filter-select" id="filterFreq" onchange="renderTable()"><option value="">All Frequencies</option></select>
-      <input class="search-input" id="searchInput" type="text" placeholder="Search equipment or task..." oninput="renderTable()">
+
+    <!-- LIST VIEW -->
+    <div id="listView">
+      <div class="filters">
+        <span class="filter-label">Filter</span>
+        <select class="filter-select" id="filterArea" onchange="renderTable()"><option value="">All Areas</option></select>
+        <select class="filter-select" id="filterResp" onchange="renderTable()"><option value="">All Responsible</option></select>
+        <select class="filter-select" id="filterFreq" onchange="renderTable()"><option value="">All Frequencies</option></select>
+        <input class="search-input" id="searchInput" type="text" placeholder="Search equipment or task..." oninput="renderTable()">
+      </div>
+      <div class="nav-tabs">
+        <div class="nav-tab active" id="tab-overdue" onclick="setTab('overdue')">Overdue <span class="nav-tab-count" id="tc-overdue">0</span></div>
+        <div class="nav-tab" id="tab-month" onclick="setTab('month')">Due This Month <span class="nav-tab-count" id="tc-month">0</span></div>
+        <div class="nav-tab" id="tab-upcoming" onclick="setTab('upcoming')">Upcoming 90d <span class="nav-tab-count" id="tc-upcoming">0</span></div>
+        <div class="nav-tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="nav-tab-count" id="tc-all">0</span></div>
+      </div>
+      <div class="table-wrap">
+        <div class="state-box" id="loadingState"><div class="loader"></div><p>Loading maintenance data...</p></div>
+        <div id="emptyState" class="state-box hidden"><div class="icon">&#10003;</div><p>No tasks match the current filter</p></div>
+        <table id="mainTable" class="hidden">
+          <thead><tr>
+            <th onclick="sortBy('Title')">Equipment <span class="sort-icon">&#8597;</span></th>
+            <th onclick="sortBy('Area')">Area <span class="sort-icon">&#8597;</span></th>
+            <th class="td-task">Task</th>
+            <th onclick="sortBy('Frequency')">Frequency <span class="sort-icon">&#8597;</span></th>
+            <th onclick="sortBy('Responsible')">Responsible <span class="sort-icon">&#8597;</span></th>
+            <th onclick="sortBy('ProposedDate')">Proposed Date <span class="sort-icon">&#8597;</span></th>
+            <th onclick="sortBy('_daysFromNow')">Status <span class="sort-icon">&#8597;</span></th>
+          </tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="tabs">
-      <div class="tab active" id="tab-overdue" onclick="setTab('overdue')">Overdue <span class="tab-count" id="tc-overdue">0</span></div>
-      <div class="tab" id="tab-month" onclick="setTab('month')">Due This Month <span class="tab-count" id="tc-month">0</span></div>
-      <div class="tab" id="tab-upcoming" onclick="setTab('upcoming')">Upcoming 90d <span class="tab-count" id="tc-upcoming">0</span></div>
-      <div class="tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="tab-count" id="tc-all">0</span></div>
-    </div>
-    <div class="table-wrap">
-      <div class="state-box" id="loadingState"><div class="loader"></div><p>Loading maintenance data...</p></div>
-      <div id="emptyState" class="state-box hidden"><div class="icon">&#10003;</div><p>No tasks match the current filter</p></div>
-      <table id="mainTable" class="hidden">
-        <thead><tr>
-          <th onclick="sortBy('Title')">Equipment <span class="sort-icon">&#8597;</span></th>
-          <th onclick="sortBy('Area')">Area <span class="sort-icon">&#8597;</span></th>
-          <th class="td-task">Task</th>
-          <th onclick="sortBy('Frequency')">Frequency <span class="sort-icon">&#8597;</span></th>
-          <th onclick="sortBy('Responsible')">Responsible <span class="sort-icon">&#8597;</span></th>
-          <th onclick="sortBy('ProposedDate')">Proposed Date <span class="sort-icon">&#8597;</span></th>
-          <th onclick="sortBy('_daysFromNow')">Status <span class="sort-icon">&#8597;</span></th>
-        </tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+
+    <!-- CALENDAR VIEW -->
+    <div id="calendarView" class="hidden">
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <div class="cal-title" id="calTitle">May 2026</div>
+          <div class="cal-controls">
+            <button class="cal-btn active" id="btnMonth" onclick="setCalMode('month')">Month</button>
+            <button class="cal-btn" id="btnWeek" onclick="setCalMode('week')">Week</button>
+            <button class="cal-nav" onclick="calNav(-1)">&#8249;</button>
+            <button class="cal-btn" onclick="calToday()">Today</button>
+            <button class="cal-nav" onclick="calNav(1)">&#8250;</button>
+          </div>
+        </div>
+        <div class="cal-legend">
+          <div class="cal-legend-item"><div class="cal-legend-dot freq-weekly"></div>Weekly</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot freq-monthly"></div>Monthly</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot freq-quarterly"></div>Quarterly</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot freq-annual"></div>Annual</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot freq-3year"></div>3-Year</div>
+        </div>
+        <div id="calBody"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- TASK DETAIL MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-header">
@@ -173,6 +257,14 @@
       <div class="detail-grid" id="modalGrid"></div>
     </div>
   </div>
+</div>
+
+<!-- CALENDAR EVENT POPUP -->
+<div class="cal-popup" id="calPopup">
+  <button class="cal-popup-close" onclick="closeCalPopup()">&#x2715;</button>
+  <div class="cal-popup-title" id="cpTitle"></div>
+  <div class="cal-popup-sub" id="cpSub"></div>
+  <div id="cpBody"></div>
 </div>
 
 <script>
@@ -189,13 +281,9 @@
 
   function b64url(buf) {
     return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+      .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
   }
-
-  function genVerifier() {
-    return b64url(crypto.getRandomValues(new Uint8Array(32)));
-  }
-
+  function genVerifier() { return b64url(crypto.getRandomValues(new Uint8Array(32))); }
   function genChallenge(cv) {
     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(cv))
       .then(function(dig) { return b64url(dig); });
@@ -206,111 +294,97 @@
     sessionStorage.setItem(CV_KEY, cv);
     genChallenge(cv).then(function(cc) {
       location.href = 'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/v2.0/authorize'
-        + '?client_id='             + CLIENT_ID
-        + '&response_type=code'
-        + '&redirect_uri='          + encodeURIComponent(REDIRECT)
-        + '&scope='                 + encodeURIComponent(SCOPE)
-        + '&response_mode=query'
-        + '&code_challenge='        + cc
-        + '&code_challenge_method=S256';
+        + '?client_id=' + CLIENT_ID + '&response_type=code'
+        + '&redirect_uri=' + encodeURIComponent(REDIRECT)
+        + '&scope=' + encodeURIComponent(SCOPE)
+        + '&response_mode=query&code_challenge=' + cc + '&code_challenge_method=S256';
     });
   };
 
   function exchangeCode(code) {
     var cv = sessionStorage.getItem(CV_KEY);
     sessionStorage.removeItem(CV_KEY);
-    var body = new URLSearchParams({
-      client_id: CLIENT_ID, code: code,
-      redirect_uri: REDIRECT,
-      grant_type: 'authorization_code',
-      code_verifier: cv, scope: SCOPE
-    });
-    return fetch('https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/v2.0/token',
-      { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
-      .then(function(r) {
-        if (!r.ok) return r.json().then(function(e) { throw new Error(e.error_description || e.error); });
-        return r.json();
-      })
+    var body = new URLSearchParams({ client_id:CLIENT_ID, code:code, redirect_uri:REDIRECT, grant_type:'authorization_code', code_verifier:cv, scope:SCOPE });
+    return fetch('https://login.microsoftonline.com/'+TENANT_ID+'/oauth2/v2.0/token',
+      { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body })
+      .then(function(r) { if(!r.ok) return r.json().then(function(e){throw new Error(e.error_description||e.error);}); return r.json(); })
       .then(function(d) {
         accessToken = d.access_token;
-        sessionStorage.setItem('at', JSON.stringify({ t: accessToken, exp: Date.now() + d.expires_in * 1000 }));
+        sessionStorage.setItem('at', JSON.stringify({t:accessToken, exp:Date.now()+d.expires_in*1000}));
         return true;
       });
   }
 
   function parseToken() {
     try {
-      var cached = JSON.parse(sessionStorage.getItem('at') || 'null');
-      if (cached && cached.exp > Date.now() + 60000) { accessToken = cached.t; return Promise.resolve(true); }
+      var c = JSON.parse(sessionStorage.getItem('at')||'null');
+      if (c && c.exp > Date.now()+60000) { accessToken=c.t; return Promise.resolve(true); }
     } catch(e) {}
     var p = new URLSearchParams(location.search);
-    var code = p.get('code'), err = p.get('error');
+    var code=p.get('code'), err=p.get('error');
     if (err) {
-      history.replaceState(null, '', location.pathname);
-      var el = document.getElementById('authError');
-      el.textContent = 'Sign-in error: ' + (p.get('error_description') || err);
-      el.style.display = 'block';
+      history.replaceState(null,'',location.pathname);
+      var el=document.getElementById('authError');
+      el.textContent='Sign-in error: '+(p.get('error_description')||err); el.style.display='block';
       return Promise.resolve(false);
     }
     if (code) {
-      history.replaceState(null, '', location.pathname);
-      return exchangeCode(code).catch(function(e) {
-        var el = document.getElementById('authError');
-        el.textContent = 'Token error: ' + e.message;
-        el.style.display = 'block';
-        return false;
+      history.replaceState(null,'',location.pathname);
+      return exchangeCode(code).catch(function(e){
+        var el=document.getElementById('authError');
+        el.textContent='Token error: '+e.message; el.style.display='block'; return false;
       });
     }
     return Promise.resolve(false);
   }
 
   function graphGet(url) {
-    var items = [];
+    var items=[];
     function next(u) {
-      if (!u) return Promise.resolve(items);
-      return fetch(u, { headers: { Authorization: 'Bearer ' + accessToken } })
-        .then(function(r) {
-          if (!r.ok) return r.text().then(function(t) { throw new Error('Graph ' + r.status + ': ' + t); });
-          return r.json();
-        })
-        .then(function(d) {
-          items = items.concat(d.value || []);
-          return next(d['@odata.nextLink'] || null);
-        });
+      if(!u) return Promise.resolve(items);
+      return fetch(u,{headers:{Authorization:'Bearer '+accessToken}})
+        .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('Graph '+r.status+': '+t);});return r.json();})
+        .then(function(d){items=items.concat(d.value||[]);return next(d['@odata.nextLink']||null);});
     }
     return next(url);
   }
 
-  var allTasks = [], allWOs = [], currentTab = 'overdue', sortField = 'ProposedDate', sortAsc = true;
+  var allTasks=[], allWOs=[], currentTab='overdue', sortField='ProposedDate', sortAsc=true;
+  var currentView='list';
+
+  window.switchView = function(v) {
+    currentView = v;
+    document.getElementById('listView').classList.toggle('hidden', v!=='list');
+    document.getElementById('calendarView').classList.toggle('hidden', v!=='calendar');
+    document.getElementById('calViewBtn').style.display = v==='list' ? '' : 'none';
+    document.getElementById('listViewBtn').style.display = v==='calendar' ? '' : 'none';
+    if (v==='calendar') renderCal();
+  };
 
   window.loadData = function() {
-    var btn = document.getElementById('refreshBtn');
+    var btn=document.getElementById('refreshBtn');
     btn.classList.add('spinning');
     document.getElementById('loadingState').classList.remove('hidden');
     document.getElementById('mainTable').classList.add('hidden');
     document.getElementById('emptyState').classList.add('hidden');
-    document.getElementById('errorBanner').style.display = 'none';
+    document.getElementById('errorBanner').style.display='none';
     Promise.all([
-      graphGet(GRAPH + '/sites/' + SITE_ID + '/lists/' + PM_LIST_ID + '/items?$expand=fields&$top=500'),
-      graphGet(GRAPH + '/sites/' + SITE_ID + '/lists/' + WO_LIST_ID + '/items?$expand=fields&$top=500')
-    ]).then(function(results) {
-      var taskItems = results[0], woItems = results[1];
-      var today = new Date(); today.setHours(0,0,0,0);
-      allTasks = taskItems.map(function(i) {
-        var f = i.fields || {}, dn = null;
-        if (f.ProposedDate) dn = Math.round((new Date(f.ProposedDate.substring(0,10)) - today) / 86400000);
-        return Object.assign({}, f, { _id: i.id, _daysFromNow: dn });
+      graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+PM_LIST_ID+'/items?$expand=fields&$top=500'),
+      graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items?$expand=fields&$top=500')
+    ]).then(function(res) {
+      var ti=res[0], wi=res[1];
+      var today=new Date(); today.setHours(0,0,0,0);
+      allTasks=ti.map(function(i){
+        var f=i.fields||{}, dn=null;
+        if(f.ProposedDate) dn=Math.round((new Date(f.ProposedDate.substring(0,10))-today)/86400000);
+        return Object.assign({},f,{_id:i.id,_daysFromNow:dn});
       });
-      allWOs = woItems.map(function(i) { return i.fields || {}; });
-      var woRefs = {};
-      allWOs.filter(function(w) {
-        return ['completed','in progress'].indexOf((w.WOStatus||'').toLowerCase()) >= 0;
-      }).forEach(function(w) { if (w.PMTaskRef) woRefs[w.PMTaskRef] = true; });
-      var tm = today.getMonth(), ty = today.getFullYear();
-      var woM = allWOs.filter(function(w) {
-        if (!w.DateOpened) return false;
-        var d = new Date(w.DateOpened); return d.getMonth()===tm && d.getFullYear()===ty;
-      }).length;
+      allWOs=wi.map(function(i){return i.fields||{};});
+      var woRefs={};
+      allWOs.filter(function(w){return['completed','in progress'].indexOf((w.WOStatus||'').toLowerCase())>=0;})
+            .forEach(function(w){if(w.PMTaskRef)woRefs[w.PMTaskRef]=true;});
+      var tm=today.getMonth(), ty=today.getFullYear();
+      var woM=allWOs.filter(function(w){if(!w.DateOpened)return false;var d=new Date(w.DateOpened);return d.getMonth()===tm&&d.getFullYear()===ty;}).length;
       document.getElementById('countOverdue').textContent  = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow<0&&!woRefs[t._id];}).length;
       document.getElementById('countMonth').textContent    = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow>=0&&t._daysFromNow<=30;}).length;
       document.getElementById('countUpcoming').textContent = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow>30&&t._daysFromNow<=90;}).length;
@@ -319,32 +393,33 @@
       document.getElementById('tc-month').textContent    = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow>=0&&t._daysFromNow<=30;}).length;
       document.getElementById('tc-upcoming').textContent = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow>30&&t._daysFromNow<=90;}).length;
       document.getElementById('tc-all').textContent = allTasks.length;
+      document.getElementById('calViewBtn').style.display = '';
       populateFilters();
-      document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       renderTable();
-    }).catch(function(err) {
-      var eb = document.getElementById('errorBanner');
-      eb.style.display = 'block'; eb.textContent = 'Failed to load: ' + err.message;
+    }).catch(function(err){
+      var eb=document.getElementById('errorBanner');
+      eb.style.display='block'; eb.textContent='Failed to load: '+err.message;
       document.getElementById('loadingState').classList.add('hidden');
-    }).then(function() { btn.classList.remove('spinning'); });
+    }).then(function(){btn.classList.remove('spinning');});
   };
 
   function populateFilters() {
-    function unique(arr) { var s={}; arr.forEach(function(v){if(v)s[v]=1;}); return Object.keys(s).sort(); }
-    function setOpts(id, vals, lbl) {
-      var el=document.getElementById(id), cur=el.value;
+    function unique(arr){var s={};arr.forEach(function(v){if(v)s[v]=1;});return Object.keys(s).sort();}
+    function setOpts(id,vals,lbl){
+      var el=document.getElementById(id),cur=el.value;
       el.innerHTML='<option value="">All '+lbl+'</option>';
       vals.forEach(function(v){var o=document.createElement('option');o.value=o.textContent=v;el.appendChild(o);});
       el.value=cur;
     }
-    setOpts('filterArea', unique(allTasks.map(function(t){return t.Area;})), 'Areas');
-    setOpts('filterResp', unique(allTasks.map(function(t){return t.Responsible;})), 'Responsible');
-    setOpts('filterFreq', unique(allTasks.map(function(t){return t.Frequency;})), 'Frequencies');
+    setOpts('filterArea',unique(allTasks.map(function(t){return t.Area;})),'Areas');
+    setOpts('filterResp',unique(allTasks.map(function(t){return t.Responsible;})),'Responsible');
+    setOpts('filterFreq',unique(allTasks.map(function(t){return t.Frequency;})),'Frequencies');
   }
 
   window.setTab = function(tab) {
     currentTab=tab;
-    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+tab).classList.add('active');
     renderTable();
   };
@@ -368,12 +443,11 @@
     var freq=document.getElementById('filterFreq').value;
     var srch=document.getElementById('searchInput').value.toLowerCase();
     var tasks=getTabTasks().filter(function(t){
-      return(!area||t.Area===area)&&(!resp||t.Responsible===resp)&&
-             (!freq||t.Frequency===freq)&&
+      return(!area||t.Area===area)&&(!resp||t.Responsible===resp)&&(!freq||t.Frequency===freq)&&
              (!srch||(t.Title||'').toLowerCase().indexOf(srch)>=0||(t.Task||'').toLowerCase().indexOf(srch)>=0);
     });
     tasks.sort(function(a,b){
-      var av=a[sortField]!=null?a[sortField]:'', bv=b[sortField]!=null?b[sortField]:'';
+      var av=a[sortField]!=null?a[sortField]:'',bv=b[sortField]!=null?b[sortField]:'';
       if(sortField==='_daysFromNow'){av=a._daysFromNow!=null?a._daysFromNow:9999;bv=b._daysFromNow!=null?b._daysFromNow:9999;}
       var c=typeof av==='number'?av-bv:String(av).localeCompare(String(bv));
       return sortAsc?c:-c;
@@ -395,13 +469,11 @@
       var ini=(t.Responsible||'?').split('/')[0].trim().substring(0,2).toUpperCase();
       var food=t.FoodContact==='Y'?'<span class="food-dot"></span>':'';
       return '<tr onclick="showDetail(\''+t._id+'\')">'+
-        '<td class="td-equipment"><div class="equip-name">'+(t.Title||'')+food+'</div>'+
-        (t.VesselID?'<div class="equip-vessel">'+t.VesselID+'</div>':'')+'</td>'+
+        '<td class="td-equipment"><div class="equip-name">'+(t.Title||'')+food+'</div>'+(t.VesselID?'<div class="equip-vessel">'+t.VesselID+'</div>':'')+'</td>'+
         '<td><span class="area-badge">'+(t.Area||'-')+'</span></td>'+
         '<td class="td-task"><div class="task-text">'+(t.Task||'')+'</div></td>'+
         '<td style="color:var(--text2);white-space:nowrap">'+(t.Frequency||'-')+'</td>'+
-        '<td><div class="responsible-chip"><div class="resp-avatar">'+ini+'</div>'+
-        (t.Responsible||'-').split('/')[0].trim()+'</div></td>'+
+        '<td><div class="responsible-chip"><div class="resp-avatar">'+ini+'</div>'+(t.Responsible||'-').split('/')[0].trim()+'</div></td>'+
         '<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'-')+'</td>'+
         '<td><span class="days-badge '+bc+'">'+bt+'</span></td></tr>';
     }).join('');
@@ -413,15 +485,10 @@
     document.getElementById('modalTitle').textContent=t.Title||'';
     document.getElementById('modalSub').textContent=(t.Area||'')+' \u00b7 '+(t.Frequency||'');
     document.getElementById('modalTask').textContent=t.Task||'No task description';
-    var fields=[
-      ['Type',t.Type0],['Responsible',t.Responsible],
-      ['Food Contact',t.FoodContact==='Y'?'\u2713 Yes':'No'],
-      ['Proposed Date',t.ProposedDate?t.ProposedDate.substring(0,10):'-'],
-      ['Performed Date',t.PerformedDate?t.PerformedDate.substring(0,10):'-'],
-      ['Internal / Outsourced',t.InternalOrOutsourced],
-      ['Outsourced To',t.OutsourcedTo||'-'],['Status',t.Status||'-'],
-      ['Vessel ID',t.VesselID||'-'],['Comments',t.Comments||'-']
-    ];
+    var fields=[['Type',t.Type0],['Responsible',t.Responsible],['Food Contact',t.FoodContact==='Y'?'\u2713 Yes':'No'],
+      ['Proposed Date',t.ProposedDate?t.ProposedDate.substring(0,10):'-'],['Performed Date',t.PerformedDate?t.PerformedDate.substring(0,10):'-'],
+      ['Internal / Outsourced',t.InternalOrOutsourced],['Outsourced To',t.OutsourcedTo||'-'],['Status',t.Status||'-'],
+      ['Vessel ID',t.VesselID||'-'],['Comments',t.Comments||'-']];
     document.getElementById('modalGrid').innerHTML=fields.map(function(f){
       return '<div class="detail-field"><label>'+f[0]+'</label><value>'+(f[1]||'-')+'</value></div>';
     }).join('');
@@ -432,6 +499,298 @@
     if(e&&e.target!==document.getElementById('modalOverlay'))return;
     document.getElementById('modalOverlay').classList.remove('open');
   };
+
+  // ── CALENDAR ──────────────────────────────────────────────────────────────
+  var calMode='month';
+  var calDate=new Date();
+  calDate.setDate(1);
+
+  var FREQ_COLOR = { 'Weekly':'#2980b9','Monthly':'#e8a020','Quarterly':'#8e44ad','Annual':'#27ae60','3-Year':'#c0392b' };
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Generate all occurrences of a task within [start, end] based on frequency
+  function getOccurrences(task, start, end) {
+    var freq = (task.Frequency||'').trim();
+    var dates = [];
+    var d = new Date(start);
+
+    if (freq === 'Weekly') {
+      // Every Monday
+      d = new Date(start);
+      // advance to next Monday
+      var dow = d.getDay(); // 0=Sun
+      var diff = (1 - dow + 7) % 7;
+      d.setDate(d.getDate() + diff);
+      while (d <= end) {
+        dates.push(new Date(d));
+        d.setDate(d.getDate() + 7);
+      }
+    } else if (freq === 'Monthly') {
+      // 1st of each month
+      d = new Date(start.getFullYear(), start.getMonth(), 1);
+      while (d <= end) {
+        if (d >= start) dates.push(new Date(d));
+        d.setMonth(d.getMonth() + 1);
+      }
+    } else if (freq === 'Quarterly') {
+      // Jan 1, Apr 1, Jul 1, Oct 1
+      var qMonths = [0, 3, 6, 9];
+      d = new Date(start.getFullYear(), 0, 1);
+      while (d <= end) {
+        if (qMonths.indexOf(d.getMonth()) >= 0 && d >= start) dates.push(new Date(d));
+        d.setMonth(d.getMonth() + 1);
+      }
+    } else if (freq === 'Annual') {
+      // Jan 1 each year
+      d = new Date(start.getFullYear(), 0, 1);
+      while (d <= end) {
+        if (d >= start) dates.push(new Date(d));
+        d.setFullYear(d.getFullYear() + 1);
+      }
+    } else if (freq === '3-Year') {
+      // Jan 1, every 3 years from now
+      var base = new Date();
+      base.setMonth(0); base.setDate(1); base.setHours(0,0,0,0);
+      // rewind to nearest past 3-year mark
+      d = new Date(base);
+      while (d > start) d.setFullYear(d.getFullYear() - 3);
+      while (d <= end) {
+        if (d >= start) dates.push(new Date(d));
+        d.setFullYear(d.getFullYear() + 3);
+      }
+    }
+    return dates;
+  }
+
+  // Build a map of dateKey -> [events] for the visible range
+  function buildEventMap(rangeStart, rangeEnd) {
+    var map = {};
+    var threeYrEnd = new Date();
+    threeYrEnd.setFullYear(threeYrEnd.getFullYear() + 3);
+    var end = rangeEnd < threeYrEnd ? rangeEnd : threeYrEnd;
+
+    allTasks.forEach(function(task) {
+      var occurrences = getOccurrences(task, rangeStart, end);
+      occurrences.forEach(function(d) {
+        var key = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+        if (!map[key]) map[key] = [];
+        map[key].push(task);
+      });
+    });
+    return map;
+  }
+
+  function dateKey(d) {
+    return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  }
+
+  function isSameDay(a,b) {
+    return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+  }
+
+  function eventChip(task, extraClass) {
+    var color = FREQ_COLOR[task.Frequency] || '#555f73';
+    var cls = extraClass || 'cal-event';
+    return '<div class="'+cls+'" style="background:'+color+'" onclick="showCalPopup(event,\''+task._id+'\',\''+dateKey(new Date())+'\')" title="'+escHtml(task.Title||'')+'">'+escHtml(task.Title||'')+'</div>';
+  }
+
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function setCalMode(mode) {
+    calMode = mode;
+    document.getElementById('btnMonth').classList.toggle('active', mode==='month');
+    document.getElementById('btnWeek').classList.toggle('active', mode==='week');
+    renderCal();
+  }
+
+  function calNav(dir) {
+    if (calMode==='month') {
+      calDate.setMonth(calDate.getMonth()+dir);
+    } else {
+      calDate.setDate(calDate.getDate()+dir*7);
+    }
+    renderCal();
+  }
+
+  function calToday() {
+    calDate = new Date(); calDate.setDate(1);
+    renderCal();
+  }
+
+  window.setCalMode = setCalMode;
+  window.calNav = calNav;
+  window.calToday = calToday;
+
+  function renderCal() {
+    if (calMode==='month') renderMonth(); else renderWeek();
+  }
+
+  function renderMonth() {
+    var year=calDate.getFullYear(), month=calDate.getMonth();
+    document.getElementById('calTitle').textContent = MONTHS[month]+' '+year;
+
+    var firstDay = new Date(year, month, 1).getDay();
+    var daysInMonth = new Date(year, month+1, 0).getDate();
+    var today = new Date(); today.setHours(0,0,0,0);
+
+    // Range: whole month (plus padding cells)
+    var rangeStart = new Date(year, month, 1);
+    var rangeEnd   = new Date(year, month, daysInMonth);
+    var eventMap   = buildEventMap(rangeStart, rangeEnd);
+
+    var headHtml = '<div class="cal-grid-head">';
+    DAYS.forEach(function(d){ headHtml += '<div class="cal-day-name">'+d+'</div>'; });
+    headHtml += '</div>';
+
+    var gridHtml = '<div class="cal-grid">';
+    var totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+    for (var i=0; i<totalCells; i++) {
+      var dayNum = i - firstDay + 1;
+      var cellDate = new Date(year, month, dayNum);
+      var isThisMonth = dayNum >= 1 && dayNum <= daysInMonth;
+      var isToday = isSameDay(cellDate, today);
+
+      var cls = 'cal-cell';
+      if (!isThisMonth) cls += ' other-month';
+      if (isToday) cls += ' today';
+
+      var key = dateKey(cellDate);
+      var events = eventMap[key] || [];
+
+      var dateDiv = '<div class="cal-date">'+cellDate.getDate()+'</div>';
+      var eventsHtml = '';
+      var maxShow = 3;
+      for (var j=0; j<Math.min(events.length, maxShow); j++) {
+        var color = FREQ_COLOR[events[j].Frequency]||'#555f73';
+        eventsHtml += '<div class="cal-event" style="background:'+color+'" onclick="showCalPopup(event,\''+events[j]._id+'\',\''+key+'\')" title="'+escHtml(events[j].Title||'')+'">'+escHtml(events[j].Title||'')+'</div>';
+      }
+      if (events.length > maxShow) {
+        eventsHtml += '<div class="cal-more" onclick="showDayEvents(event,\''+key+'\')">+' + (events.length-maxShow) + ' more</div>';
+      }
+
+      gridHtml += '<div class="'+cls+'">'+dateDiv+eventsHtml+'</div>';
+    }
+    gridHtml += '</div>';
+
+    document.getElementById('calBody').innerHTML = headHtml + gridHtml;
+  }
+
+  function renderWeek() {
+    // Find Monday of current week
+    var d = new Date(calDate);
+    var dow = d.getDay();
+    var monday = new Date(d);
+    monday.setDate(d.getDate() - ((dow+6)%7)); // Monday
+    monday.setHours(0,0,0,0);
+
+    var weekDays = [];
+    for (var i=0; i<7; i++) {
+      var wd = new Date(monday);
+      wd.setDate(monday.getDate()+i);
+      weekDays.push(wd);
+    }
+
+    var today = new Date(); today.setHours(0,0,0,0);
+    var rangeEnd = new Date(weekDays[6]); rangeEnd.setHours(23,59,59);
+    var eventMap = buildEventMap(monday, rangeEnd);
+
+    var startStr = MONTHS[monday.getMonth()].substring(0,3)+' '+monday.getDate();
+    var endStr   = MONTHS[weekDays[6].getMonth()].substring(0,3)+' '+weekDays[6].getDate()+', '+weekDays[6].getFullYear();
+    document.getElementById('calTitle').textContent = 'Week of '+startStr+' \u2013 '+endStr;
+
+    // Header row
+    var headHtml = '<div class="cal-week-head"><div class="cal-week-day-head"></div>';
+    weekDays.forEach(function(wd) {
+      var isToday = isSameDay(wd,today);
+      var cls = 'cal-week-day-head'+(isToday?' today-col':'');
+      headHtml += '<div class="'+cls+'">'+DAYS[wd.getDay()]+'<br><strong>'+wd.getDate()+'</strong></div>';
+    });
+    headHtml += '</div>';
+
+    // Body: one row per "slot" — we just do all-day style since these are full-day tasks
+    var bodyHtml = '<div class="cal-week-grid">';
+    // time label column (blank for all-day)
+    bodyHtml += '<div class="cal-time-col" style="min-height:120px;padding-top:8px">All day</div>';
+    weekDays.forEach(function(wd) {
+      var isToday = isSameDay(wd,today);
+      var key = dateKey(wd);
+      var events = eventMap[key]||[];
+      var cls = 'cal-week-cell'+(isToday?' today-col':'');
+      var evHtml = events.map(function(ev){
+        var color = FREQ_COLOR[ev.Frequency]||'#555f73';
+        return '<a class="cal-week-event" style="background:'+color+'" onclick="showCalPopup(event,\''+ev._id+'\',\''+key+'\')" title="'+escHtml(ev.Title||'')+'">'+escHtml(ev.Title||'')+'</a>';
+      }).join('');
+      bodyHtml += '<div class="'+cls+'">'+evHtml+'</div>';
+    });
+    bodyHtml += '</div>';
+
+    document.getElementById('calBody').innerHTML = headHtml + bodyHtml;
+  }
+
+  window.showCalPopup = function(e, taskId, key) {
+    e.stopPropagation();
+    var task = allTasks.filter(function(x){return x._id===taskId;})[0];
+    if (!task) return;
+    var popup = document.getElementById('calPopup');
+    document.getElementById('cpTitle').textContent = task.Title||'';
+    var color = FREQ_COLOR[task.Frequency]||'#555f73';
+    document.getElementById('cpSub').innerHTML = '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+color+';margin-right:6px"></span>'+
+      escHtml(task.Frequency||'')+' &mdash; '+escHtml(task.Area||'');
+    var rows = [
+      ['Responsible', task.Responsible||'-'],
+      ['Task', task.Task||'-'],
+      ['Food Contact', task.FoodContact==='Y'?'\u2713 Yes':'No']
+    ];
+    document.getElementById('cpBody').innerHTML = rows.map(function(r){
+      return '<div class="cal-popup-row"><strong>'+r[0]+':</strong> '+escHtml(r[1])+'</div>';
+    }).join('');
+    // Position near click
+    var x = e.clientX+10, y = e.clientY+10;
+    if (x+310 > window.innerWidth) x = e.clientX-320;
+    if (y+180 > window.innerHeight) y = e.clientY-190;
+    popup.style.left = x+'px'; popup.style.top = y+'px';
+    popup.classList.add('open');
+    e.preventDefault();
+  };
+
+  window.showDayEvents = function(e, key) {
+    e.stopPropagation();
+    // Build a quick popup showing all events for that day
+    var parts = key.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var rangeStart = new Date(d); rangeStart.setHours(0,0,0,0);
+    var rangeEnd   = new Date(d); rangeEnd.setHours(23,59,59);
+    var map = buildEventMap(rangeStart, rangeEnd);
+    var events = map[key]||[];
+    var popup = document.getElementById('calPopup');
+    document.getElementById('cpTitle').textContent = MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+    document.getElementById('cpSub').textContent = events.length+' tasks scheduled';
+    document.getElementById('cpBody').innerHTML = events.map(function(ev){
+      var color = FREQ_COLOR[ev.Frequency]||'#555f73';
+      return '<div class="cal-popup-row" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'+
+        '<span style="width:8px;height:8px;border-radius:2px;background:'+color+';flex-shrink:0"></span>'+
+        '<span>'+escHtml(ev.Title||'')+'</span></div>';
+    }).join('');
+    var x=e.clientX+10, y=e.clientY+10;
+    if(x+310>window.innerWidth) x=e.clientX-320;
+    if(y+240>window.innerHeight) y=e.clientY-250;
+    popup.style.left=x+'px'; popup.style.top=y+'px';
+    popup.classList.add('open');
+    e.stopPropagation();
+  };
+
+  window.closeCalPopup = function() {
+    document.getElementById('calPopup').classList.remove('open');
+  };
+
+  document.addEventListener('click', function(e) {
+    var popup = document.getElementById('calPopup');
+    if (popup.classList.contains('open') && !popup.contains(e.target)) {
+      popup.classList.remove('open');
+    }
+  });
 
   parseToken().then(function(ok) {
     if(ok){
