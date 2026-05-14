@@ -85,7 +85,8 @@
     .error-banner{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#e74c3c;padding:12px 16px;border-radius:6px;margin-bottom:20px;font-size:13px;display:none}
     .auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;padding:20px}
     .auth-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:6px;padding:40px;max-width:400px;width:100%;text-align:center}
-    .auth-logo{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+    .auth-logo{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);text-transform:uppercase;margin-bottom:4px}
+    .auth-version{font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:20px}
     .auth-sub{color:var(--text3);font-size:13px;margin-bottom:28px}
     .auth-btn{background:var(--accent);color:#000;border:none;padding:12px 32px;border-radius:4px;font-family:var(--font-head);font-size:16px;font-weight:700;text-transform:uppercase;cursor:pointer;width:100%;transition:opacity .15s}
     .auth-btn:hover{opacity:.85}
@@ -100,6 +101,7 @@
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">LSB Maintainer</div>
+    <div class="auth-version">v5 &mdash; client 14755f84</div>
     <div class="auth-sub">Last Spike Brewery &mdash; Maintenance Dashboard</div>
     <button class="auth-btn" id="signInBtn">Sign in with Microsoft</button>
     <div class="auth-error" id="authError"></div>
