@@ -463,6 +463,7 @@
       var afBtn = document.getElementById('autoFillBtn');
       afBtn.classList.toggle('hidden', missingCount===0);
       if (missingCount>0) afBtn.innerHTML = '&#10024; Auto-fill '+missingCount+' Dates';
+      document.getElementById('tankViewBtn').classList.remove('hidden');
       document.getElementById('calViewBtn').classList.remove('hidden');
       buildLegend();
       populateFilters();
@@ -500,9 +501,12 @@
     currentView=v;
     document.getElementById('listView').classList.toggle('hidden',v!=='list');
     document.getElementById('calendarView').classList.toggle('hidden',v!=='calendar');
+    document.getElementById('tankView').classList.toggle('hidden',v!=='tank');
     document.getElementById('calViewBtn').classList.toggle('hidden',v==='calendar');
     document.getElementById('listViewBtn').classList.toggle('hidden',v==='list');
+    document.getElementById('tankViewBtn').classList.toggle('hidden',v==='tank');
     if(v==='calendar') renderCal();
+    if(v==='tank'){ if(!allTanks.length) loadTanks(); else { updateTankSummary(); renderTanks(); } }
   };
 
   window.setTab = function(tab){
@@ -619,7 +623,7 @@
       .catch(function(err){btn.disabled=false;btn.textContent='Save Changes';status.textContent='Error: '+err.message;status.className='save-status err';});
   };
 
-  window.closeModal=function(e){if(e&&e.target!==document.getElementById('modalOverlay'))return;document.getElementById('modalOverlay').classList.remove('open');};
+  window.closeModal=function(e){if(e&&e.target!==document.getElementById('modalOverlay'))return;document.getElementById('modalOverlay').classList.remove('open'); document.getElementById('saveBtn').onclick=saveTask;};
 
   function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
@@ -774,3 +778,5 @@
 </script>
 </body>
 </html>
+
+
