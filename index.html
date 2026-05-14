@@ -170,6 +170,7 @@
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
+      <button class="refresh-btn hidden" id="tankViewBtn" onclick="switchView('tank')">&#9956; Tank Register</button>
       <button class="refresh-btn hidden" id="calViewBtn" onclick="switchView('calendar')">&#128197; Calendar</button>
       <button class="refresh-btn hidden" id="listViewBtn" onclick="switchView('list')">&#9776; List</button>
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
@@ -239,6 +240,22 @@
         <div class="cal-legend" id="calLegend"></div>
         <div id="calBody"></div>
       </div>
+    </div>
+
+    <div id="tankView" class="hidden">
+      <div class="tank-summary-cards">
+        <div class="tank-summary-card ts-active"><div class="ts-value" id="tsc-active">-</div><div class="ts-label">Active</div></div>
+        <div class="tank-summary-card ts-cip"><div class="ts-value" id="tsc-cip">-</div><div class="ts-label">CIP</div></div>
+        <div class="tank-summary-card ts-offline"><div class="ts-value" id="tsc-offline">-</div><div class="ts-label">Offline</div></div>
+        <div class="tank-summary-card ts-total"><div class="ts-value" id="tsc-total">-</div><div class="ts-label">Total Tanks</div></div>
+      </div>
+      <div class="tank-filters">
+        <span class="filter-label">Filter</span>
+        <select class="filter-select" id="tankFilterType" onchange="renderTanks()"><option value="">All Types</option></select>
+        <select class="filter-select" id="tankFilterStatus" onchange="renderTanks()"><option value="">All Statuses</option><option>Active</option><option>CIP</option><option>Offline</option><option>Decommissioned</option></select>
+        <input class="search-input" id="tankSearch" type="text" placeholder="Search tanks..." oninput="renderTanks()">
+      </div>
+      <div id="tankBody"><div class="state-box"><div class="loader"></div><p>Loading tank data...</p></div></div>
     </div>
   </div>
 </div>
@@ -778,5 +795,7 @@
 </script>
 </body>
 </html>
+
+
 
 
