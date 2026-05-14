@@ -181,7 +181,7 @@
   var WO_LIST_ID = 'b3cf8490-af6a-4bd8-ac00-98d999640196';
   var GRAPH      = 'https://graph.microsoft.com/v1.0';
   var REDIRECT   = 'https://a1ch.github.io/LastSpikeDashboard/';
-  var SCOPE      = 'https://graph.microsoft.com/Sites.Read.All https://graph.microsoft.com/Files.Read';
+  var SCOPE      = 'openid profile offline_access https://graph.microsoft.com/Sites.Read.All';
   var CV_KEY     = 'pkce_cv';
   var accessToken = null;
 
@@ -392,16 +392,16 @@
       else{bc='upcoming';bt=t.ProposedDate?t.ProposedDate.substring(0,10):'';}
       var ini=(t.Responsible||'?').split('/')[0].trim().substring(0,2).toUpperCase();
       var food=t.FoodContact==='Y'?'<span class="food-dot"></span>':'';
-      return '<tr onclick="showDetail(\''+t._id+'\')">'
-        +'<td class="td-equipment"><div class="equip-name">'+(t.Title||'')+food+'</div>'
-        +(t.VesselID?'<div class="equip-vessel">'+t.VesselID+'</div>':'')+'</td>'
-        +'<td><span class="area-badge">'+(t.Area||'-')+'</span></td>'
-        +'<td class="td-task"><div class="task-text">'+(t.Task||'')+'</div></td>'
-        +'<td style="color:var(--text2);white-space:nowrap">'+(t.Frequency||'-')+'</td>'
-        +'<td><div class="responsible-chip"><div class="resp-avatar">'+ini+'</div>'
-        +(t.Responsible||'-').split('/')[0].trim()+'</div></td>'
-        +'<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'-')+'</td>'
-        +'<td><span class="days-badge '+bc+'">'+bt+'</span></td></tr>';
+      return '<tr onclick="showDetail(\''+t._id+'\')">'+
+        '<td class="td-equipment"><div class="equip-name">'+(t.Title||'')+food+'</div>'+
+        (t.VesselID?'<div class="equip-vessel">'+t.VesselID+'</div>':'')+'</td>'+
+        '<td><span class="area-badge">'+(t.Area||'-')+'</span></td>'+
+        '<td class="td-task"><div class="task-text">'+(t.Task||'')+'</div></td>'+
+        '<td style="color:var(--text2);white-space:nowrap">'+(t.Frequency||'-')+'</td>'+
+        '<td><div class="responsible-chip"><div class="resp-avatar">'+ini+'</div>'+
+        (t.Responsible||'-').split('/')[0].trim()+'</div></td>'+
+        '<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'-')+'</td>'+
+        '<td><span class="days-badge '+bc+'">'+bt+'</span></td></tr>';
     }).join('');
   };
 
