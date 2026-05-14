@@ -169,8 +169,7 @@
       <div class="last-updated" id="lastUpdated">Loading...</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
-      <button class="refresh-btn hidden" id="tankViewBtn" onclick="switchView('tank')">&#9956; Tank Register</button>
+      <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
       <button class="refresh-btn hidden" id="calViewBtn" onclick="switchView('calendar')">&#128197; Calendar</button>
       <button class="refresh-btn hidden" id="listViewBtn" onclick="switchView('list')">&#9776; List</button>
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
@@ -206,7 +205,23 @@
         <div class="nav-tab" id="tab-month" onclick="setTab('month')">Due This Month <span class="nav-tab-count" id="tc-month">0</span></div>
         <div class="nav-tab" id="tab-upcoming" onclick="setTab('upcoming')">Upcoming 90d <span class="nav-tab-count" id="tc-upcoming">0</span></div>
         <div class="nav-tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="nav-tab-count" id="tc-all">0</span></div>
+        <div class="nav-tab" id="tab-tanks" onclick="setTab('tanks')">&#9956; Tank Register</div>
       </div>
+      <div id="tankView" class="hidden">
+      <div class="tank-summary-cards">
+        <div class="tank-summary-card ts-active"><div class="ts-value" id="tsc-active">-</div><div class="ts-label">Active</div></div>
+        <div class="tank-summary-card ts-cip"><div class="ts-value" id="tsc-cip">-</div><div class="ts-label">CIP</div></div>
+        <div class="tank-summary-card ts-offline"><div class="ts-value" id="tsc-offline">-</div><div class="ts-label">Offline</div></div>
+        <div class="tank-summary-card ts-total"><div class="ts-value" id="tsc-total">-</div><div class="ts-label">Total Tanks</div></div>
+      </div>
+      <div class="tank-filters">
+        <span class="filter-label">Filter</span>
+        <select class="filter-select" id="tankFilterType" onchange="renderTanks()"><option value="">All Types</option></select>
+        <select class="filter-select" id="tankFilterStatus" onchange="renderTanks()"><option value="">All Statuses</option><option>Active</option><option>CIP</option><option>Offline</option><option>Decommissioned</option></select>
+        <input class="search-input" id="tankSearch" type="text" placeholder="Search tanks..." oninput="renderTanks()">
+      </div>
+      <div id="tankBody"><div class="state-box"><div class="loader"></div><p>Loading tank data...</p></div></div>
+    </div>
       <div class="table-wrap">
         <div class="state-box" id="loadingState"><div class="loader"></div><p>Loading maintenance data...</p></div>
         <div id="emptyState" class="state-box hidden"><div class="icon">&#10003;</div><p>No tasks match the current filter</p></div>
@@ -242,21 +257,6 @@
       </div>
     </div>
 
-    <div id="tankView" class="hidden">
-      <div class="tank-summary-cards">
-        <div class="tank-summary-card ts-active"><div class="ts-value" id="tsc-active">-</div><div class="ts-label">Active</div></div>
-        <div class="tank-summary-card ts-cip"><div class="ts-value" id="tsc-cip">-</div><div class="ts-label">CIP</div></div>
-        <div class="tank-summary-card ts-offline"><div class="ts-value" id="tsc-offline">-</div><div class="ts-label">Offline</div></div>
-        <div class="tank-summary-card ts-total"><div class="ts-value" id="tsc-total">-</div><div class="ts-label">Total Tanks</div></div>
-      </div>
-      <div class="tank-filters">
-        <span class="filter-label">Filter</span>
-        <select class="filter-select" id="tankFilterType" onchange="renderTanks()"><option value="">All Types</option></select>
-        <select class="filter-select" id="tankFilterStatus" onchange="renderTanks()"><option value="">All Statuses</option><option>Active</option><option>CIP</option><option>Offline</option><option>Decommissioned</option></select>
-        <input class="search-input" id="tankSearch" type="text" placeholder="Search tanks..." oninput="renderTanks()">
-      </div>
-      <div id="tankBody"><div class="state-box"><div class="loader"></div><p>Loading tank data...</p></div></div>
-    </div>
   </div>
 </div>
 
@@ -480,7 +480,6 @@
       var afBtn = document.getElementById('autoFillBtn');
       afBtn.classList.toggle('hidden', missingCount===0);
       if (missingCount>0) afBtn.innerHTML = '&#10024; Auto-fill '+missingCount+' Dates';
-      document.getElementById('tankViewBtn').classList.remove('hidden');
       document.getElementById('calViewBtn').classList.remove('hidden');
       buildLegend();
       populateFilters();
@@ -518,19 +517,23 @@
     currentView=v;
     document.getElementById('listView').classList.toggle('hidden',v!=='list');
     document.getElementById('calendarView').classList.toggle('hidden',v!=='calendar');
-    document.getElementById('tankView').classList.toggle('hidden',v!=='tank');
     document.getElementById('calViewBtn').classList.toggle('hidden',v==='calendar');
     document.getElementById('listViewBtn').classList.toggle('hidden',v==='list');
-    document.getElementById('tankViewBtn').classList.toggle('hidden',v==='tank');
     if(v==='calendar') renderCal();
-    if(v==='tank'){ if(!allTanks.length) loadTanks(); else { updateTankSummary(); renderTanks(); } }
   };
 
   window.setTab = function(tab){
     currentTab=tab;
     document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+tab).classList.add('active');
-    renderTable();
+    var isTank = tab === 'tanks';
+    document.getElementById('tankView').classList.toggle('hidden', !isTank);
+    var filtersEl = document.querySelector('.filters');
+    if(filtersEl) filtersEl.style.display = isTank ? 'none' : '';
+    var tableWrap = document.querySelector('.table-wrap');
+    if(tableWrap) tableWrap.style.display = isTank ? 'none' : '';
+    if(isTank){ if(!allTanks.length) loadTanks(); else { updateTankSummary(); renderTanks(); } }
+    else renderTable();
   };
 
   window.sortBy = function(field){
