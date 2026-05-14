@@ -169,9 +169,7 @@
       <div class="last-updated" id="lastUpdated">Loading...</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
-      <button class="refresh-btn hidden" id="calViewBtn" onclick="switchView('calendar')">&#128197; Calendar</button>
-      <button class="refresh-btn hidden" id="listViewBtn" onclick="switchView('list')">&#9776; List</button>
+      <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M23 4v6h-6M1 20v-6h6"/>
@@ -206,6 +204,7 @@
         <div class="nav-tab" id="tab-upcoming" onclick="setTab('upcoming')">Upcoming 90d <span class="nav-tab-count" id="tc-upcoming">0</span></div>
         <div class="nav-tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="nav-tab-count" id="tc-all">0</span></div>
         <div class="nav-tab" id="tab-tanks" onclick="setTab('tanks')">&#9956; Tank Register</div>
+        <div class="nav-tab" id="tab-calendar" onclick="setTab('calendar')">&#128197; Calendar</div>
       </div>
       <div id="tankView" class="hidden">
       <div class="tank-summary-cards">
@@ -480,7 +479,6 @@
       var afBtn = document.getElementById('autoFillBtn');
       afBtn.classList.toggle('hidden', missingCount===0);
       if (missingCount>0) afBtn.innerHTML = '&#10024; Auto-fill '+missingCount+' Dates';
-      document.getElementById('calViewBtn').classList.remove('hidden');
       buildLegend();
       populateFilters();
       document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
@@ -516,10 +514,6 @@
   window.switchView = function(v){
     currentView=v;
     document.getElementById('listView').classList.toggle('hidden',v!=='list');
-    document.getElementById('calendarView').classList.toggle('hidden',v!=='calendar');
-    document.getElementById('calViewBtn').classList.toggle('hidden',v==='calendar');
-    document.getElementById('listViewBtn').classList.toggle('hidden',v==='list');
-    if(v==='calendar') renderCal();
   };
 
   window.setTab = function(tab){
@@ -527,12 +521,15 @@
     document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+tab).classList.add('active');
     var isTank = tab === 'tanks';
+    var isCal = tab === 'calendar';
     document.getElementById('tankView').classList.toggle('hidden', !isTank);
+    document.getElementById('calendarView').classList.toggle('hidden', !isCal);
     var filtersEl = document.querySelector('.filters');
-    if(filtersEl) filtersEl.style.display = isTank ? 'none' : '';
+    if(filtersEl) filtersEl.style.display = (isTank||isCal) ? 'none' : '';
     var tableWrap = document.querySelector('.table-wrap');
-    if(tableWrap) tableWrap.style.display = isTank ? 'none' : '';
+    if(tableWrap) tableWrap.style.display = (isTank||isCal) ? 'none' : '';
     if(isTank){ if(!allTanks.length) loadTanks(); else { updateTankSummary(); renderTanks(); } }
+    else if(isCal) renderCal();
     else renderTable();
   };
 
