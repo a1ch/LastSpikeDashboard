@@ -157,7 +157,25 @@
         .theme-toggle{background:none;border:1px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:20px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
     .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
     @media(max-width:600px){.cards{grid-template-columns:1fr 1fr}.container{padding:12px}.detail-grid{grid-template-columns:1fr}}
-  </style>
+      /* TANK REGISTER */
+    .tank-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:4px}
+    .tank-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;cursor:pointer;transition:transform .12s,border-color .12s;position:relative;overflow:hidden}
+    .tank-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+    .tank-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .tank-card.status-active::before{background:var(--ok)}.tank-card.status-cip::before{background:var(--warning)}.tank-card.status-offline::before{background:var(--overdue)}.tank-card.status-decommissioned::before,.tank-card.status-unknown::before{background:var(--border)}
+    .tank-name{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);letter-spacing:.04em;margin-bottom:6px}
+    .tank-type{font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+    .tank-meta{display:flex;flex-direction:column;gap:3px}.tank-meta-row{font-size:12px;color:var(--text2);display:flex;justify-content:space-between;align-items:center}.tank-meta-row span{color:var(--text3);font-size:11px}
+    .tank-status-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-family:var(--font-head);font-size:11px;font-weight:700;margin-top:8px}
+    .tank-status-badge.active{background:rgba(39,174,96,.15);color:#2ecc71;border:1px solid rgba(39,174,96,.3)}.tank-status-badge.cip{background:rgba(230,126,34,.15);color:#e67e22;border:1px solid rgba(230,126,34,.3)}.tank-status-badge.offline{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}.tank-status-badge.decommissioned,.tank-status-badge.unknown{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+    .tank-section-header{font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:8px 0 6px;margin-top:16px;margin-bottom:4px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .tank-section-count{background:var(--surface2);border-radius:10px;padding:1px 7px;font-size:11px;color:var(--text3)}
+    .tank-filters{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .tank-summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    .tank-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 18px;text-align:center}
+    .ts-value{font-family:var(--font-head);font-size:36px;font-weight:800;line-height:1}.ts-label{font-family:var(--font-head);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-top:4px}
+    .ts-active .ts-value{color:var(--ok)}.ts-cip .ts-value{color:var(--warning)}.ts-offline .ts-value{color:var(--overdue)}.ts-total .ts-value{color:var(--text2)}
+    .last-maint-ok{color:var(--ok)}.last-maint-warn{color:var(--warning)}.last-maint-over{color:var(--overdue)}.last-maint-none{color:var(--text3)}</style>
 </head>
 <body>
 
@@ -179,7 +197,6 @@
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
-      <button class="theme-toggle" id="themeToggle" title="Toggle theme">&#9790;</button>
       <button class="theme-toggle" id="themeToggle" title="Toggle theme">&#9790;</button>
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -304,6 +321,7 @@
   var SITE_ID    = 'lastspike.sharepoint.com,6892318a-a5f7-49e8-8185-29e312333002,4adb6650-80ef-4044-82f7-025578446597';
   var PM_LIST_ID = 'c6ef9477-536d-4415-92f2-a9cdc4d9c772';
   var WO_LIST_ID = 'b3cf8490-af6a-4bd8-ac00-98d999640196';
+  var TANK_LIST_ID = '0ad69a1a-6c37-46b8-9cd8-37995b508b19';
   var GRAPH      = 'https://graph.microsoft.com/v1.0';
   var REDIRECT   = 'https://wonderful-tree-07babb41e.7.azurestaticapps.net/';
   var SCOPE      = 'openid profile offline_access https://graph.microsoft.com/Sites.ReadWrite.All';
