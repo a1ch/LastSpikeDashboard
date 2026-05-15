@@ -814,7 +814,145 @@
     this.textContent = next === 'dark' ? '\u2600' : '\uD83C\uDF19';
   };
 
-    parseToken().then(function(ok){
+  
+  // -- TANK REGISTER --
+  var allTanks = [];
+
+  function loadTanks() {
+    return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items?$expand=fields&$top=500')
+      .then(function(items) {
+        allTanks = items.map(function(i){ return i.fields||{}; });
+        populateTankTypeFilter();
+        updateTankSummary();
+        renderTanks();
+      });
+  }
+
+  function populateTankTypeFilter() {
+    var types = {};
+    allTanks.forEach(function(t){ if(t.Tank_Type) types[t.Tank_Type]=1; });
+    var sel = document.getElementById('tankFilterType');
+    sel.innerHTML = '<option value="">All Types</option>';
+    Object.keys(types).sort().forEach(function(v){
+      var o = document.createElement('option'); o.value = o.textContent = v; sel.appendChild(o);
+    });
+  }
+
+  function updateTankSummary() {
+    var counts = {Active:0, CIP:0, Offline:0};
+    allTanks.forEach(function(t){ if(counts[t.Status]!==undefined) counts[t.Status]++; });
+    document.getElementById('tsc-active').textContent  = counts.Active;
+    document.getElementById('tsc-cip').textContent     = counts.CIP;
+    document.getElementById('tsc-offline').textContent = counts.Offline;
+    document.getElementById('tsc-total').textContent   = allTanks.length;
+  }
+
+  window.renderTanks = function() {
+    var typeF   = document.getElementById('tankFilterType').value;
+    var statusF = document.getElementById('tankFilterStatus').value;
+    var srch    = (document.getElementById('tankSearch').value||'').toLowerCase();
+    var tanks = allTanks.filter(function(t){
+      return (!typeF   || t.Tank_Type === typeF)
+          && (!statusF || t.Status    === statusF)
+          && (!srch    || (t.Title||'').toLowerCase().indexOf(srch) >= 0
+                       || (t.Area_Location||'').toLowerCase().indexOf(srch) >= 0);
+    });
+    var tb = document.getElementById('tankBody');
+    if (!tanks.length) { tb.innerHTML = '<div class="state-box"><p>No tanks match the filter</p></div>'; return; }
+    var groups = {}, order = [];
+    tanks.forEach(function(t){
+      var prefix = (t.Title||'').replace(/\s*\d+$/,'').trim() || 'Other';
+      if (!groups[prefix]) { groups[prefix]=[]; order.push(prefix); }
+      groups[prefix].push(t);
+    });
+    order = order.filter(function(v,i){return order.indexOf(v)===i;});
+    var label = {GT:'General/Grants Tanks', FT:'Fermenter Tanks', YT:'Yeast Tanks', BBT:'Bright Beer Tanks'};
+    var html = '';
+    order.forEach(function(prefix){
+      html += '<div class="tank-section-header">'+(label[prefix]||prefix+' Tanks')+' <span class="tank-section-count">'+groups[prefix].length+'</span></div><div class="tank-grid">';
+      groups[prefix].forEach(function(t){
+        var status = t.Status || '', statusSlug = status.toLowerCase().replace(/[^a-z]/g,'') || 'unknown';
+        var lastMaint = t.Last_Maintained ? t.Last_Maintained.substring(0,10) : null;
+        var maintClass = 'last-maint-none', maintText = 'Never recorded';
+        if (lastMaint) {
+          var daysAgo = Math.round((new Date() - new Date(lastMaint)) / 86400000);
+          maintText = lastMaint + ' (' + daysAgo + 'd ago)';
+          maintClass = daysAgo <= 30 ? 'last-maint-ok' : daysAgo <= 90 ? 'last-maint-warn' : 'last-maint-over';
+        }
+        html += '<div class="tank-card status-'+statusSlug+'" onclick="showTankDetail(\''+escHtml(t.id||t.Title)+'\')">'
+          + '<div class="tank-name">'+escHtml(t.Title||'')+'</div>'
+          + (t.Tank_Type ? '<div class="tank-type">'+escHtml(t.Tank_Type)+'</div>' : '')
+          + '<div class="tank-meta">'
+          + (t.Capacity ? '<div class="tank-meta-row"><span>Capacity</span> '+t.Capacity+' hL</div>' : '')
+          + (t.Area_Location ? '<div class="tank-meta-row"><span>Location</span> '+escHtml(t.Area_Location)+'</div>' : '')
+          + '<div class="tank-meta-row '+maintClass+'"><span>Last Maint.</span> '+escHtml(maintText)+'</div>'
+          + '</div>'
+          + '<div class="tank-status-badge '+statusSlug+'">'+(status||'Unknown')+'</div>'
+          + '</div>';
+      });
+      html += '</div>';
+    });
+    tb.innerHTML = html;
+  };
+
+  window.showTankDetail = function(idOrTitle) {
+    var tank = allTanks.filter(function(t){ return (t.id||t.Title) === idOrTitle || t.Title === idOrTitle; })[0];
+    if (!tank) return;
+    document.getElementById('modalTitle').textContent = tank.Title || '';
+    document.getElementById('modalSub').textContent = (tank.Tank_Type||'Tank') + (tank.Area_Location ? ' · '+tank.Area_Location : '');
+    document.getElementById('modalTask').textContent = tank.Notes || 'No notes recorded.';
+    document.getElementById('saveStatus').textContent = '';
+    document.getElementById('saveStatus').className = 'save-status';
+    var editFields = [
+      {label:'Tank Type',     key:'Tank_Type',       type:'text',   val:tank.Tank_Type||''},
+      {label:'Capacity (hL)', key:'Capacity',         type:'number', val:tank.Capacity!=null?String(tank.Capacity):''},
+      {label:'Area / Location',key:'Area_Location',   type:'text',   val:tank.Area_Location||''},
+      {label:'Status',        key:'Status',           type:'select', val:tank.Status||'', options:['','Active','CIP','Offline','Decommissioned']},
+      {label:'Last Maintained',key:'Last_Maintained', type:'date',   val:tank.Last_Maintained?tank.Last_Maintained.substring(0,10):''},
+      {label:'Notes',         key:'Notes',            type:'textarea',val:tank.Notes||''},
+    ];
+    var html = '';
+    editFields.forEach(function(f){
+      html += '<div class="detail-field"><label>'+f.label+'</label>';
+      if (f.type==='date')      html += '<input type="date" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
+      else if (f.type==='select') html += '<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'— select —')+'</option>';}).join('')+'</select>';
+      else if (f.type==='textarea') html += '<textarea id="ef_'+f.key+'">'+escHtml(f.val)+'</textarea>';
+      else if (f.type==='number')   html += '<input type="number" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
+      else html += '<input type="text" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
+      html += '</div>';
+    });
+    document.getElementById('modalGrid').innerHTML = html;
+    var btn = document.getElementById('saveBtn');
+    btn.onclick = function(){ saveTank(tank); };
+    document.getElementById('modalOverlay').classList.add('open');
+  };
+
+  window.saveTank = function(tank) {
+    var btn = document.getElementById('saveBtn'), status = document.getElementById('saveStatus');
+    btn.disabled = true; btn.textContent = 'Saving...';
+    var fields = {};
+    ['Tank_Type','Capacity','Area_Location','Status','Last_Maintained','Notes'].forEach(function(k){
+      var el = document.getElementById('ef_'+k); if (!el) return;
+      var val = el.value.trim();
+      if (k==='Last_Maintained') fields[k] = val ? val+'T00:00:00Z' : null;
+      else if (k==='Capacity')   fields[k] = val ? parseFloat(val) : null;
+      else                        fields[k] = val || null;
+    });
+    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tank.id+'/fields', fields)
+      .then(function(){
+        var idx = -1; for(var i=0;i<allTanks.length;i++){if(allTanks[i].id===tank.id){idx=i;break;}}
+        if (idx >= 0) Object.assign(allTanks[idx], fields);
+        updateTankSummary(); renderTanks();
+        btn.disabled = false; btn.textContent = 'Save Changes';
+        status.textContent = '✓ Saved'; status.className = 'save-status ok';
+        setTimeout(function(){status.textContent='';},3000);
+      })
+      .catch(function(err){
+        btn.disabled = false; btn.textContent = 'Save Changes';
+        status.textContent = 'Error: '+err.message; status.className = 'save-status err';
+      });
+  };
+  parseToken().then(function(ok){
     if(ok){document.getElementById('authScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');loadData();}
     else{document.getElementById('authScreen').classList.remove('hidden');document.getElementById('dashboard').classList.add('hidden');}
   });
