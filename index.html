@@ -13,6 +13,11 @@
       --overdue:#c0392b;--warning:#e67e22;--ok:#27ae60;--accent4:#2980b9;
       --font-head:'Barlow Condensed',sans-serif;--font-body:'Barlow',sans-serif;
     }
+    [data-theme="light"] {
+      --bg:#f4f5f7;--surface:#ffffff;--surface2:#eaecf0;--border:#d0d5dd;
+      --accent:#c47f0a;--text:#1a1f2e;--text2:#4a5568;--text3:#8a96a8;
+      --overdue:#c0392b;--warning:#d4650a;--ok:#1e8449;--accent4:#1a6fa8;
+    }
     *{box-sizing:border-box;margin:0;padding:0}
     body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;min-height:100vh}
     .topbar{background:var(--surface);border-bottom:2px solid var(--accent);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
@@ -147,6 +152,10 @@
     .cal-popup-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
     .cal-popup-edit{display:block;margin-top:10px;font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase}
     @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.td-task{display:none}.cal-cell{min-height:60px}}
+        .theme-toggle{background:none;border:1px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:20px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+    .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+        .theme-toggle{background:none;border:1px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:20px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+    .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
     @media(max-width:600px){.cards{grid-template-columns:1fr 1fr}.container{padding:12px}.detail-grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -170,6 +179,8 @@
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme">&#9790;</button>
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme">&#9790;</button>
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M23 4v6h-6M1 20v-6h6"/>
@@ -788,7 +799,22 @@
   window.closeCalPopup=function(){document.getElementById('calPopup').classList.remove('open');document.getElementById('cpEdit').style.display='';};
   document.addEventListener('click',function(e){var p=document.getElementById('calPopup');if(p.classList.contains('open')&&!p.contains(e.target))closeCalPopup();});
 
-  parseToken().then(function(ok){
+  // -- THEME ---
+  (function(){
+    var saved = localStorage.getItem('lsb_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    var btn = document.getElementById('themeToggle');
+    if(btn) btn.textContent = saved === 'dark' ? '\u2600' : '\uD83C\uDF19';
+  })();
+  document.getElementById('themeToggle').onclick = function() {
+    var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('lsb_theme', next);
+    this.textContent = next === 'dark' ? '\u2600' : '\uD83C\uDF19';
+  };
+
+    parseToken().then(function(ok){
     if(ok){document.getElementById('authScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');loadData();}
     else{document.getElementById('authScreen').classList.remove('hidden');document.getElementById('dashboard').classList.add('hidden');}
   });
