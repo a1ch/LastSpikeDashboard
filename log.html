@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>LSB Maintenance Logger</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e1117;--surface:#161b24;--surface2:#1d2535;--border:#2a3347;--accent:#e8a020;--accent-dim:rgba(232,160,32,.12);--text:#e8eaf0;--text2:#8892a4;--text3:#555f73;--ok:#27ae60;--warning:#e67e22;--danger:#c0392b;--planned:#2980b9;--unplanned:#8e44ad;--font-head:'Barlow Condensed',sans-serif;--font-body:'Barlow',sans-serif;--radius:10px;--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;min-height:100vh;padding-bottom:calc(80px + var(--safe-bottom))}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.header{background:var(--surface);border-bottom:2px solid var(--accent);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-logo{font-family:var(--font-head);font-size:22px;font-weight:900;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+.header-logo span{color:var(--text2);font-weight:400}
+.header-user{font-size:11px;color:var(--text3);text-align:right;line-height:1.4}
+.header-user strong{color:var(--text2);display:block}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:var(--safe-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;gap:4px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);cursor:pointer;border:none;background:none;transition:color .15s}
+.nav-btn.active{color:var(--accent)}.nav-btn svg{width:22px;height:22px;stroke-width:2}
+.nav-indicator{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0;transition:opacity .15s}
+.nav-btn.active .nav-indicator{opacity:1}
+.page{display:none;padding:20px 16px;animation:fadeIn .2s ease}.page.active{display:block}
+.type-selector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.type-card{border:2px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s;text-align:center;background:var(--surface)}
+.type-card.sel-planned{border-color:var(--planned);background:rgba(41,128,185,.1)}
+.type-card.sel-unplanned{border-color:var(--unplanned);background:rgba(142,68,173,.1)}
+.type-icon{font-size:28px;margin-bottom:6px}
+.type-label{font-family:var(--font-head);font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.type-card.sel-planned .type-label{color:var(--planned)}.type-card.sel-unplanned .type-label{color:var(--unplanned)}
+.type-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.section-head{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.field{margin-bottom:14px}
+.field label{font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:5px}
+.field label .req{color:var(--accent)}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:8px;font-size:15px;font-family:var(--font-body);outline:none;appearance:none;-webkit-appearance:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);background:var(--surface)}
+.field textarea{resize:none;min-height:80px;line-height:1.5}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555f73' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3)}
+.field input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5)}
+.pm-search-wrap{position:relative}
+.pm-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--accent);border-radius:8px;z-index:50;max-height:220px;overflow-y:auto;display:none}
+.pm-results.open{display:block}
+.pm-result-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s}
+.pm-result-item:last-child{border-bottom:none}.pm-result-item:active{background:var(--surface2)}
+.pm-result-title{font-weight:600;color:var(--text);font-size:14px}
+.pm-result-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.pm-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-dim);color:var(--accent);border-radius:4px;padding:7px 12px;font-family:var(--font-head);font-size:13px;font-weight:700;margin-top:8px;cursor:pointer}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+.toggle-label{font-size:14px;color:var(--text2)}
+.toggle{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border);border-radius:13px;cursor:pointer;transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--accent);border-color:var(--accent)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#000}
+.hours-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.priority-chips{display:flex;gap:8px}
+.priority-chip{flex:1;padding:10px 4px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3);background:var(--surface2)}
+.priority-chip.sel-low{border-color:var(--ok);background:rgba(39,174,96,.12);color:var(--ok)}
+.priority-chip.sel-medium{border-color:var(--warning);background:rgba(230,126,34,.12);color:var(--warning)}
+.priority-chip.sel-high{border-color:var(--danger);background:rgba(192,57,43,.12);color:var(--danger)}
+.submit-btn{width:100%;padding:16px;background:var(--accent);color:#000;border:none;border-radius:var(--radius);font-family:var(--font-head);font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:24px;transition:opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}.submit-btn:active:not(:disabled){opacity:.8}
+.success-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px}
+.success-screen.show{display:flex;animation:fadeIn .3s ease}
+.success-icon{width:72px;height:72px;background:rgba(39,174,96,.15);border:2px solid var(--ok);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px}
+.success-title{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--ok);margin-bottom:8px}
+.success-sub{color:var(--text3);font-size:14px;margin-bottom:32px}
+.success-meta{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;width:100%;max-width:320px;text-align:left;margin-bottom:24px}
+.success-meta-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--text2)}
+.success-meta-row strong{color:var(--text);font-weight:600}
+.new-btn{padding:14px 32px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:var(--radius);font-family:var(--font-head);font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.history-filter{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+.hf-chip{flex-shrink:0;padding:7px 14px;border:1px solid var(--border);border-radius:20px;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);cursor:pointer;white-space:nowrap;background:var(--surface);transition:all .15s}
+.hf-chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.wo-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.wo-card:active{border-color:var(--accent)}
+.wo-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.wo-card.planned::before{background:var(--planned)}.wo-card.unplanned::before{background:var(--unplanned)}
+.wo-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.wo-card-title{font-weight:600;color:var(--text);font-size:15px;line-height:1.3}
+.wo-status-badge{flex-shrink:0;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid var(--border);color:var(--text3);background:var(--surface2)}
+.wo-status-badge.open{border-color:rgba(41,128,185,.4);color:var(--planned);background:rgba(41,128,185,.1)}
+.wo-status-badge.progress{border-color:rgba(230,126,34,.4);color:var(--warning);background:rgba(230,126,34,.1)}
+.wo-status-badge.complete{border-color:rgba(39,174,96,.4);color:var(--ok);background:rgba(39,174,96,.1)}
+.wo-card-meta{font-size:12px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.wo-type-pill{display:inline-block;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:6px}
+.wo-type-pill.planned{background:rgba(41,128,185,.15);color:var(--planned)}.wo-type-pill.unplanned{background:rgba(142,68,173,.15);color:var(--unplanned)}
+.wo-card-desc{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.4}
+.tap-hint{font-size:11px;color:var(--accent);margin-top:6px;opacity:.7}
+.history-empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.history-loading{text-align:center;padding:40px;color:var(--text3)}
+.loader{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+.auth-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.auth-logo{font-family:var(--font-head);font-size:36px;font-weight:900;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.auth-sub{color:var(--text3);font-size:13px;margin-bottom:40px}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:340px}
+.auth-desc{color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:24px}
+.auth-btn{width:100%;padding:15px;background:var(--accent);color:#000;border:none;border-radius:8px;font-family:var(--font-head);font-size:17px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.auth-err{color:var(--danger);font-size:13px;margin-top:12px;display:none}
+.spinner-overlay{position:fixed;inset:0;background:rgba(14,17,23,.8);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}.spinner-overlay.show{display:flex}
+.spinner-big{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.spinner-label{font-family:var(--font-head);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.toast{position:fixed;bottom:calc(90px + var(--safe-bottom));left:16px;right:16px;background:#c0392b;color:#fff;padding:14px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:400;transform:translateY(20px);opacity:0;transition:all .25s;pointer-events:none}.toast.show{transform:none;opacity:1}
+.edit-banner{background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);color:var(--accent);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;align-items:center;gap:8px}.edit-banner.show{display:flex}
+@media(min-width:480px){.page{max-width:480px;margin:0 auto}.auth-card{max-width:480px}.bottom-nav{max-width:480px;left:50%;transform:translateX(-50%);border-left:1px solid var(--border);border-right:1px solid var(--border)}}
+</style>
+</head>
+<body>
+<div id="authScreen" class="auth-screen">
+  <div class="auth-logo">LSB</div>
+  <div class="auth-sub">Maintenance Logger</div>
+  <div class="auth-card">
+    <div class="auth-desc">Sign in with your Last Spike Microsoft account to log maintenance work.</div>
+    <button class="auth-btn" id="signInBtn">Sign In with Microsoft</button>
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+<div id="app" style="display:none">
+  <div class="header">
+    <div class="header-logo">LSB <span>Logger</span></div>
+    <div class="header-user" id="headerUser"></div>
+  </div>
+  <div class="page active" id="pageLog">
+    <div id="formWrap">
+      <div class="edit-banner" id="editBanner">&#9998; Editing WO <span id="editBannerID"></span> &mdash; <span id="editBannerEquip"></span></div>
+      <div class="type-selector">
+        <div class="type-card" id="cardPlanned" onclick="selectType('Planned')">
+          <div class="type-icon">&#128203;</div>
+          <div class="type-label">Planned</div>
+          <div class="type-sub">Scheduled PM task</div>
+        </div>
+        <div class="type-card" id="cardUnplanned" onclick="selectType('Unplanned')">
+          <div class="type-icon">&#9889;</div>
+          <div class="type-label">Unplanned</div>
+          <div class="type-sub">Reactive / breakdown</div>
+        </div>
+      </div>
+      <div id="pmTaskSection" style="display:none">
+        <div class="section-head">Link to PM Task</div>
+        <div class="field">
+          <label>Search PM Schedule</label>
+          <div class="pm-search-wrap">
+            <input type="text" id="pmSearch" placeholder="Type equipment name..." autocomplete="off" oninput="filterPM()">
+            <div class="pm-results" id="pmResults"></div>
+          </div>
+          <div id="pmSelected" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="section-head">Equipment &amp; Location</div>
+      <div class="field"><label>Equipment / Asset <span class="req">*</span></label><input type="text" id="fEquipment" placeholder="e.g. FT 05, Glycol Pump A"></div>
+      <div class="field"><label>Area</label><select id="fArea"><option value="">&#8212; Select area &#8212;</option><option>Brewhouse</option><option>Fermentation</option><option>Bright Beer</option><option>Packaging</option><option>Cold Room</option><option>Boiler Room</option><option>MBH</option><option>Cellar</option><option>Lab</option><option>General</option></select></div>
+      <div class="field"><label>Vessel ID</label><input type="text" id="fVesselID" placeholder="e.g. FT 05"></div>
+      <div class="section-head">Work Details</div>
+      <div class="field"><label>Task Description <span class="req">*</span></label><textarea id="fTaskDesc" rows="3" placeholder="Describe the work to be performed..."></textarea></div>
+      <div class="field"><label>Work Performed</label><textarea id="fWorkPerformed" rows="3" placeholder="What was actually done..."></textarea></div>
+      <div class="field"><label>Parts / Materials Used</label><input type="text" id="fParts" placeholder="e.g. Pump seal kit, O-rings"></div>
+      <div id="prioritySection" style="display:none">
+        <div class="field"><label>Priority</label>
+          <div class="priority-chips">
+            <div class="priority-chip" id="chipLow" onclick="selectPriority('Low')">Low</div>
+            <div class="priority-chip" id="chipMedium" onclick="selectPriority('Medium')">Medium</div>
+            <div class="priority-chip" id="chipHigh" onclick="selectPriority('High')">High</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-head">Dates &amp; Time</div>
+      <div class="field"><label>Date Opened <span class="req">*</span></label><input type="date" id="fDateOpened"></div>
+      <div class="field"><label>Date Completed</label><input type="date" id="fDateCompleted"></div>
+      <div class="hours-row">
+        <div class="field"><label>Est. Hours</label><input type="number" id="fEstHours" placeholder="0.0" step="0.5" min="0"></div>
+        <div class="field"><label>Actual Hours</label><input type="number" id="fActualHours" placeholder="0.0" step="0.5" min="0"></div>
+      </div>
+      <div class="section-head">People</div>
+      <div class="field"><label>Assigned To</label><select id="fAssignedTo"><option value="">&#8212; Select &#8212;</option><option>Shawn</option><option>Ronel</option><option>Joel</option><option>Outsourced</option></select></div>
+      <div class="field"><label>Requested By</label><input type="text" id="fRequestedBy" placeholder="Name or department"></div>
+      <div class="field"><label>Outsourced To</label><input type="text" id="fOutsourcedTo" placeholder="Contractor / vendor name"></div>
+      <div class="section-head">Status &amp; Flags</div>
+      <div class="field"><label>WO Status</label><select id="fStatus"><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="Deferred">Deferred</option><option value="Cancelled">Cancelled</option></select></div>
+      <div class="field"><div class="toggle-row"><span class="toggle-label">Food Safety Impact</span><label class="toggle"><input type="checkbox" id="fFoodSafety"><span class="toggle-slider"></span></label></div></div>
+      <div class="field"><div class="toggle-row"><span class="toggle-label">Follow-up Required</span><label class="toggle"><input type="checkbox" id="fFollowUp" onchange="toggleFollowUp()"><span class="toggle-slider"></span></label></div></div>
+      <div class="field" id="followUpNotesField" style="display:none;margin-top:8px"><label>Follow-up Notes</label><textarea id="fFollowUpNotes" rows="2" placeholder="Describe what follow-up is needed..."></textarea></div>
+      <button class="submit-btn" id="submitBtn" onclick="submitWO()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="submitLabel">Submit Work Order</span>
+      </button>
+    </div>
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">&#10003;</div>
+      <div class="success-title" id="successTitle">Logged!</div>
+      <div class="success-sub">Work order saved to SharePoint</div>
+      <div class="success-meta" id="successMeta"></div>
+      <button class="new-btn" onclick="resetForm()">+ Log Another</button>
+    </div>
+  </div>
+  <div class="page" id="pageHistory">
+    <div class="history-filter">
+      <div class="hf-chip active" onclick="setHistFilter('all',this)">All</div>
+      <div class="hf-chip" onclick="setHistFilter('Planned',this)">Planned</div>
+      <div class="hf-chip" onclick="setHistFilter('Unplanned',this)">Unplanned</div>
+      <div class="hf-chip" onclick="setHistFilter('Open',this)">Open</div>
+      <div class="hf-chip" onclick="setHistFilter('In Progress',this)">In Progress</div>
+      <div class="hf-chip" onclick="setHistFilter('Completed',this)">Completed</div>
+    </div>
+    <div id="historyList"><div class="history-loading"><div class="loader"></div>Loading...</div></div>
+  </div>
+</div>
+<div class="bottom-nav" id="bottomNav" style="display:none">
+  <button class="nav-btn active" id="navLog" onclick="showPage('Log')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+    <span>New WO</span><div class="nav-indicator"></div>
+  </button>
+  <button class="nav-btn" id="navHistory" onclick="showPage('History')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    <span>History</span><div class="nav-indicator"></div>
+  </button>
+</div>
+<div class="spinner-overlay" id="spinner"><div class="spinner-big"></div><div class="spinner-label">Saving...</div></div>
+<div class="toast" id="toast"></div>
+<script>
+var TENANT_ID='468160ba-331c-4b5c-af62-2e65ddb636a8';
+var CLIENT_ID='14755f84-78f4-441b-82a6-d70b4a31bd87';
+var REDIRECT=location.href.split('?')[0].split('#')[0];
+var SCOPE='openid profile offline_access https://graph.microsoft.com/Sites.ReadWrite.All';
+var GRAPH='https://graph.microsoft.com/v1.0';
+var SITE_ID='lastspike.sharepoint.com,6892318a-a5f7-49e8-8185-29e312333002,4adb6650-80ef-4044-82f7-025578446597';
+var WO_LIST_ID='b3cf8490-af6a-4bd8-ac00-98d999640196';
+var PM_LIST_ID='c6ef9477-536d-4415-92f2-a9cdc4d9c772';
+var CV_KEY='lsb_log_cv';
+var accessToken=null,allPMTasks=[],selectedPMTask=null,selectedType=null,selectedPriority=null,histFilter='all',allWOs=[],editingWOId=null;
+
+function b64url(buf){return btoa(String.fromCharCode.apply(null,new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+function genVerifier(){return b64url(crypto.getRandomValues(new Uint8Array(32)));}
+function genChallenge(cv){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(cv)).then(function(d){return b64url(d);});}
+
+document.getElementById('signInBtn').onclick=function(){
+  var cv=genVerifier();sessionStorage.setItem(CV_KEY,cv);
+  genChallenge(cv).then(function(cc){
+    location.href='https://login.microsoftonline.com/'+TENANT_ID+'/oauth2/v2.0/authorize'
+      +'?client_id='+CLIENT_ID+'&response_type=code&redirect_uri='+encodeURIComponent(REDIRECT)
+      +'&scope='+encodeURIComponent(SCOPE)+'&response_mode=query&code_challenge='+cc+'&code_challenge_method=S256';
+  });
+};
+function exchangeCode(code){
+  var cv=sessionStorage.getItem(CV_KEY);sessionStorage.removeItem(CV_KEY);
+  var body=new URLSearchParams({client_id:CLIENT_ID,code:code,redirect_uri:REDIRECT,grant_type:'authorization_code',code_verifier:cv,scope:SCOPE});
+  return fetch('https://login.microsoftonline.com/'+TENANT_ID+'/oauth2/v2.0/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body})
+    .then(function(r){return r.json();}).then(function(d){if(d.error)throw new Error(d.error_description||d.error);accessToken=d.access_token;sessionStorage.setItem('lsb_log_at',JSON.stringify({t:accessToken,exp:Date.now()+d.expires_in*1000}));return true;});
+}
+function parseToken(){
+  try{var c=JSON.parse(sessionStorage.getItem('lsb_log_at')||'null');if(c&&c.exp>Date.now()+60000){accessToken=c.t;return Promise.resolve(true);}}catch(e){}
+  var p=new URLSearchParams(location.search);var code=p.get('code'),err=p.get('error');
+  if(err){history.replaceState(null,'',location.pathname);showAuthErr(p.get('error_description')||err);return Promise.resolve(false);}
+  if(code){history.replaceState(null,'',location.pathname);return exchangeCode(code).catch(function(e){showAuthErr(e.message);return false;});}
+  return Promise.resolve(false);
+}
+function showAuthErr(msg){var el=document.getElementById('authErr');el.textContent=msg;el.style.display='block';}
+function getUserName(){try{var p=accessToken.split('.');var pl=JSON.parse(atob(p[1].replace(/-/g,'+').replace(/_/g,'/')));return pl.name||pl.preferred_username||'User';}catch(e){return 'User';}}
+function bootApp(){
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('bottomNav').style.display='flex';
+  document.getElementById('headerUser').innerHTML='<strong>'+escHtml(getUserName())+'</strong>Maintainer';
+  document.getElementById('fDateOpened').value=new Date().toISOString().substring(0,10);
+  loadPMTasks();
+}
+function graphGet(path){
+  var items=[];
+  function next(url){return fetch(url,{headers:{Authorization:'Bearer '+accessToken}}).then(function(r){return r.json();}).then(function(d){items=items.concat(d.value||[]);return d['@odata.nextLink']?next(d['@odata.nextLink']):items;});}
+  return next(GRAPH+path);
+}
+function graphPost(path,data){return fetch(GRAPH+path,{method:'POST',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json();});}
+function graphPatch(path,data){return fetch(GRAPH+path,{method:'PATCH',headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){if(r.status===204)return{};return r.json();});}
+
+function loadPMTasks(){
+  graphGet('/sites/'+SITE_ID+'/lists/'+PM_LIST_ID+'/items?$expand=fields&$top=500')
+    .then(function(items){allPMTasks=items.map(function(i){return i.fields||{};});});
+}
+function filterPM(){
+  var srch=document.getElementById('pmSearch').value.toLowerCase().trim();
+  var results=document.getElementById('pmResults');
+  if(!srch||srch.length<2){results.classList.remove('open');return;}
+  var matches=allPMTasks.filter(function(t){return(t.Title||'').toLowerCase().indexOf(srch)>=0||(t.Area||'').toLowerCase().indexOf(srch)>=0||(t.VesselID||'').toLowerCase().indexOf(srch)>=0;}).slice(0,8);
+  if(!matches.length){results.classList.remove('open');return;}
+  results.innerHTML=matches.map(function(t){return'<div class="pm-result-item" onclick="selectPMTask(\''+escAttr(t.id||'')+'\')"><div class="pm-result-title">'+escHtml(t.Title||'')+'</div><div class="pm-result-sub">'+escHtml(t.Area||'')+(t.Frequency?' &middot; '+escHtml(t.Frequency):'')+(t.VesselID?' &middot; '+escHtml(t.VesselID):'')+'</div></div>';}).join('');
+  results.classList.add('open');
+}
+function selectPMTask(id){
+  var task=allPMTasks.filter(function(t){return t.id===id;})[0];if(!task)return;
+  selectedPMTask=task;
+  document.getElementById('pmResults').classList.remove('open');
+  document.getElementById('pmSearch').value='';
+  document.getElementById('pmSelected').innerHTML='<div class="pm-badge">'+escHtml(task.Title||'')+'<span style="opacity:.5;margin-left:4px">&times;</span></div>';
+  document.getElementById('pmSelected').querySelector('.pm-badge').onclick=function(){selectedPMTask=null;document.getElementById('pmSelected').innerHTML='';};
+  if(!document.getElementById('fEquipment').value)document.getElementById('fEquipment').value=task.Title||'';
+  if(!document.getElementById('fArea').value)document.getElementById('fArea').value=task.Area||'';
+  if(!document.getElementById('fVesselID').value)document.getElementById('fVesselID').value=task.VesselID||'';
+  if(!document.getElementById('fTaskDesc').value)document.getElementById('fTaskDesc').value=task.Task||'';
+}
+document.addEventListener('click',function(e){
+  var ps=document.getElementById('pmSearch'),pr=document.getElementById('pmResults');
+  if(ps&&pr&&!ps.contains(e.target)&&!pr.contains(e.target))pr.classList.remove('open');
+});
+function selectType(type){
+  selectedType=type;
+  document.getElementById('cardPlanned').className='type-card'+(type==='Planned'?' sel-planned':'');
+  document.getElementById('cardUnplanned').className='type-card'+(type==='Unplanned'?' sel-unplanned':'');
+  document.getElementById('pmTaskSection').style.display=type==='Planned'?'block':'none';
+  document.getElementById('prioritySection').style.display=type==='Unplanned'?'block':'none';
+}
+function selectPriority(p){
+  selectedPriority=p;
+  ['Low','Medium','High'].forEach(function(x){document.getElementById('chip'+x).className='priority-chip'+(p===x?' sel-'+x.toLowerCase():'');});
+}
+function toggleFollowUp(){
+  document.getElementById('followUpNotesField').style.display=document.getElementById('fFollowUp').checked?'block':'none';
+}
+// Prefill form from a WO history item
+function prefillFromWO(w){
+  editingWOId=w.id||null;
+  // Type
+  selectType(w.WOType||'Unplanned');
+  // Equipment
+  document.getElementById('fEquipment').value=w.Equipment||w.Title||'';
+  document.getElementById('fArea').value=w.Area||'';
+  document.getElementById('fVesselID').value=w.VesselID||'';
+  // Work
+  document.getElementById('fTaskDesc').value=w.TaskDescription||'';
+  document.getElementById('fWorkPerformed').value=w.WorkPerformed||'';
+  document.getElementById('fParts').value=w.PartsUsed||'';
+  // Priority
+  if(w.Priority)selectPriority(w.Priority);
+  // Dates
+  document.getElementById('fDateOpened').value=w.DateOpened?w.DateOpened.substring(0,10):'';
+  document.getElementById('fDateCompleted').value=w.DateCompleted?w.DateCompleted.substring(0,10):'';
+  // Hours
+  document.getElementById('fEstHours').value=w.EstHours!=null?w.EstHours:'';
+  document.getElementById('fActualHours').value=w.ActualHours!=null?w.ActualHours:'';
+  // People
+  document.getElementById('fAssignedTo').value=w.AssignedTo||'';
+  document.getElementById('fRequestedBy').value=w.RequestedBy||'';
+  document.getElementById('fOutsourcedTo').value=w.OutsourcedTo||'';
+  // Status
+  document.getElementById('fStatus').value=w.WOStatus||'Open';
+  // Flags
+  document.getElementById('fFoodSafety').checked=(w.FoodSafetyImpact==='Yes');
+  document.getElementById('fFollowUp').checked=(w.FollowUpRequired==='Yes');
+  document.getElementById('fFollowUpNotes').value=w.FollowUpNotes||'';
+  document.getElementById('followUpNotesField').style.display=(w.FollowUpRequired==='Yes')?'block':'none';
+  // Edit banner
+  var banner=document.getElementById('editBanner');
+  banner.classList.add('show');
+  document.getElementById('editBannerID').textContent='#'+escHtml(w.id||'');
+  document.getElementById('editBannerEquip').textContent=escHtml(w.Equipment||w.Title||'');
+  document.getElementById('submitLabel').textContent='Update Work Order';
+  document.getElementById('successTitle').textContent='Updated!';
+}
+function submitWO(){
+  var equipment=document.getElementById('fEquipment').value.trim();
+  var taskDesc=document.getElementById('fTaskDesc').value.trim();
+  var dateOpen=document.getElementById('fDateOpened').value;
+  if(!selectedType){showToast('Please select Planned or Unplanned');return;}
+  if(!equipment){showToast('Equipment / Asset is required');return;}
+  if(!taskDesc){showToast('Task Description is required');return;}
+  if(!dateOpen){showToast('Date Opened is required');return;}
+  var fields={
+    Title:equipment,WOType:selectedType,Equipment:equipment,
+    Area:document.getElementById('fArea').value||null,
+    VesselID:document.getElementById('fVesselID').value.trim()||null,
+    TaskDescription:taskDesc,
+    WorkPerformed:document.getElementById('fWorkPerformed').value.trim()||null,
+    PartsUsed:document.getElementById('fParts').value.trim()||null,
+    Priority:selectedPriority||null,
+    WOStatus:document.getElementById('fStatus').value||'Open',
+    AssignedTo:document.getElementById('fAssignedTo').value||null,
+    RequestedBy:document.getElementById('fRequestedBy').value.trim()||null,
+    OutsourcedTo:document.getElementById('fOutsourcedTo').value.trim()||null,
+    DateOpened:dateOpen?dateOpen+'T00:00:00Z':null,
+    DateCompleted:document.getElementById('fDateCompleted').value?document.getElementById('fDateCompleted').value+'T00:00:00Z':null,
+    EstHours:document.getElementById('fEstHours').value?parseFloat(document.getElementById('fEstHours').value):null,
+    ActualHours:document.getElementById('fActualHours').value?parseFloat(document.getElementById('fActualHours').value):null,
+    FoodSafetyImpact:document.getElementById('fFoodSafety').checked?'Yes':'No',
+    FollowUpRequired:document.getElementById('fFollowUp').checked?'Yes':'No',
+    FollowUpNotes:document.getElementById('fFollowUpNotes').value.trim()||null,
+    PMTaskRef:selectedPMTask?selectedPMTask.id:null,
+  };
+  Object.keys(fields).forEach(function(k){if(fields[k]===null)delete fields[k];});
+  showSpinner(true);
+  var req=editingWOId
+    ?graphPatch('/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items/'+editingWOId+'/fields',fields)
+    :graphPost('/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items',{fields:fields});
+  req.then(function(res){
+    showSpinner(false);
+    if(res&&res.error){showToast('Error: '+(res.error.message||JSON.stringify(res.error)));return;}
+    showSuccess(fields);
+    allWOs=[];
+  }).catch(function(err){showSpinner(false);showToast('Error: '+err.message);});
+}
+function showSuccess(fields){
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('successScreen').classList.add('show');
+  var meta=document.getElementById('successMeta');
+  meta.innerHTML=[
+    ['Type','<span class="wo-type-pill '+fields.WOType.toLowerCase()+'">'+fields.WOType+'</span>'],
+    ['Equipment',escHtml(fields.Equipment||'')],
+    ['Area',escHtml(fields.Area||'\u2014')],
+    ['Status',escHtml(fields.WOStatus||'Open')],
+    ['Date',escHtml((fields.DateOpened||'').substring(0,10))]
+  ].map(function(r){return'<div class="success-meta-row"><span>'+r[0]+'</span><strong>'+r[1]+'</strong></div>';}).join('');
+}
+function resetForm(){
+  editingWOId=null;selectedType=null;selectedPMTask=null;selectedPriority=null;
+  document.getElementById('formWrap').style.display='block';
+  document.getElementById('successScreen').classList.remove('show');
+  document.querySelectorAll('#formWrap input,#formWrap textarea').forEach(function(el){el.value='';});
+  document.querySelectorAll('#formWrap select').forEach(function(el){el.selectedIndex=0;});
+  document.getElementById('fStatus').value='Open';
+  document.getElementById('fDateOpened').value=new Date().toISOString().substring(0,10);
+  document.getElementById('cardPlanned').className='type-card';
+  document.getElementById('cardUnplanned').className='type-card';
+  document.getElementById('pmTaskSection').style.display='none';
+  document.getElementById('prioritySection').style.display='none';
+  document.getElementById('pmSelected').innerHTML='';
+  document.getElementById('fFoodSafety').checked=false;
+  document.getElementById('fFollowUp').checked=false;
+  document.getElementById('followUpNotesField').style.display='none';
+  ['Low','Medium','High'].forEach(function(x){document.getElementById('chip'+x).className='priority-chip';});
+  document.getElementById('editBanner').classList.remove('show');
+  document.getElementById('submitLabel').textContent='Submit Work Order';
+  document.getElementById('successTitle').textContent='Logged!';
+  window.scrollTo(0,0);
+}
+function loadHistory(){
+  document.getElementById('historyList').innerHTML='<div class="history-loading"><div class="loader"></div>Loading...</div>';
+  graphGet('/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items?$expand=fields&$top=100')
+    .then(function(items){
+      allWOs=items.map(function(i){var f=i.fields||{};f.id=i.id;return f;});
+      renderHistory();
+    })
+    .catch(function(err){document.getElementById('historyList').innerHTML='<div class="history-empty"><p>&#9888; '+escHtml(err.message)+'</p></div>';});
+}
+function setHistFilter(f,el){
+  histFilter=f;
+  document.querySelectorAll('.hf-chip').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active');
+  renderHistory();
+}
+function renderHistory(){
+  var filtered=allWOs.filter(function(w){
+    if(histFilter==='all')return true;
+    if(histFilter==='Planned'||histFilter==='Unplanned')return w.WOType===histFilter;
+    return w.WOStatus===histFilter;
+  });
+  var list=document.getElementById('historyList');
+  if(!filtered.length){list.innerHTML='<div class="history-empty"><p>No work orders found</p></div>';return;}
+  list.innerHTML=filtered.map(function(w){
+    var statusClass=w.WOStatus==='Open'?'open':w.WOStatus==='In Progress'?'progress':w.WOStatus==='Completed'?'complete':'';
+    var typeClass=(w.WOType||'').toLowerCase();
+    var date=w.DateOpened?w.DateOpened.substring(0,10):'\u2014';
+    return'<div class="wo-card '+typeClass+'" data-woid="'+escAttr(w.id||'')+'">'
+      +'<div class="wo-card-head">'
+      +'<div class="wo-card-title"><span class="wo-type-pill '+typeClass+'">'+(w.WOType||'WO')+'</span>'+escHtml(w.Equipment||w.Title||'Work Order')+'</div>'
+      +'<span class="wo-status-badge '+statusClass+'">'+(w.WOStatus||'Open')+'</span>'
+      +'</div>'
+      +'<div class="wo-card-meta">'
+      +(w.Area?'<span>&#128205; '+escHtml(w.Area)+'</span>':'')
+      +'<span>&#128197; '+date+'</span>'
+      +(w.AssignedTo?'<span>&#128100; '+escHtml(w.AssignedTo)+'</span>':'')
+      +(w.Priority?'<span>'+escHtml(w.Priority)+' priority</span>':'')
+      +'</div>'
+      +(w.TaskDescription?'<div class="wo-card-desc">'+escHtml(w.TaskDescription.substring(0,120))+(w.TaskDescription.length>120?'...':'')+'</div>':'')
+      +'<div class="tap-hint">Tap to prefill &amp; edit &#8594;</div>'
+      +'</div>';
+  }).join('');
+  list.querySelectorAll('.wo-card').forEach(function(card){
+    card.addEventListener('click',function(){
+      var w=allWOs.filter(function(x){return x.id===card.dataset.woid;})[0];
+      if(!w)return;
+      prefillFromWO(w);
+      showPage('Log');
+      window.scrollTo(0,0);
+    });
+  });
+}
+function showPage(name){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('page'+name).classList.add('active');
+  document.getElementById('nav'+name).classList.add('active');
+  if(name==='History')loadHistory();
+  window.scrollTo(0,0);
+}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return String(s||'').replace(/'/g,"\\'");}
+function showSpinner(v){document.getElementById('spinner').classList.toggle('show',v);}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3500);}
+parseToken().then(function(ok){if(ok)bootApp();});
+</script>
+</body>
+</html>
