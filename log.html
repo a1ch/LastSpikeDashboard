@@ -266,6 +266,7 @@ function bootApp(){
   document.getElementById('bottomNav').style.display='flex';
   document.getElementById('headerUser').innerHTML='<strong>'+escHtml(getUserName())+'</strong>Maintainer';
   document.getElementById('fDateOpened').value=new Date().toISOString().substring(0,10);
+  document.getElementById('fDateCompleted').value=new Date().toISOString().substring(0,10);
   loadPMTasks();
 }
 function graphGet(path){
@@ -420,6 +421,7 @@ function resetForm(){
   document.querySelectorAll('#formWrap select').forEach(function(el){el.selectedIndex=0;});
   document.getElementById('fStatus').value='Open';
   document.getElementById('fDateOpened').value=new Date().toISOString().substring(0,10);
+  document.getElementById('fDateCompleted').value=new Date().toISOString().substring(0,10);
   document.getElementById('cardPlanned').className='type-card';
   document.getElementById('cardUnplanned').className='type-card';
   document.getElementById('pmTaskSection').style.display='none';
