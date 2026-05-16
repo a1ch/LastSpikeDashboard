@@ -297,10 +297,14 @@ function selectPMTask(id){
   document.getElementById('pmSearch').value='';
   document.getElementById('pmSelected').innerHTML='<div class="pm-badge">'+escHtml(task.Title||'')+'<span style="opacity:.5;margin-left:4px">&times;</span></div>';
   document.getElementById('pmSelected').querySelector('.pm-badge').onclick=function(){selectedPMTask=null;document.getElementById('pmSelected').innerHTML='';};
-  if(!document.getElementById('fEquipment').value)document.getElementById('fEquipment').value=task.Title||'';
-  if(!document.getElementById('fArea').value)document.getElementById('fArea').value=task.Area||'';
-  if(!document.getElementById('fVesselID').value)document.getElementById('fVesselID').value=task.VesselID||'';
-  if(!document.getElementById('fTaskDesc').value)document.getElementById('fTaskDesc').value=task.Task||'';
+  var today=new Date().toISOString().substring(0,10);
+  document.getElementById('fEquipment').value=task.Title||'';
+  document.getElementById('fArea').value=task.Area||'';
+  document.getElementById('fVesselID').value=task.VesselID||'';
+  document.getElementById('fTaskDesc').value=task.Task||'';
+  document.getElementById('fDateOpened').value=today;
+  document.getElementById('fDateCompleted').value=today;
+  if(task.Responsible)document.getElementById('fAssignedTo').value=task.Responsible||'';
 }
 document.addEventListener('click',function(e){
   var ps=document.getElementById('pmSearch'),pr=document.getElementById('pmResults');
