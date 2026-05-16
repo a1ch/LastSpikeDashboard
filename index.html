@@ -262,6 +262,7 @@
         <div class="nav-tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="nav-tab-count" id="tc-all">0</span></div>
         <div class="nav-tab" id="tab-tanks" onclick="setTab('tanks')">&#9956; Tank Register</div>
         <div class="nav-tab" id="tab-calendar" onclick="setTab('calendar')">&#128197; Calendar</div>
+        <div class="nav-tab" id="tab-wo" onclick="setTab('wo')">&#128196; Work Orders</div>
         <div class="nav-tab" id="tab-analytics" onclick="setTab('analytics')">&#128200; Analytics</div>
         <div class="nav-tab" id="tab-parts" onclick="setTab('parts')">&#128230; Parts</div>
       </div>
@@ -619,12 +620,13 @@
     currentTab=tab;
     document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+tab).classList.add('active');
-    var isTank=tab==='tanks',isCal=tab==='calendar',isAn=tab==='analytics',isParts=tab==='parts';
-    var isSpecial=isTank||isCal||isAn||isParts;
+    var isTank=tab==='tanks',isCal=tab==='calendar',isAn=tab==='analytics',isParts=tab==='parts',isWO=tab==='wo';
+    var isSpecial=isTank||isCal||isAn||isParts||isWO;
     document.getElementById('tankView').classList.toggle('hidden',!isTank);
     document.getElementById('calendarView').classList.toggle('hidden',!isCal);
     document.getElementById('analyticsView').classList.toggle('hidden',!isAn);
     document.getElementById('partsView').classList.toggle('hidden',!isParts);
+    document.getElementById('woView').classList.toggle('hidden',!isWO);
     var filtersEl=document.querySelector('.filters');
     if(filtersEl)filtersEl.style.display=isSpecial?'none':'';
     var tableWrap=document.querySelector('.table-wrap');
@@ -633,6 +635,7 @@
     else if(isCal)renderCal();
     else if(isAn)renderAnalytics();
     else if(isParts){if(!allParts.length)loadParts();else renderParts();}
+    else if(isWO)renderWOs();
     else renderTable();
   };
     window.sortBy = function(field){
@@ -1354,6 +1357,104 @@
     graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tankId+'/fields',{Notes:(document.getElementById('dt_notes_existing').value?document.getElementById('dt_notes_existing').value+'\n':'')+'['+todayMT()+'] '+note})
       .then(function(){closeDowntime();allTanks=[];loadTanks();})
       .catch(function(e){document.getElementById('dtStatus').textContent='Error: '+e.message;});
+  };
+
+
+
+  // -- WORK ORDERS TAB -------------------------------------------------------
+  function renderWOs(){
+    var loading=document.getElementById('woLoading');
+    var tbl=document.getElementById('woTable');
+    var empty=document.getElementById('woEmpty');
+    var tbody=document.getElementById('woBody');
+
+    if(!allWOs.length){
+      if(loading)loading.classList.remove('hidden');
+      if(tbl)tbl.classList.add('hidden');
+      if(empty)empty.classList.add('hidden');
+      // Load WOs if not already loaded
+      graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items?$expand=fields&$top=500')
+        .then(function(items){
+          allWOs=items.map(function(i){return i.fields||{};});
+          if(loading)loading.classList.add('hidden');
+          populateWOFilters();
+          _renderWOTable();
+        })
+        .catch(function(e){if(loading)loading.classList.add('hidden');if(empty){empty.innerHTML='<p>Error loading work orders: '+escHtml(e.message)+'</p>';empty.classList.remove('hidden');}});
+      return;
+    }
+    if(loading)loading.classList.add('hidden');
+    populateWOFilters();
+    _renderWOTable();
+  }
+
+  function populateWOFilters(){
+    var seen={};allWOs.forEach(function(w){if(w.Area)seen[w.Area]=1;});
+    var sel=document.getElementById('woFilterArea');
+    if(!sel)return;
+    var cur=sel.value;
+    sel.innerHTML='<option value="">All Areas</option>';
+    Object.keys(seen).sort().forEach(function(v){var o=document.createElement('option');o.value=o.textContent=v;sel.appendChild(o);});
+    sel.value=cur;
+  }
+
+  function _renderWOTable(){
+    var typeF=(document.getElementById('woFilterType').value||'');
+    var statusF=(document.getElementById('woFilterStatus').value||'');
+    var areaF=(document.getElementById('woFilterArea').value||'');
+    var srch=((document.getElementById('woSearch').value)||'').toLowerCase();
+    var filtered=allWOs.filter(function(w){
+      return(!typeF||w.WOType===typeF)&&(!statusF||w.WOStatus===statusF)&&(!areaF||w.Area===areaF)&&
+        (!srch||(w.Equipment||w.Title||'').toLowerCase().indexOf(srch)>=0||(w.TaskDescription||'').toLowerCase().indexOf(srch)>=0);
+    });
+    // Sort by date descending
+    filtered.sort(function(a,b){return(b.DateOpened||'').localeCompare(a.DateOpened||'');});
+    var tbl=document.getElementById('woTable');
+    var empty=document.getElementById('woEmpty');
+    var tbody=document.getElementById('woBody');
+    if(!filtered.length){if(tbl)tbl.classList.add('hidden');if(empty)empty.classList.remove('hidden');return;}
+    if(tbl)tbl.classList.remove('hidden');if(empty)empty.classList.add('hidden');
+    if(tbody)tbody.innerHTML=filtered.map(function(w){
+      var statusCls=w.WOStatus==='Completed'?'days-badge upcoming':w.WOStatus==='In Progress'?'days-badge due-soon':w.WOStatus==='Open'?'days-badge overdue':'days-badge no-date';
+      var typePill='<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;'+(w.WOType==='Planned'?'background:rgba(41,128,185,.15);color:#3498db':'background:rgba(142,68,173,.15);color:#9b59b6')+'">'+escHtml(w.WOType||'')+'</span>';
+      var date=w.DateOpened?w.DateOpened.substring(0,10):'--';
+      var hours=w.ActualHours?w.ActualHours+'h':(w.EstHours?w.EstHours+'h est':'--');
+      return '<tr style="cursor:pointer;border-bottom:1px solid var(--border)" onclick="openWOModal(this)" data-wo="'+escAttr(JSON.stringify({Equipment:w.Equipment||w.Title,WOType:w.WOType,Area:w.Area,VesselID:w.VesselID,TaskDescription:w.TaskDescription,WorkPerformed:w.WorkPerformed,PartsUsed:w.PartsUsed,Priority:w.Priority,WOStatus:w.WOStatus,AssignedTo:w.AssignedTo,RequestedBy:w.RequestedBy,DateOpened:date,DateCompleted:w.DateCompleted?w.DateCompleted.substring(0,10):'',EstHours:w.EstHours,ActualHours:w.ActualHours,FoodSafetyImpact:w.FoodSafetyImpact,FollowUpRequired:w.FollowUpRequired,FollowUpNotes:w.FollowUpNotes}))+'">'+
+        '<td style="padding:12px 16px"><div style="font-weight:600;color:var(--text)">'+escHtml(w.Equipment||w.Title||'')+'</div>'+(w.VesselID?'<div style="font-size:11px;color:var(--text3)">'+escHtml(w.VesselID)+'</div>':'')+
+        (w.TaskDescription?'<div style="font-size:12px;color:var(--text2);margin-top:2px">'+escHtml(w.TaskDescription.substring(0,60))+(w.TaskDescription.length>60?'...':'')+'</div>':'')+'</td>'+
+        '<td style="padding:12px 16px">'+typePill+'</td>'+
+        '<td style="padding:12px 16px"><span class="area-badge">'+escHtml(w.Area||'--')+'</span></td>'+
+        '<td style="padding:12px 16px"><span class="'+statusCls+'">'+escHtml(w.WOStatus||'--')+'</span></td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(w.AssignedTo||'--')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2);white-space:nowrap">'+date+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+hours+'</td>'+
+        '</tr>';
+    }).join('');
+  }
+
+  window.openWOModal=function(row){
+    var wo=JSON.parse(row.dataset.wo);
+    document.getElementById('modalTitle').textContent=wo.Equipment||'';
+    document.getElementById('modalSub').textContent=(wo.WOType||'')+(wo.Area?' · '+wo.Area:'')+(wo.WOStatus?' · '+wo.WOStatus:'');
+    document.getElementById('modalTask').textContent=wo.TaskDescription||'No description';
+    document.getElementById('saveStatus').textContent='';
+    var grid=document.getElementById('modalGrid');
+    grid.innerHTML=[
+      ['Work Performed',wo.WorkPerformed||'--'],
+      ['Parts Used',wo.PartsUsed||'--'],
+      ['Priority',wo.Priority||'--'],
+      ['Assigned To',wo.AssignedTo||'--'],
+      ['Date Opened',wo.DateOpened||'--'],
+      ['Date Completed',wo.DateCompleted||'--'],
+      ['Est Hours',wo.EstHours?wo.EstHours+'h':'--'],
+      ['Actual Hours',wo.ActualHours?wo.ActualHours+'h':'--'],
+      ['Food Safety',wo.FoodSafetyImpact||'No'],
+      ['Follow-up',wo.FollowUpRequired||'No'],
+      ['Follow-up Notes',wo.FollowUpNotes||'--'],
+      ['Requested By',wo.RequestedBy||'--'],
+    ].map(function(f){return '<div class="detail-field"><label>'+f[0]+'</label><value style="color:var(--text2);font-size:14px">'+escHtml(f[1])+'</value></div>';}).join('');
+    document.getElementById('saveBtn').style.display='none';
+    document.getElementById('modalOverlay').classList.add('open');
   };
 
 
