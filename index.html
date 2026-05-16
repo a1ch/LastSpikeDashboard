@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hopswatch &mdash; Dashboard</title>
+  <title>LSB Maintainer &mdash; Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -49,8 +49,8 @@
     .filter-select:focus{border-color:var(--accent)}
     .search-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:4px;font-size:13px;outline:none;flex:1;min-width:200px}
     .search-input:focus{border-color:var(--accent)}.search-input::placeholder{color:var(--text3)}
-    .nav-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
-    .nav-tab{font-family:var(--font-head);font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:8px 12px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .nav-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+    .nav-tab{font-family:var(--font-head);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:8px}
     .nav-tab:hover{color:var(--text)}.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
     .nav-tab-count{background:var(--surface2);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700}
     .nav-tab.active .nav-tab-count{background:var(--accent);color:#000}
@@ -175,34 +175,14 @@
     .tank-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 18px;text-align:center}
     .ts-value{font-family:var(--font-head);font-size:36px;font-weight:800;line-height:1}.ts-label{font-family:var(--font-head);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-top:4px}
     .ts-active .ts-value{color:var(--ok)}.ts-cip .ts-value{color:var(--warning)}.ts-offline .ts-value{color:var(--overdue)}.ts-total .ts-value{color:var(--text2)}
-    .last-maint-ok{color:var(--ok)}.last-maint-warn{color:var(--warning)}.last-maint-over{color:var(--overdue)}.last-maint-none{color:var(--text3)}
-    /* ANALYTICS */
-    .analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
-    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px}
-    .stat-label{font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
-    .stat-value{font-family:var(--font-head);font-size:42px;font-weight:800;line-height:1;color:var(--accent)}
-    .stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
-    .analytics-section-head{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:24px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-    .an-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px}
-    .an-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-    .an-bar-label{font-size:13px;color:var(--text2);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .an-bar-track{flex:1;background:var(--surface2);border-radius:3px;height:18px;position:relative}
-    .an-bar-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .4s ease}
-    .an-bar-count{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text2);width:30px;text-align:right;flex-shrink:0}
-    /* PARTS */
-    .parts-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-    .parts-status-low{color:var(--danger);font-weight:700}
-    .parts-status-ok{color:var(--ok)}
-    @media(max-width:900px){.analytics-grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:600px){.analytics-grid{grid-template-columns:1fr}}
-</style>
+    .last-maint-ok{color:var(--ok)}.last-maint-warn{color:var(--warning)}.last-maint-over{color:var(--overdue)}.last-maint-none{color:var(--text3)}</style>
 </head>
 <body>
 
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
-    <div class="auth-logo">Hopswatch</div>
-    <div class="auth-version">v12 &mdash; client 14755f84</div>
+    <div class="auth-logo">LSB Maintainer</div>
+    <div class="auth-version">v8 &mdash; client 14755f84</div>
     <div class="auth-sub">Last Spike Brewery &mdash; Maintenance Dashboard</div>
     <button class="auth-btn" id="signInBtn">Sign in with Microsoft</button>
     <div class="auth-error" id="authError"></div>
@@ -212,20 +192,11 @@
 <div id="dashboard" class="hidden">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="logo">Hops<span>watch</span></div>
+      <div class="logo">LSB <span>Maintainer</span></div>
       <div class="last-updated" id="lastUpdated">Loading...</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="refresh-btn accent-btn hidden" id="autoFillBtn" onclick="autoFillDates()">&#10024; Auto-fill Dates</button>
-      <button class="refresh-btn" onclick="openNewPM()" style="border-color:var(--accent4);color:var(--accent4)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        New PM
-      </button>
-      <button class="refresh-btn" onclick="openNewWO()" style="border-color:var(--warning);color:var(--warning)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        New WO
-      </button>
-      <a href="faq.html" target="_blank" class="refresh-btn" title="Help & FAQ" style="text-decoration:none">&#10067; FAQ</a>
       <button class="theme-toggle" id="themeToggle" title="Toggle theme">&#9790;</button>
       <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -262,9 +233,6 @@
         <div class="nav-tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="nav-tab-count" id="tc-all">0</span></div>
         <div class="nav-tab" id="tab-tanks" onclick="setTab('tanks')">&#9956; Tank Register</div>
         <div class="nav-tab" id="tab-calendar" onclick="setTab('calendar')">&#128197; Calendar</div>
-        <div class="nav-tab" id="tab-wo" onclick="setTab('wo')">&#128196; Work Orders</div>
-        <div class="nav-tab" id="tab-analytics" onclick="setTab('analytics')">&#128200; Analytics</div>
-        <div class="nav-tab" id="tab-parts" onclick="setTab('parts')">&#128230; Parts</div>
       </div>
       <div id="tankView" class="hidden">
       <div class="tank-summary-cards">
@@ -316,39 +284,6 @@
       </div>
     </div>
 
-      <div id="analyticsView" class="hidden">
-        <div class="analytics-grid">
-          <div class="stat-card"><div class="stat-label">WOs This Month</div><div class="stat-value" id="an-woMonth">-</div></div>
-          <div class="stat-card"><div class="stat-label">WOs This Year</div><div class="stat-value" id="an-woYear">-</div></div>
-          <div class="stat-card"><div class="stat-label">Avg Hours / WO</div><div class="stat-value" id="an-avgHours">-</div></div>
-          <div class="stat-card"><div class="stat-label">PM Compliance</div><div class="stat-value" id="an-pmComp">-</div><div class="stat-sub">completed on time</div></div>
-          <div class="stat-card"><div class="stat-label">Overdue Rate</div><div class="stat-value" id="an-overdueRate">-</div></div>
-          <div class="stat-card"><div class="stat-label">Planned</div><div class="stat-value" id="an-planned">-</div><div class="stat-sub" id="an-unplanned"></div></div>
-        </div>
-        <div class="analytics-section-head">Work Orders by Assignee</div>
-        <div id="an-byAssignee" class="an-bar-wrap"></div>
-        <div class="analytics-section-head">Work Orders by Area</div>
-        <div id="an-byArea" class="an-bar-wrap"></div>
-        <div class="analytics-section-head">By Status</div>
-        <div id="an-byStatus" class="an-bar-wrap"></div>
-        <div class="analytics-section-head">Recent Work Orders</div>
-        <div id="an-recentWOs"></div>
-      </div>
-
-      <div id="partsView" class="hidden">
-        <div class="parts-toolbar">
-          <input class="search-input" id="partsSearch" type="text" placeholder="Search parts..." oninput="renderParts()" style="max-width:300px">
-          <button class="refresh-btn accent-btn" onclick="openNewPart()">+ Add Part</button>
-        </div>
-        <div class="table-wrap">
-          <div class="state-box" id="partsLoading"><div class="loader"></div><p>Loading parts...</p></div>
-          <table id="partsTable" class="hidden"><thead><tr>
-            <th>Part Name</th><th>Part Number</th><th>Category</th><th>Qty</th><th>Min Stock</th><th>Location</th><th>Unit Cost</th><th>Status</th>
-          </tr></thead><tbody id="partsBody"></tbody></table>
-          <div id="partsEmpty" class="state-box hidden"><p>No parts found. Add your first part with the button above.</p></div>
-        </div>
-      </div>
-
   </div>
 </div>
 
@@ -365,11 +300,7 @@
       <div class="detail-task" id="modalTask"></div>
       <div class="detail-grid" id="modalGrid"></div>
     </div>
-    <div style="padding:16px 24px;border-top:1px solid var(--border)">
-        <div style="font-family:var(--font-head);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Comments</div>
-        <div id="commentsContainer"></div>
-      </div>
-      <div class="modal-footer">
+    <div class="modal-footer">
       <div class="save-status" id="saveStatus"></div>
       <button class="save-btn" id="saveBtn" onclick="saveTask()">Save Changes</button>
     </div>
@@ -397,7 +328,7 @@
   var CV_KEY     = 'pkce_cv';
   var accessToken = null;
 
-  // -- FREQUENCY NORMALIZER --------------------------------------------------
+  // ── FREQUENCY NORMALIZER ──────────────────────────────────────────────────
   // Maps all the various frequency strings in SharePoint to canonical keys
   function normalizeFreq(raw) {
     var f = (raw||'').trim().toLowerCase();
@@ -434,7 +365,7 @@
     return FREQ_COLOR[normalizeFreq(raw)] || '#555f73';
   }
 
-  // -- NEXT DATE LOGIC --------------------------------------------------------
+  // ── NEXT DATE LOGIC ────────────────────────────────────────────────────────
   function nextProposedDate(raw) {
     var now = new Date(); now.setHours(0,0,0,0);
     var d = new Date(now);
@@ -466,12 +397,11 @@
       d = new Date(now.getFullYear()+1, 0, 1);
       while ((d.getFullYear() - now.getFullYear()) % 5 !== 0) d.setFullYear(d.getFullYear()+1);
     } else {
-      return null; // Daily, Per CIP, As Per Use - no fixed date
+      return null; // Daily, Per CIP, As Per Use — no fixed date
     }
     return d.toISOString().substring(0,10);
   }
 
-  function todayMT(){return new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});}
   function b64url(buf){return btoa(String.fromCharCode.apply(null,new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
   function genVerifier(){return b64url(crypto.getRandomValues(new Uint8Array(32)));}
   function genChallenge(cv){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(cv)).then(function(dig){return b64url(dig);});}
@@ -517,7 +447,7 @@
   var allTasks=[], allWOs=[], currentTab='overdue', sortField='ProposedDate', sortAsc=true, currentView='list';
   var currentTaskId=null;
 
-  // -- AUTO-FILL DATES --------------------------------------------------------
+  // ── AUTO-FILL DATES ────────────────────────────────────────────────────────
   window.autoFillDates = function() {
     var missing = allTasks.filter(function(t){return !t.ProposedDate && t.Frequency;});
     if (!missing.length) { showInfo('All tasks already have a Proposed Date.'); return; }
@@ -543,7 +473,7 @@
 
   function showInfo(msg){var el=document.getElementById('infoBanner');el.textContent=msg;el.style.display='block';setTimeout(function(){el.style.display='none';},5000);}
 
-  // -- DATA LOAD --------------------------------------------------------------
+  // ── DATA LOAD ──────────────────────────────────────────────────────────────
   window.loadData = function() {
     var btn=document.getElementById('refreshBtn'); btn.classList.add('spinning');
     document.getElementById('loadingState').classList.remove('hidden');
@@ -562,7 +492,6 @@
         return Object.assign({},f,{_id:i.id,_daysFromNow:dn});
       });
       allWOs=wi.map(function(i){return i.fields||{};});
-      if(currentTab==='analytics')renderAnalytics();
       var woRefs={};
       allWOs.filter(function(w){return['completed','in progress'].indexOf((w.WOStatus||'').toLowerCase())>=0;}).forEach(function(w){if(w.PMTaskRef)woRefs[w.PMTaskRef]=true;});
       var tm=today.getMonth(),ty=today.getFullYear();
@@ -581,7 +510,7 @@
       if (missingCount>0) afBtn.innerHTML = '&#10024; Auto-fill '+missingCount+' Dates';
       buildLegend();
       populateFilters();
-      document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-US',{timeZone:'America/Denver',hour:'2-digit',minute:'2-digit'});
+      document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       renderTable();
       if (currentView==='calendar') renderCal();
     }).catch(function(err){
@@ -620,25 +549,20 @@
     currentTab=tab;
     document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+tab).classList.add('active');
-    var isTank=tab==='tanks',isCal=tab==='calendar',isAn=tab==='analytics',isParts=tab==='parts',isWO=tab==='wo';
-    var isSpecial=isTank||isCal||isAn||isParts||isWO;
-    document.getElementById('tankView').classList.toggle('hidden',!isTank);
-    document.getElementById('calendarView').classList.toggle('hidden',!isCal);
-    document.getElementById('analyticsView').classList.toggle('hidden',!isAn);
-    document.getElementById('partsView').classList.toggle('hidden',!isParts);
-    document.getElementById('woView').classList.toggle('hidden',!isWO);
-    var filtersEl=document.querySelector('.filters');
-    if(filtersEl)filtersEl.style.display=isSpecial?'none':'';
-    var tableWrap=document.querySelector('.table-wrap');
-    if(tableWrap)tableWrap.style.display=isSpecial?'none':'';
-    if(isTank){if(!allTanks.length)loadTanks();else{updateTankSummary();renderTanks();}}
-    else if(isCal)renderCal();
-    else if(isAn)renderAnalytics();
-    else if(isParts){if(!allParts.length)loadParts();else renderParts();}
-    else if(isWO)renderWOs();
+    var isTank = tab === 'tanks';
+    var isCal = tab === 'calendar';
+    document.getElementById('tankView').classList.toggle('hidden', !isTank);
+    document.getElementById('calendarView').classList.toggle('hidden', !isCal);
+    var filtersEl = document.querySelector('.filters');
+    if(filtersEl) filtersEl.style.display = (isTank||isCal) ? 'none' : '';
+    var tableWrap = document.querySelector('.table-wrap');
+    if(tableWrap) tableWrap.style.display = (isTank||isCal) ? 'none' : '';
+    if(isTank){ if(!allTanks.length) loadTanks(); else { updateTankSummary(); renderTanks(); } }
+    else if(isCal) renderCal();
     else renderTable();
   };
-    window.sortBy = function(field){
+
+  window.sortBy = function(field){
     if(sortField===field)sortAsc=!sortAsc;else{sortField=field;sortAsc=true;}
     document.querySelectorAll('th').forEach(function(t){t.classList.remove('sorted');});
     renderTable();
@@ -677,12 +601,12 @@
         '<td class="td-task"><div class="task-text">'+(t.Task||'')+'</div></td>'+
         '<td style="color:var(--text2);white-space:nowrap">'+(t.Frequency||'-')+'</td>'+
         '<td><div class="responsible-chip"><div class="resp-avatar">'+ini+'</div>'+(t.Responsible||'-').split('/')[0].trim()+'</div></td>'+
-        '<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'<span style="color:var(--text3)">-</span>')+'</td>'+
+        '<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'<span style="color:var(--text3)">—</span>')+'</td>'+
         '<td><span class="days-badge '+bc+'">'+bt+'</span></td></tr>';
     }).join('');
   };
 
-  // -- DETAIL / EDIT MODAL ---------------------------------------------------
+  // ── DETAIL / EDIT MODAL ───────────────────────────────────────────────────
   window.showDetail = function(id){
     currentTaskId = id;
     var t=allTasks.filter(function(x){return x._id===id;})[0];
@@ -696,7 +620,7 @@
     var roFields = [['Type',t.Type0||'-'],['Food Contact',t.FoodContact==='Y'?'\u2713 Yes':'No'],['Internal / Outsourced',t.InternalOrOutsourced||'-'],['Vessel ID',t.VesselID||'-']];
     var editFields = [
       {label:'Proposed Date',key:'ProposedDate',type:'date',val:suggestedDate},
-      {label:'Performed Date',key:'PerformedDate',type:'date',val:t.PerformedDate?t.PerformedDate.substring(0,10):todayMT()},
+      {label:'Performed Date',key:'PerformedDate',type:'date',val:t.PerformedDate?t.PerformedDate.substring(0,10):''},
       {label:'Responsible',key:'Responsible',type:'text',val:t.Responsible||''},
       {label:'Status',key:'Status',type:'select',val:t.Status||'',options:['','Active','Completed','Deferred','In Progress']},
       {label:'Outsourced To',key:'OutsourcedTo',type:'text',val:t.OutsourcedTo||''},
@@ -706,7 +630,7 @@
     editFields.forEach(function(f){
       html+='<div class="detail-field"><label>'+f.label+'</label>';
       if(f.type==='date') html+='<input type="date" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
-      else if(f.type==='select') html+='<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'- select -')+'</option>';}).join('')+'</select>';
+      else if(f.type==='select') html+='<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'— select —')+'</option>';}).join('')+'</select>';
       else if(f.type==='textarea') html+='<textarea id="ef_'+f.key+'">'+escHtml(f.val)+'</textarea>';
       else html+='<input type="text" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
       html+='</div>';
@@ -714,9 +638,6 @@
     roFields.forEach(function(f){html+='<div class="detail-field"><label>'+f[0]+'</label><value>'+escHtml(f[1])+'</value></div>';});
     document.getElementById('modalGrid').innerHTML=html;
     document.getElementById('modalOverlay').classList.add('open');
-    // Load comments
-    var cc=document.getElementById('commentsContainer');
-    if(cc){cc.innerHTML='<div style="color:var(--text3);font-size:12px">Loading...</div>';loadWOComments(id,cc);}
   };
 
   window.saveTask = function(){
@@ -751,9 +672,8 @@
   window.closeModal=function(e){if(e&&e.target!==document.getElementById('modalOverlay'))return;document.getElementById('modalOverlay').classList.remove('open'); document.getElementById('saveBtn').onclick=saveTask;};
 
   function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  function escAttr(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
-  // -- CALENDAR --------------------------------------------------------------
+  // ── CALENDAR ──────────────────────────────────────────────────────────────
   var calMode='month', calDate=new Date(); calDate.setDate(1);
   var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
   var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -789,7 +709,7 @@
       d=new Date(base5); while(d>start)d.setFullYear(d.getFullYear()-5);
       while(d<=end){if(d>=start)dates.push(new Date(d));d.setFullYear(d.getFullYear()+5);}
     }
-    // Daily, Per CIP, As Per Use - skip on calendar (no fixed schedule)
+    // Daily, Per CIP, As Per Use — skip on calendar (no fixed schedule)
     return dates;
   }
 
@@ -919,7 +839,7 @@
   function loadTanks() {
     return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items?$expand=fields&$top=500')
       .then(function(items) {
-        allTanks = items.map(function(i){ return i.fields||{}; });
+        allTanks = items.map(function(i){ return Object.assign({}, i.fields||{}, {_id: i.id}); });
         populateTankTypeFilter();
         updateTankSummary();
         renderTanks();
@@ -977,7 +897,7 @@
           maintText = lastMaint + ' (' + daysAgo + 'd ago)';
           maintClass = daysAgo <= 30 ? 'last-maint-ok' : daysAgo <= 90 ? 'last-maint-warn' : 'last-maint-over';
         }
-        html += '<div class="tank-card status-'+statusSlug+'" onclick="showTankDetail(\''+escHtml(t.id||t.Title)+'\')">'
+        html += '<div class="tank-card status-'+statusSlug+'" onclick="showTankDetail(\''+escHtml(t._id)+'\')">'
           + '<div class="tank-name">'+escHtml(t.Title||'')+'</div>'
           + (t.Tank_Type ? '<div class="tank-type">'+escHtml(t.Tank_Type)+'</div>' : '')
           + '<div class="tank-meta">'
@@ -986,10 +906,6 @@
           + '<div class="tank-meta-row '+maintClass+'"><span>Last Maint.</span> '+escHtml(maintText)+'</div>'
           + '</div>'
           + '<div class="tank-status-badge '+statusSlug+'">'+(status||'Unknown')+'</div>'
-          + '<div style="display:flex;gap:6px;margin-top:8px">'
-          + '<button onclick="event.stopPropagation();generateQR(location.href.split(\"?\")[0]+\"?tank=\"+encodeURIComponent(t.Title||\"\"),t.Title||\"QR\")" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">QR</button>'
-          + '<button onclick="event.stopPropagation();openDowntime(this)" data-tid="'+escAttr(t.id||t.Title)+'" data-ttitle="'+escAttr(t.Title||'')+'" data-tnotes="'+escAttr(t.Notes||'')+'" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">Downtime</button>'
-          + '</div>'
           + '</div>';
       });
       html += '</div>';
@@ -998,34 +914,26 @@
   };
 
   window.showTankDetail = function(idOrTitle) {
-    var tank = allTanks.filter(function(t){ return (t.id||t.Title) === idOrTitle || t.Title === idOrTitle; })[0];
+    var tank = allTanks.filter(function(t){ return t._id === idOrTitle; })[0];
     if (!tank) return;
     document.getElementById('modalTitle').textContent = tank.Title || '';
     document.getElementById('modalSub').textContent = (tank.Tank_Type||'Tank') + (tank.Area_Location ? ' · '+tank.Area_Location : '');
     document.getElementById('modalTask').textContent = tank.Notes || 'No notes recorded.';
     document.getElementById('saveStatus').textContent = '';
     document.getElementById('saveStatus').className = 'save-status';
-    var today = todayMT();
-    var prefix = (tank.Title||'').replace(/\s*\d+$/,'').trim().toUpperCase();
-    var typeMap  = {GT:'General Tank',FT:'Fermenter Tank',BBT:'Bright Beer Tank',YT:'Yeast Tank'};
-    var areaMap  = {GT:'Cellar',FT:'Fermentation',BBT:'Bright Beer',YT:'Cellar'};
-    var defaultType = tank.Tank_Type || typeMap[prefix] || '';
-    var defaultArea = tank.Area_Location || areaMap[prefix] || '';
-    var defaultStatus = tank.Status || 'Active';
-    var defaultMaint = tank.Last_Maintained ? tank.Last_Maintained.substring(0,10) : today;
     var editFields = [
-      {label:'Tank Type',     key:'Tank_Type',       type:'text',   val:defaultType},
+      {label:'Tank Type',     key:'Tank_Type',       type:'text',   val:tank.Tank_Type||''},
       {label:'Capacity (hL)', key:'Capacity',         type:'number', val:tank.Capacity!=null?String(tank.Capacity):''},
-      {label:'Area / Location',key:'Area_Location',   type:'text',   val:defaultArea},
-      {label:'Status',        key:'Status',           type:'select', val:defaultStatus, options:['','Active','CIP','Offline','Decommissioned']},
-      {label:'Last Maintained',key:'Last_Maintained', type:'date',   val:defaultMaint},
+      {label:'Area / Location',key:'Area_Location',   type:'text',   val:tank.Area_Location||''},
+      {label:'Status',        key:'Status',           type:'select', val:tank.Status||'', options:['','Active','CIP','Offline','Decommissioned']},
+      {label:'Last Maintained',key:'Last_Maintained', type:'date',   val:tank.Last_Maintained?tank.Last_Maintained.substring(0,10):''},
       {label:'Notes',         key:'Notes',            type:'textarea',val:tank.Notes||''},
     ];
     var html = '';
     editFields.forEach(function(f){
       html += '<div class="detail-field"><label>'+f.label+'</label>';
       if (f.type==='date')      html += '<input type="date" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
-      else if (f.type==='select') html += '<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'- select -')+'</option>';}).join('')+'</select>';
+      else if (f.type==='select') html += '<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'— select —')+'</option>';}).join('')+'</select>';
       else if (f.type==='textarea') html += '<textarea id="ef_'+f.key+'">'+escHtml(f.val)+'</textarea>';
       else if (f.type==='number')   html += '<input type="number" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
       else html += '<input type="text" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
@@ -1048,9 +956,9 @@
       else if (k==='Capacity')   fields[k] = val ? parseFloat(val) : null;
       else                        fields[k] = val || null;
     });
-    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tank.id+'/fields', fields)
+    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tank._id+'/fields', fields)
       .then(function(){
-        var idx = -1; for(var i=0;i<allTanks.length;i++){if(allTanks[i].id===tank.id){idx=i;break;}}
+        var idx = -1; for(var i=0;i<allTanks.length;i++){if(allTanks[i]._id===tank._id){idx=i;break;}}
         if (idx >= 0) Object.assign(allTanks[idx], fields);
         updateTankSummary(); renderTanks();
         btn.disabled = false; btn.textContent = 'Save Changes';
@@ -1062,662 +970,14 @@
         status.textContent = 'Error: '+err.message; status.className = 'save-status err';
       });
   };
-
-  // -- NEW STATE -------------------------------------------------------------
-  var allParts = [];
-  var PARTS_LIST_ID = 'hopswatch-parts'; // will be created
-
-  // -- ANALYTICS -------------------------------------------------------------
-  function renderAnalytics(){
-    var now = new Date(), today = todayMT();
-    var thisMonth = now.getMonth(), thisYear = now.getFullYear();
-
-    // WOs this month / year
-    var woMonth = allWOs.filter(function(w){
-      if(!w.DateOpened)return false;
-      var d=new Date(w.DateOpened);
-      return d.getMonth()===thisMonth&&d.getFullYear()===thisYear;
-    }).length;
-    var woYear = allWOs.filter(function(w){
-      if(!w.DateOpened)return false;
-      return new Date(w.DateOpened).getFullYear()===thisYear;
-    }).length;
-
-    // Avg hours
-    var hoursWOs = allWOs.filter(function(w){return w.ActualHours!=null&&w.ActualHours>0;});
-    var avgHours = hoursWOs.length ? (hoursWOs.reduce(function(s,w){return s+parseFloat(w.ActualHours||0);},0)/hoursWOs.length).toFixed(1) : '-';
-
-    // PM compliance - tasks with ProposedDate in past that have a completed WO
-    var woRefs={};
-    allWOs.filter(function(w){return(w.WOStatus||'').toLowerCase()==='completed';}).forEach(function(w){if(w.PMTaskRef)woRefs[w.PMTaskRef]=true;});
-    var pastDue = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow<0;});
-    var compliant = pastDue.filter(function(t){return woRefs[t._id];}).length;
-    var compRate = pastDue.length ? Math.round(compliant/pastDue.length*100)+'%' : 'N/A';
-
-    // Overdue rate
-    var overdueRate = allTasks.length ? Math.round(allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow<0;}).length/allTasks.length*100)+'%' : '0%';
-
-    // Planned vs unplanned
-    var planned = allWOs.filter(function(w){return w.WOType==='Planned';}).length;
-    var unplanned = allWOs.filter(function(w){return w.WOType==='Unplanned';}).length;
-
-    setText('an-woMonth',String(woMonth));
-    setText('an-woYear',String(woYear));
-    setText('an-avgHours',avgHours+'h');
-    setText('an-pmComp',compRate);
-    setText('an-overdueRate',overdueRate);
-    setText('an-planned',planned+' Planned');
-    setText('an-unplanned',unplanned+' Unplanned');
-
-    // Bar charts
-    renderBarChart('an-byAssignee', countBy(allWOs,'AssignedTo'));
-    renderBarChart('an-byArea', countBy(allWOs,'Area'));
-    renderBarChart('an-byStatus', countBy(allWOs,'WOStatus'));
-
-    // Recent WOs table
-    var recent = allWOs.slice().sort(function(a,b){return (b.DateOpened||'').localeCompare(a.DateOpened||'');}).slice(0,10);
-    var el = document.getElementById('an-recentWOs');
-    if(!recent.length){el.innerHTML='<div class="state-box"><p>No work orders yet</p></div>';return;}
-    el.innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--surface2);border-bottom:1px solid var(--border)">'
-      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Equipment</th>'
-      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Type</th>'
-      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Status</th>'
-      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Date</th>'
-      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Hours</th>'
-      +'</tr></thead><tbody>'
-      +recent.map(function(w){
-        return'<tr style="border-bottom:1px solid var(--border)">'
-          +'<td style="padding:10px 16px;color:var(--text);font-weight:600">'+escHtml(w.Equipment||w.Title||'')+'</td>'
-          +'<td style="padding:10px 16px;color:var(--text2)">'+escHtml(w.WOType||'')+'</td>'
-          +'<td style="padding:10px 16px;color:var(--text2)">'+escHtml(w.WOStatus||'')+'</td>'
-          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.DateOpened?w.DateOpened.substring(0,10):'-')+'</td>'
-          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.ActualHours!=null?w.ActualHours+'h':'-')+'</td>'
-          +'</tr>';
-      }).join('')+'</tbody></table>';
-  }
-
-  function countBy(arr, key){
-    var counts={};
-    arr.forEach(function(item){var v=item[key]||'Unknown';counts[v]=(counts[v]||0)+1;});
-    return counts;
-  }
-
-  function renderBarChart(elId, counts){
-    var el=document.getElementById(elId);
-    var entries=Object.entries(counts).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
-    var max=entries.length?entries[0][1]:1;
-    if(!entries.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:12px">No data</div>';return;}
-    el.innerHTML=entries.map(function(e){
-      var pct=Math.round(e[1]/max*100);
-      return'<div class="an-bar-row">'
-        +'<div class="an-bar-label" title="'+escHtml(e[0])+'">'+escHtml(e[0])+'</div>'
-        +'<div class="an-bar-track"><div class="an-bar-fill" style="width:'+pct+'%"></div></div>'
-        +'<div class="an-bar-count">'+e[1]+'</div>'
-        +'</div>';
-    }).join('');
-  }
-
-  function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
-
-  // -- PARTS INVENTORY -------------------------------------------------------
-  // Parts stored as a SharePoint list - create list name in SITE_ID as 'HopswatchParts'
-  var PARTS_LIST_NAME = 'HopswatchParts';
-
-  function loadParts(){
-    var el=document.getElementById('partsLoading');
-    if(el)el.classList.remove('hidden');
-    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists?$filter=displayName eq \''+PARTS_LIST_NAME+'\'')
-      .then(function(lists){
-        if(!lists.length){
-          // List doesn't exist yet - show empty state
-          allParts=[];
-          document.getElementById('partsLoading').classList.add('hidden');
-          document.getElementById('partsEmpty').classList.remove('hidden');
-          return;
-        }
-        window.PARTS_LIST_ID = lists[0].id;
-        return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items?$expand=fields&$top=500');
-      })
-      .then(function(items){
-        if(!items)return;
-        allParts=items.map(function(i){var f=i.fields||{};f.id=i.id;return f;});
-        document.getElementById('partsLoading').classList.add('hidden');
-        renderParts();
-      })
-      .catch(function(){
-        document.getElementById('partsLoading').classList.add('hidden');
-        document.getElementById('partsEmpty').classList.remove('hidden');
-      });
-  }
-
-  function renderParts(){
-    var srch=(document.getElementById('partsSearch').value||'').toLowerCase();
-    var filtered=allParts.filter(function(p){
-      return !srch||(p.Title||'').toLowerCase().indexOf(srch)>=0||(p.PartNumber||'').toLowerCase().indexOf(srch)>=0||(p.Category||'').toLowerCase().indexOf(srch)>=0;
-    });
-    var tbody=document.getElementById('partsBody');
-    var tbl=document.getElementById('partsTable');
-    var empty=document.getElementById('partsEmpty');
-    if(!filtered.length){if(tbl)tbl.classList.add('hidden');if(empty)empty.classList.remove('hidden');return;}
-    if(tbl)tbl.classList.remove('hidden');
-    if(empty)empty.classList.add('hidden');
-    if(tbody)tbody.innerHTML=filtered.map(function(p){
-      var qty=parseInt(p.Quantity)||0, min=parseInt(p.MinStock)||0;
-      var statusCls=qty<=min?'parts-status-low':'parts-status-ok';
-      var statusTxt=qty<=min?'Low Stock':'OK';
-      return'<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="openEditPart(\''+escAttr(p.id||'')+'\')">'+
-        '<td style="padding:12px 16px;font-weight:600;color:var(--text)">'+escHtml(p.Title||'')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.PartNumber||'-')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.Category||'-')+'</td>'+
-        '<td style="padding:12px 16px;font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text)">'+qty+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text3)">'+min+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.StorageLocation||'-')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+(p.UnitCost?'$'+parseFloat(p.UnitCost).toFixed(2):'-')+'</td>'+
-        '<td style="padding:12px 16px"><span class="'+statusCls+'">'+statusTxt+'</span></td>'+
-        '</tr>';
-    }).join('');
-  }
-
-  window.openNewPart = function(){
-    openPartModal(null);
-  };
-  window.openEditPart = function(id){
-    var part=allParts.filter(function(p){return p.id===id;})[0];
-    openPartModal(part);
-  };
-
-  function openPartModal(part){
-    var overlay=document.getElementById('partModalOverlay');
-    var isEdit=!!part;
-    document.getElementById('partModalTitle').textContent=isEdit?'Edit Part':'New Part';
-    document.getElementById('pm_name').value=part?part.Title||''  :'';
-    document.getElementById('pm_number').value=part?part.PartNumber||'':'';
-    document.getElementById('pm_category').value=part?part.Category||'':'';
-    document.getElementById('pm_qty').value=part?part.Quantity||'':'';
-    document.getElementById('pm_min').value=part?part.MinStock||'':'';
-    document.getElementById('pm_location').value=part?part.StorageLocation||'':'';
-    document.getElementById('pm_cost').value=part?part.UnitCost||'':'';
-    document.getElementById('pm_notes').value=part?part.Notes||'':'';
-    document.getElementById('pmSaveBtn').dataset.partId=part?part.id:'';
-    document.getElementById('pmStatus').textContent='';
-    overlay.classList.add('open');
-  }
-  window.closePartModal=function(){document.getElementById('partModalOverlay').classList.remove('open');};
-
-  window.savePart=function(){
-    var btn=document.getElementById('pmSaveBtn');
-    var partId=btn.dataset.partId;
-    var fields={
-      Title:document.getElementById('pm_name').value.trim(),
-      PartNumber:document.getElementById('pm_number').value.trim()||null,
-      Category:document.getElementById('pm_category').value.trim()||null,
-      Quantity:document.getElementById('pm_qty').value?parseInt(document.getElementById('pm_qty').value):null,
-      MinStock:document.getElementById('pm_min').value?parseInt(document.getElementById('pm_min').value):null,
-      StorageLocation:document.getElementById('pm_location').value.trim()||null,
-      UnitCost:document.getElementById('pm_cost').value?parseFloat(document.getElementById('pm_cost').value):null,
-      Notes:document.getElementById('pm_notes').value.trim()||null,
-    };
-    if(!fields.Title){document.getElementById('pmStatus').textContent='Part name is required';return;}
-    Object.keys(fields).forEach(function(k){if(fields[k]===null)delete fields[k];});
-    btn.disabled=true;btn.textContent='Saving...';
-    if(!window.PARTS_LIST_ID){
-      document.getElementById('pmStatus').textContent='Parts list not set up in SharePoint yet. Create a list named "HopswatchParts" first.';
-      btn.disabled=false;btn.textContent='Save';return;
-    }
-    var url,method;
-    if(partId){
-      url=GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items/'+partId+'/fields';
-      method='PATCH';
-    } else {
-      url=GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items';
-      method='POST';
-    }
-    fetch(url,{method:method,headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(partId?fields:{fields:fields})})
-      .then(function(r){return r.json();})
-      .then(function(res){
-        btn.disabled=false;btn.textContent='Save';
-        if(res.error){document.getElementById('pmStatus').textContent='Error: '+(res.error.message||'Unknown');return;}
-        closePartModal();
-        allParts=[];loadParts();
-      })
-      .catch(function(e){btn.disabled=false;btn.textContent='Save';document.getElementById('pmStatus').textContent='Error: '+e.message;});
-  };
-
-  // -- WO COMMENTS ----------------------------------------------------------
-  // Comments stored in a Comments field on WO items (multiline text append)
-  function loadWOComments(woId, containerEl){
-    containerEl.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Loading comments...</div>';
-    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items/'+woId+'?$expand=fields')
-      .then(function(item){
-        var comments = (item.fields&&item.fields.FollowUpNotes)||'';
-        renderComments(containerEl, comments, woId);
-      })
-      .catch(function(){containerEl.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Could not load comments</div>';});
-  }
-
-  function renderComments(containerEl, raw, woId){
-    var lines = raw ? raw.split('\n---\n').filter(function(l){return l.trim();}) : [];
-    var html = lines.length ? lines.map(function(l){
-      return '<div style="background:var(--surface2);border-radius:4px;padding:8px 12px;margin-bottom:6px;font-size:13px;color:var(--text2)">'+escHtml(l)+'</div>';
-    }).join('') : '<div style="color:var(--text3);font-size:12px;padding:4px 0">No comments yet</div>';
-    html += '<div style="margin-top:10px;display:flex;gap:8px">'
-      +'<input type="text" id="commentInput_'+woId+'" placeholder="Add a comment..." style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:4px;font-size:13px;font-family:var(--font-body);outline:none">'
-      +'<button onclick="addComment(\''+woId+'\',\''+escAttr(raw)+'\')" style="background:var(--accent);color:#000;border:none;padding:7px 14px;border-radius:4px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Post</button>'
-      +'</div>';
-    containerEl.innerHTML=html;
-  }
-
-  window.addComment=function(woId, existing){
-    var inp=document.getElementById('commentInput_'+woId);
-    if(!inp||!inp.value.trim())return;
-    var user=getUserName();
-    var ts=new Date().toLocaleString('en-US',{timeZone:'America/Denver',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    var newLine=user+' ('+ts+'): '+inp.value.trim();
-    var updated=(existing?existing+'\n---\n':'')+newLine;
-    inp.disabled=true;
-    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items/'+woId+'/fields',{FollowUpNotes:updated})
-      .then(function(){inp.disabled=false;inp.value='';var container=document.getElementById('comments_'+woId);if(container)renderComments(container,updated,woId);})
-      .catch(function(){inp.disabled=false;});
-  };
-
-  function getUserName(){try{var p=accessToken.split('.');var pl=JSON.parse(atob(p[1].replace(/-/g,'+').replace(/_/g,'/')));return pl.name||pl.preferred_username||'User';}catch(e){return 'User';}}
-
-  // -- QR CODE ---------------------------------------------------------------
-  window.generateQR=function(text, title){
-    var url='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(text);
-    var overlay=document.getElementById('qrOverlay');
-    document.getElementById('qrTitle').textContent=title||'QR Code';
-    document.getElementById('qrImg').src=url;
-    document.getElementById('qrLink').href=url;
-    overlay.classList.add('open');
-  };
-  window.closeQR=function(){document.getElementById('qrOverlay').classList.remove('open');};
-
-  // -- DOWNTIME TRACKING -----------------------------------------------------
-  window.openDowntime=function(btn){
-    var id=btn.dataset.tid,title=btn.dataset.ttitle,notes=btn.dataset.tnotes;
-    document.getElementById('dt_tankId').value=id||'';
-    document.getElementById('dt_tank').value=title||'';
-    document.getElementById('dt_notes_existing').value=notes||'';
-    document.getElementById('dt_start').value=todayMT()+'T06:00';
-    document.getElementById('dt_end').value='';
-    document.getElementById('dt_reason').value='';
-    document.getElementById('dtStatus').textContent='';
-    document.getElementById('downtimeOverlay').classList.add('open');
-  };
-  window.closeDowntime=function(){document.getElementById('downtimeOverlay').classList.remove('open');};
-  window.saveDowntime=function(){
-    var tankId=document.getElementById('dt_tankId').value;
-    var start=document.getElementById('dt_start').value;
-    var reason=document.getElementById('dt_reason').value.trim();
-    if(!reason){document.getElementById('dtStatus').textContent='Reason is required';return;}
-    var end=document.getElementById('dt_end').value;
-    var durationH=end&&start?((new Date(end)-new Date(start))/3600000).toFixed(1):null;
-    var note='DOWNTIME: '+start+(end?' to '+end:' (ongoing)')+' | Reason: '+reason+(durationH?' | Duration: '+durationH+'h':'');
-    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tankId+'/fields',{Notes:(document.getElementById('dt_notes_existing').value?document.getElementById('dt_notes_existing').value+'\n':'')+'['+todayMT()+'] '+note})
-      .then(function(){closeDowntime();allTanks=[];loadTanks();})
-      .catch(function(e){document.getElementById('dtStatus').textContent='Error: '+e.message;});
-  };
-
-
-
-  // -- WORK ORDERS TAB -------------------------------------------------------
-  function renderWOs(){
-    var loading=document.getElementById('woLoading');
-    var tbl=document.getElementById('woTable');
-    var empty=document.getElementById('woEmpty');
-    var tbody=document.getElementById('woBody');
-
-    if(!allWOs.length){
-      if(loading)loading.classList.remove('hidden');
-      if(tbl)tbl.classList.add('hidden');
-      if(empty)empty.classList.add('hidden');
-      // Load WOs if not already loaded
-      graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items?$expand=fields&$top=500')
-        .then(function(items){
-          allWOs=items.map(function(i){return i.fields||{};});
-          if(loading)loading.classList.add('hidden');
-          populateWOFilters();
-          _renderWOTable();
-        })
-        .catch(function(e){if(loading)loading.classList.add('hidden');if(empty){empty.innerHTML='<p>Error loading work orders: '+escHtml(e.message)+'</p>';empty.classList.remove('hidden');}});
-      return;
-    }
-    if(loading)loading.classList.add('hidden');
-    populateWOFilters();
-    _renderWOTable();
-  }
-
-  function populateWOFilters(){
-    var seen={};allWOs.forEach(function(w){if(w.Area)seen[w.Area]=1;});
-    var sel=document.getElementById('woFilterArea');
-    if(!sel)return;
-    var cur=sel.value;
-    sel.innerHTML='<option value="">All Areas</option>';
-    Object.keys(seen).sort().forEach(function(v){var o=document.createElement('option');o.value=o.textContent=v;sel.appendChild(o);});
-    sel.value=cur;
-  }
-
-  function _renderWOTable(){
-    var typeF=(document.getElementById('woFilterType').value||'');
-    var statusF=(document.getElementById('woFilterStatus').value||'');
-    var areaF=(document.getElementById('woFilterArea').value||'');
-    var srch=((document.getElementById('woSearch').value)||'').toLowerCase();
-    var filtered=allWOs.filter(function(w){
-      return(!typeF||w.WOType===typeF)&&(!statusF||w.WOStatus===statusF)&&(!areaF||w.Area===areaF)&&
-        (!srch||(w.Equipment||w.Title||'').toLowerCase().indexOf(srch)>=0||(w.TaskDescription||'').toLowerCase().indexOf(srch)>=0);
-    });
-    // Sort by date descending
-    filtered.sort(function(a,b){return(b.DateOpened||'').localeCompare(a.DateOpened||'');});
-    var tbl=document.getElementById('woTable');
-    var empty=document.getElementById('woEmpty');
-    var tbody=document.getElementById('woBody');
-    if(!filtered.length){if(tbl)tbl.classList.add('hidden');if(empty)empty.classList.remove('hidden');return;}
-    if(tbl)tbl.classList.remove('hidden');if(empty)empty.classList.add('hidden');
-    if(tbody)tbody.innerHTML=filtered.map(function(w){
-      var statusCls=w.WOStatus==='Completed'?'days-badge upcoming':w.WOStatus==='In Progress'?'days-badge due-soon':w.WOStatus==='Open'?'days-badge overdue':'days-badge no-date';
-      var typePill='<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;'+(w.WOType==='Planned'?'background:rgba(41,128,185,.15);color:#3498db':'background:rgba(142,68,173,.15);color:#9b59b6')+'">'+escHtml(w.WOType||'')+'</span>';
-      var date=w.DateOpened?w.DateOpened.substring(0,10):'--';
-      var hours=w.ActualHours?w.ActualHours+'h':(w.EstHours?w.EstHours+'h est':'--');
-      return '<tr style="cursor:pointer;border-bottom:1px solid var(--border)" onclick="openWOModal(this)" data-wo="'+escAttr(JSON.stringify({Equipment:w.Equipment||w.Title,WOType:w.WOType,Area:w.Area,VesselID:w.VesselID,TaskDescription:w.TaskDescription,WorkPerformed:w.WorkPerformed,PartsUsed:w.PartsUsed,Priority:w.Priority,WOStatus:w.WOStatus,AssignedTo:w.AssignedTo,RequestedBy:w.RequestedBy,DateOpened:date,DateCompleted:w.DateCompleted?w.DateCompleted.substring(0,10):'',EstHours:w.EstHours,ActualHours:w.ActualHours,FoodSafetyImpact:w.FoodSafetyImpact,FollowUpRequired:w.FollowUpRequired,FollowUpNotes:w.FollowUpNotes}))+'">'+
-        '<td style="padding:12px 16px"><div style="font-weight:600;color:var(--text)">'+escHtml(w.Equipment||w.Title||'')+'</div>'+(w.VesselID?'<div style="font-size:11px;color:var(--text3)">'+escHtml(w.VesselID)+'</div>':'')+
-        (w.TaskDescription?'<div style="font-size:12px;color:var(--text2);margin-top:2px">'+escHtml(w.TaskDescription.substring(0,60))+(w.TaskDescription.length>60?'...':'')+'</div>':'')+'</td>'+
-        '<td style="padding:12px 16px">'+typePill+'</td>'+
-        '<td style="padding:12px 16px"><span class="area-badge">'+escHtml(w.Area||'--')+'</span></td>'+
-        '<td style="padding:12px 16px"><span class="'+statusCls+'">'+escHtml(w.WOStatus||'--')+'</span></td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(w.AssignedTo||'--')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2);white-space:nowrap">'+date+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+hours+'</td>'+
-        '</tr>';
-    }).join('');
-  }
-
-  window.openWOModal=function(row){
-    var wo=JSON.parse(row.dataset.wo);
-    document.getElementById('modalTitle').textContent=wo.Equipment||'';
-    document.getElementById('modalSub').textContent=(wo.WOType||'')+(wo.Area?' · '+wo.Area:'')+(wo.WOStatus?' · '+wo.WOStatus:'');
-    document.getElementById('modalTask').textContent=wo.TaskDescription||'No description';
-    document.getElementById('saveStatus').textContent='';
-    var grid=document.getElementById('modalGrid');
-    grid.innerHTML=[
-      ['Work Performed',wo.WorkPerformed||'--'],
-      ['Parts Used',wo.PartsUsed||'--'],
-      ['Priority',wo.Priority||'--'],
-      ['Assigned To',wo.AssignedTo||'--'],
-      ['Date Opened',wo.DateOpened||'--'],
-      ['Date Completed',wo.DateCompleted||'--'],
-      ['Est Hours',wo.EstHours?wo.EstHours+'h':'--'],
-      ['Actual Hours',wo.ActualHours?wo.ActualHours+'h':'--'],
-      ['Food Safety',wo.FoodSafetyImpact||'No'],
-      ['Follow-up',wo.FollowUpRequired||'No'],
-      ['Follow-up Notes',wo.FollowUpNotes||'--'],
-      ['Requested By',wo.RequestedBy||'--'],
-    ].map(function(f){return '<div class="detail-field"><label>'+f[0]+'</label><value style="color:var(--text2);font-size:14px">'+escHtml(f[1])+'</value></div>';}).join('');
-    document.getElementById('saveBtn').style.display='none';
-    document.getElementById('modalOverlay').classList.add('open');
-  };
-
-
   parseToken().then(function(ok){
     if(ok){document.getElementById('authScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');loadData();}
     else{document.getElementById('authScreen').classList.remove('hidden');document.getElementById('dashboard').classList.add('hidden');}
   });
 </script>
-<!-- NEW PM MODAL -->
-<div class="modal-overlay" id="newPMOverlay" onclick="if(event.target===this)closeNewPM()">
-  <div class="modal">
-    <div class="modal-header">
-      <div><div class="modal-title">New PM Task</div><div style="color:var(--text3);font-size:12px;margin-top:4px">Add to PM Schedule</div></div>
-      <button class="modal-close" onclick="closeNewPM()">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="detail-grid">
-        <div class="detail-field"><label>Equipment / Asset <span style="color:var(--accent)">*</span></label><input type="text" id="npm_title" placeholder="e.g. Glycol Pump A"></div>
-        <div class="detail-field"><label>Area</label>
-          <select id="npm_area">
-            <option value="">- Select -</option>
-            <option>Brewhouse</option><option>Fermentation</option><option>Bright Beer</option>
-            <option>Packaging</option><option>Cold Room</option><option>Boiler Room</option>
-            <option>MBH</option><option>Cellar</option><option>Lab</option><option>General</option>
-          </select>
-        </div>
-        <div class="detail-field"><label>Vessel ID</label><input type="text" id="npm_vessel" placeholder="e.g. GT 04"></div>
-        <div class="detail-field"><label>Frequency <span style="color:var(--accent)">*</span></label>
-          <select id="npm_freq">
-            <option value="">- Select -</option>
-            <option>Weekly</option><option>Monthly</option><option>Quarterly</option>
-            <option>Semi-Annual</option><option>Annual</option><option>2 Month Cycle</option>
-            <option>3 Year Cycle</option><option>5 Year Cycle</option><option>Daily</option>
-            <option>Per CIP Cycle</option><option>As Per Use</option>
-          </select>
-        </div>
-        <div class="detail-field"><label>Responsible</label><input type="text" id="npm_resp" placeholder="e.g. Shawn"></div>
-        <div class="detail-field"><label>Internal / Outsourced</label>
-          <select id="npm_intout"><option value="">- Select -</option><option>Internal</option><option>Outsourced</option></select>
-        </div>
-        <div class="detail-field"><label>Proposed Date</label><input type="date" id="npm_date"></div>
-        <div class="detail-field"><label>Food Contact</label>
-          <select id="npm_food"><option value="">- Select -</option><option value="Y">Yes</option><option value="N">No</option></select>
-        </div>
-        <div class="detail-field" style="grid-column:1/-1"><label>Task Description</label><textarea id="npm_task" rows="3" placeholder="Describe the maintenance task..."></textarea></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="save-status" id="npmStatus"></div>
-      <button class="save-btn" onclick="saveNewPM()">Create PM Task</button>
-    </div>
-  </div>
-</div>
-
-<!-- NEW WO MODAL -->
-<div class="modal-overlay" id="newWOOverlay" onclick="if(event.target===this)closeNewWO()">
-  <div class="modal">
-    <div class="modal-header">
-      <div><div class="modal-title">New Work Order</div><div style="color:var(--text3);font-size:12px;margin-top:4px">Log unplanned or ad-hoc maintenance</div></div>
-      <button class="modal-close" onclick="closeNewWO()">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="detail-grid">
-        <div class="detail-field"><label>Equipment / Asset <span style="color:var(--accent)">*</span></label><input type="text" id="nwo_equip" placeholder="e.g. FT 05, Glycol Pump A"></div>
-        <div class="detail-field"><label>Area</label>
-          <select id="nwo_area">
-            <option value="">- Select -</option>
-            <option>Brewhouse</option><option>Fermentation</option><option>Bright Beer</option>
-            <option>Packaging</option><option>Cold Room</option><option>Boiler Room</option>
-            <option>MBH</option><option>Cellar</option><option>Lab</option><option>General</option>
-          </select>
-        </div>
-        <div class="detail-field"><label>WO Type</label>
-          <select id="nwo_type"><option value="Unplanned">Unplanned</option><option value="Planned">Planned</option></select>
-        </div>
-        <div class="detail-field"><label>Priority</label>
-          <select id="nwo_priority"><option value="">- Select -</option><option>Low</option><option>Medium</option><option>High</option></select>
-        </div>
-        <div class="detail-field"><label>Vessel ID</label><input type="text" id="nwo_vessel" placeholder="e.g. FT 05"></div>
-        <div class="detail-field"><label>Assigned To</label><input type="text" id="nwo_assigned" placeholder="e.g. Shawn"></div>
-        <div class="detail-field"><label>Date Opened</label><input type="date" id="nwo_dateopen"></div>
-        <div class="detail-field"><label>Status</label>
-          <select id="nwo_status"><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select>
-        </div>
-        <div class="detail-field" style="grid-column:1/-1"><label>Task Description <span style="color:var(--accent)">*</span></label><textarea id="nwo_task" rows="2" placeholder="Describe the work..."></textarea></div>
-        <div class="detail-field" style="grid-column:1/-1"><label>Work Performed</label><textarea id="nwo_performed" rows="2" placeholder="What was done..."></textarea></div>
-        <div class="detail-field" style="grid-column:1/-1"><label>Parts / Materials Used</label><input type="text" id="nwo_parts" placeholder="e.g. Pump seal kit, O-rings"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="save-status" id="nwoStatus"></div>
-      <button class="save-btn" onclick="saveNewWO()">Create Work Order</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // -- NEW PM --------------------------------------------------------------
-  window.openNewPM = function() {
-    var overlay = document.getElementById('newPMOverlay');
-    overlay.classList.add('open');
-    document.getElementById('npm_date').value = todayMT();
-    document.getElementById('npmStatus').textContent = '';
-    document.getElementById('npmStatus').className = 'save-status';
-  };
-  window.closeNewPM = function() { document.getElementById('newPMOverlay').classList.remove('open'); };
-
-  window.saveNewPM = function() {
-    var title = document.getElementById('npm_title').value.trim();
-    var freq  = document.getElementById('npm_freq').value;
-    if (!title) { showNpmStatus('Equipment name is required', 'err'); return; }
-    if (!freq)  { showNpmStatus('Frequency is required', 'err'); return; }
-    var fields = {
-      Title:             title,
-      Area:              document.getElementById('npm_area').value || null,
-      VesselID:          document.getElementById('npm_vessel').value.trim() || null,
-      Frequency:         freq,
-      Responsible:       document.getElementById('npm_resp').value.trim() || null,
-      InternalOrOutsourced: document.getElementById('npm_intout').value || null,
-      ProposedDate:      document.getElementById('npm_date').value ? document.getElementById('npm_date').value + 'T00:00:00Z' : null,
-      FoodContact:       document.getElementById('npm_food').value || null,
-      Task:              document.getElementById('npm_task').value.trim() || null,
-      Type0:             'PM',
-    };
-    Object.keys(fields).forEach(function(k){ if(fields[k]===null) delete fields[k]; });
-    var btn = document.querySelector('#newPMOverlay .save-btn');
-    btn.disabled = true; btn.textContent = 'Saving...';
-    fetch(GRAPH+'/sites/'+SITE_ID+'/lists/'+PM_LIST_ID+'/items', {
-      method:'POST', headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
-      body: JSON.stringify({fields: fields})
-    }).then(function(r){return r.json();}).then(function(res){
-      btn.disabled=false; btn.textContent='Create PM Task';
-      if(res.error){ showNpmStatus('Error: '+(res.error.message||'Unknown'), 'err'); return; }
-      showNpmStatus('✓ PM Task created!', 'ok');
-      setTimeout(function(){ closeNewPM(); loadData(); }, 1500);
-    }).catch(function(e){ btn.disabled=false; btn.textContent='Create PM Task'; showNpmStatus('Error: '+e.message, 'err'); });
-  };
-
-  function showNpmStatus(msg, cls) {
-    var el=document.getElementById('npmStatus'); el.textContent=msg; el.className='save-status '+(cls||'');
-  }
-
-  // -- NEW WO --------------------------------------------------------------
-  window.openNewWO = function() {
-    var overlay = document.getElementById('newWOOverlay');
-    overlay.classList.add('open');
-    document.getElementById('nwo_dateopen').value = todayMT();
-    document.getElementById('nwoStatus').textContent = '';
-    document.getElementById('nwoStatus').className = 'save-status';
-  };
-  window.closeNewWO = function() { document.getElementById('newWOOverlay').classList.remove('open'); };
-
-  window.saveNewWO = function() {
-    var equip = document.getElementById('nwo_equip').value.trim();
-    var task  = document.getElementById('nwo_task').value.trim();
-    if (!equip) { showNwoStatus('Equipment is required', 'err'); return; }
-    if (!task)  { showNwoStatus('Task description is required', 'err'); return; }
-    var fields = {
-      Title:           equip,
-      Equipment:       equip,
-      WOType:          document.getElementById('nwo_type').value || 'Unplanned',
-      Area:            document.getElementById('nwo_area').value || null,
-      VesselID:        document.getElementById('nwo_vessel').value.trim() || null,
-      TaskDescription: task,
-      WorkPerformed:   document.getElementById('nwo_performed').value.trim() || null,
-      PartsUsed:       document.getElementById('nwo_parts').value.trim() || null,
-      Priority:        document.getElementById('nwo_priority').value || null,
-      WOStatus:        document.getElementById('nwo_status').value || 'Open',
-      AssignedTo:      document.getElementById('nwo_assigned').value.trim() || null,
-      DateOpened:      document.getElementById('nwo_dateopen').value ? document.getElementById('nwo_dateopen').value+'T00:00:00Z' : null,
-    };
-    Object.keys(fields).forEach(function(k){ if(fields[k]===null) delete fields[k]; });
-    var btn = document.querySelector('#newWOOverlay .save-btn');
-    btn.disabled=true; btn.textContent='Saving...';
-    fetch(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items', {
-      method:'POST', headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
-      body: JSON.stringify({fields: fields})
-    }).then(function(r){return r.json();}).then(function(res){
-      btn.disabled=false; btn.textContent='Create Work Order';
-      if(res.error){ showNwoStatus('Error: '+(res.error.message||'Unknown'), 'err'); return; }
-      showNwoStatus('✓ Work Order created!', 'ok');
-      setTimeout(function(){ closeNewWO(); loadData(); }, 1500);
-    }).catch(function(e){ btn.disabled=false; btn.textContent='Create Work Order'; showNwoStatus('Error: '+e.message, 'err'); });
-  };
-
-  function showNwoStatus(msg, cls) {
-    var el=document.getElementById('nwoStatus'); el.textContent=msg; el.className='save-status '+(cls||'');
-  }
-</script>
-<!-- PART MODAL -->
-<div class="modal-overlay" id="partModalOverlay" onclick="if(event.target===this)closePartModal()">
-  <div class="modal">
-    <div class="modal-header">
-      <div><div class="modal-title" id="partModalTitle">New Part</div></div>
-      <button class="modal-close" onclick="closePartModal()">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="detail-grid">
-        <div class="detail-field"><label>Part Name <span style="color:var(--accent)">*</span></label><input type="text" id="pm_name" placeholder="e.g. Pump Seal Kit"></div>
-        <div class="detail-field"><label>Part Number</label><input type="text" id="pm_number" placeholder="e.g. SK-2234"></div>
-        <div class="detail-field"><label>Category</label><input type="text" id="pm_category" placeholder="e.g. Seals, Fittings, Filters"></div>
-        <div class="detail-field"><label>Quantity on Hand</label><input type="number" id="pm_qty" placeholder="0" min="0"></div>
-        <div class="detail-field"><label>Min Stock Level</label><input type="number" id="pm_min" placeholder="0" min="0"></div>
-        <div class="detail-field"><label>Storage Location</label><input type="text" id="pm_location" placeholder="e.g. Maintenance Room Shelf B"></div>
-        <div class="detail-field"><label>Unit Cost ($)</label><input type="number" id="pm_cost" placeholder="0.00" step="0.01" min="0"></div>
-        <div class="detail-field"><label>Notes</label><input type="text" id="pm_notes" placeholder="Supplier, lead time, etc."></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="save-status" id="pmStatus"></div>
-      <button class="save-btn" id="pmSaveBtn" onclick="savePart()">Save Part</button>
-    </div>
-  </div>
-</div>
-
-<!-- QR MODAL -->
-<div class="modal-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()" style="z-index:300">
-  <div class="modal" style="max-width:320px;text-align:center">
-    <div class="modal-header">
-      <div><div class="modal-title" id="qrTitle">QR Code</div></div>
-      <button class="modal-close" onclick="closeQR()">&#x2715;</button>
-    </div>
-    <div class="modal-body" style="text-align:center;padding:24px">
-      <img id="qrImg" src="" style="width:200px;height:200px;border:4px solid var(--border);border-radius:8px;margin-bottom:16px" alt="QR Code">
-      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Scan to open equipment record</p>
-      <a id="qrLink" href="" download="qr.png" class="save-btn" style="display:inline-block;text-decoration:none;padding:10px 24px">Download QR</a>
-    </div>
-  </div>
-</div>
-
-<!-- DOWNTIME MODAL -->
-<div class="modal-overlay" id="downtimeOverlay" onclick="if(event.target===this)closeDowntime()">
-  <div class="modal" style="max-width:480px">
-    <div class="modal-header">
-      <div><div class="modal-title">Log Downtime</div></div>
-      <button class="modal-close" onclick="closeDowntime()">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="dt_tankId">
-      <div class="detail-grid" style="grid-template-columns:1fr">
-        <div class="detail-field"><label>Tank</label><input type="text" id="dt_tank" readonly style="opacity:.6"></div>
-        <div class="detail-field"><label>Start Time</label><input type="datetime-local" id="dt_start"></div>
-        <div class="detail-field"><label>End Time (leave blank if ongoing)</label><input type="datetime-local" id="dt_end"></div>
-        <div class="detail-field"><label>Reason <span style="color:var(--accent)">*</span></label>
-          <select id="dt_reason">
-            <option value="">- Select reason -</option>
-            <option>Mechanical failure</option><option>Scheduled maintenance</option>
-            <option>CIP</option><option>Electrical fault</option>
-            <option>Awaiting parts</option><option>Operator error</option><option>Other</option>
-          </select>
-        </div>
-        <input type="hidden" id="dt_notes_existing">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="save-status" id="dtStatus"></div>
-      <button class="save-btn" onclick="saveDowntime()">Log Downtime</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
+
 
 
 
