@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Hopswatch — Submit a Request</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0e1117;color:#e8eaf0;font-family:'Barlow',sans-serif;font-size:15px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 16px}
+.header{text-align:center;margin-bottom:40px}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:#e8a020;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.logo span{color:#8892a4;font-weight:400}
+.subtitle{font-size:13px;color:#555f73;margin-bottom:4px}
+.card{background:#161b24;border:1px solid #2a3347;border-top:3px solid #e8a020;border-radius:10px;padding:28px 24px;width:100%;max-width:480px}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#e8eaf0;margin-bottom:6px}
+.card-sub{font-size:13px;color:#555f73;margin-bottom:24px}
+.field{margin-bottom:16px}
+.field label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#555f73;display:block;margin-bottom:5px}
+.field label .req{color:#e8a020}
+.field input,.field select,.field textarea{width:100%;background:#1d2535;border:1px solid #2a3347;color:#e8eaf0;padding:12px 14px;border-radius:8px;font-size:15px;font-family:'Barlow',sans-serif;outline:none;appearance:none;-webkit-appearance:none;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#e8a020;background:#161b24}
+.field textarea{resize:none;min-height:100px;line-height:1.5}
+.field input::placeholder,.field textarea::placeholder{color:#555f73}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555f73' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.priority-chips{display:flex;gap:8px}
+.priority-chip{flex:1;padding:10px 4px;border:1px solid #2a3347;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-align:center;cursor:pointer;transition:all .15s;color:#555f73;background:#1d2535}
+.priority-chip.sel-low{border-color:#27ae60;background:rgba(39,174,96,.12);color:#27ae60}
+.priority-chip.sel-medium{border-color:#e67e22;background:rgba(230,126,34,.12);color:#e67e22}
+.priority-chip.sel-high{border-color:#c0392b;background:rgba(192,57,43,.12);color:#c0392b}
+.submit-btn{width:100%;padding:16px;background:#e8a020;color:#000;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:opacity .15s}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.submit-btn:active:not(:disabled){opacity:.8}
+.success{display:none;text-align:center;padding:40px 20px}
+.success.show{display:block}
+.success-icon{font-size:48px;margin-bottom:16px}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#27ae60;margin-bottom:8px}
+.success-sub{color:#555f73;font-size:14px;margin-bottom:24px}
+.new-btn{padding:12px 28px;background:#1d2535;border:1px solid #2a3347;color:#8892a4;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.toast{position:fixed;bottom:24px;left:16px;right:16px;max-width:440px;margin:0 auto;background:#c0392b;color:#fff;padding:14px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:400;transform:translateY(20px);opacity:0;transition:all .25s;pointer-events:none;text-align:center}
+.toast.show{transform:none;opacity:1}
+.spinner-overlay{position:fixed;inset:0;background:rgba(14,17,23,.8);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.spinner-overlay.show{display:flex}
+.spinner{width:40px;height:40px;border:3px solid #2a3347;border-top-color:#e8a020;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">Hops<span>watch</span></div>
+  <div class="subtitle">Last Spike Brewery — Maintenance Request</div>
+</div>
+
+<div class="card" id="formCard">
+  <div class="card-title">Submit a Maintenance Request</div>
+  <div class="card-sub">Fill in the details below and the maintenance team will be notified.</div>
+
+  <div class="field">
+    <label>Your Name <span class="req">*</span></label>
+    <input type="text" id="rq_name" placeholder="Your name">
+  </div>
+  <div class="field">
+    <label>Equipment / Location <span class="req">*</span></label>
+    <input type="text" id="rq_equip" placeholder="e.g. FT 05, Brewhouse glycol pump, Tap #3">
+  </div>
+  <div class="field">
+    <label>Area</label>
+    <select id="rq_area">
+      <option value="">— Select area —</option>
+      <option>Brewhouse</option><option>Fermentation</option><option>Bright Beer</option>
+      <option>Packaging</option><option>Cold Room</option><option>Boiler Room</option>
+      <option>MBH</option><option>Cellar</option><option>Lab</option><option>General</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Description <span class="req">*</span></label>
+    <textarea id="rq_desc" placeholder="Describe the issue — what happened, what you noticed, any sounds or smells..."></textarea>
+  </div>
+  <div class="field">
+    <label>Priority</label>
+    <div class="priority-chips">
+      <div class="priority-chip" id="chip_low" onclick="setPriority('Low')">Low</div>
+      <div class="priority-chip" id="chip_medium" onclick="setPriority('Medium')">Medium</div>
+      <div class="priority-chip" id="chip_high" onclick="setPriority('High')">High ⚡</div>
+    </div>
+  </div>
+  <div class="field" style="margin-top:8px">
+    <label>Food Safety Impact?</label>
+    <select id="rq_food">
+      <option value="No">No</option>
+      <option value="Yes">Yes — this affects food/beverage safety</option>
+    </select>
+  </div>
+
+  <button class="submit-btn" onclick="submitRequest()">Submit Request</button>
+</div>
+
+<div class="success" id="successCard">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Request Submitted!</div>
+  <div class="success-sub">The maintenance team has been notified.<br>You'll hear back shortly.</div>
+  <button class="new-btn" onclick="resetForm()">Submit Another</button>
+</div>
+
+<div class="spinner-overlay" id="spinner"><div class="spinner"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var TENANT_ID='468160ba-331c-4b5c-af62-2e65ddb636a8';
+var CLIENT_ID='14755f84-78f4-441b-82a6-d70b4a31bd87';
+var REDIRECT=location.href.split('?')[0].split('#')[0];
+var SCOPE='openid profile offline_access https://graph.microsoft.com/Sites.ReadWrite.All';
+var GRAPH='https://graph.microsoft.com/v1.0';
+var SITE_ID='lastspike.sharepoint.com,6892318a-a5f7-49e8-8185-29e312333002,4adb6650-80ef-4044-82f7-025578446597';
+var WO_LIST_ID='b3cf8490-af6a-4bd8-ac00-98d999640196';
+var CV_KEY='lsb_req_cv';
+var accessToken=null,selectedPriority='Medium';
+
+// Auto sign in silently using existing session
+function b64url(buf){return btoa(String.fromCharCode.apply(null,new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+function genVerifier(){return b64url(crypto.getRandomValues(new Uint8Array(32)));}
+function genChallenge(cv){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(cv)).then(function(d){return b64url(d);});}
+
+function tryAuth(){
+  try{var c=JSON.parse(sessionStorage.getItem('lsb_log_at')||sessionStorage.getItem('lsb_req_at')||'null');if(c&&c.exp>Date.now()+60000){accessToken=c.t;return Promise.resolve(true);}}catch(e){}
+  var p=new URLSearchParams(location.search);
+  if(p.get('code')){
+    history.replaceState(null,'',location.pathname);
+    var cv=sessionStorage.getItem(CV_KEY);sessionStorage.removeItem(CV_KEY);
+    var body=new URLSearchParams({client_id:CLIENT_ID,code:p.get('code'),redirect_uri:REDIRECT,grant_type:'authorization_code',code_verifier:cv,scope:SCOPE});
+    return fetch('https://login.microsoftonline.com/'+TENANT_ID+'/oauth2/v2.0/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body})
+      .then(function(r){return r.json();}).then(function(d){
+        if(d.error)return false;
+        accessToken=d.access_token;
+        sessionStorage.setItem('lsb_req_at',JSON.stringify({t:accessToken,exp:Date.now()+d.expires_in*1000}));
+        return true;
+      });
+  }
+  // Sign in silently via prompt=none, fall back to prompt if needed
+  return Promise.resolve(false);
+}
+
+function ensureAuth(){
+  if(accessToken)return Promise.resolve();
+  var cv=genVerifier();sessionStorage.setItem(CV_KEY,cv);
+  return genChallenge(cv).then(function(cc){
+    location.href='https://login.microsoftonline.com/'+TENANT_ID+'/oauth2/v2.0/authorize'
+      +'?client_id='+CLIENT_ID+'&response_type=code&redirect_uri='+encodeURIComponent(REDIRECT)
+      +'&scope='+encodeURIComponent(SCOPE)+'&response_mode=query&code_challenge='+cc+'&code_challenge_method=S256&prompt=login';
+  });
+}
+
+function setPriority(p){
+  selectedPriority=p;
+  ['Low','Medium','High'].forEach(function(x){document.getElementById('chip_'+x.toLowerCase()).className='priority-chip'+(p===x?' sel-'+x.toLowerCase():'');});
+}
+
+function submitRequest(){
+  var name=document.getElementById('rq_name').value.trim();
+  var equip=document.getElementById('rq_equip').value.trim();
+  var desc=document.getElementById('rq_desc').value.trim();
+  if(!name){showToast('Please enter your name');return;}
+  if(!equip){showToast('Please enter equipment or location');return;}
+  if(!desc){showToast('Please describe the issue');return;}
+
+  document.getElementById('spinner').classList.add('show');
+
+  var doSubmit = function(){
+    var fields={
+      Title:equip,
+      Equipment:equip,
+      WOType:'Unplanned',
+      Area:document.getElementById('rq_area').value||null,
+      TaskDescription:desc,
+      RequestedBy:name,
+      Priority:selectedPriority,
+      WOStatus:'Open',
+      FoodSafetyImpact:document.getElementById('rq_food').value,
+      DateOpened:new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'})+'T00:00:00Z',
+    };
+    Object.keys(fields).forEach(function(k){if(fields[k]===null)delete fields[k];});
+    fetch(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items',{
+      method:'POST',
+      headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},
+      body:JSON.stringify({fields:fields})
+    }).then(function(r){return r.json();}).then(function(res){
+      document.getElementById('spinner').classList.remove('show');
+      if(res.error){showToast('Error: '+(res.error.message||'Unknown'));return;}
+      document.getElementById('formCard').style.display='none';
+      document.getElementById('successCard').classList.add('show');
+    }).catch(function(e){document.getElementById('spinner').classList.remove('show');showToast('Error: '+e.message);});
+  };
+
+  if(accessToken){doSubmit();}
+  else{
+    ensureAuth().then(function(){if(accessToken)doSubmit();});
+  }
+}
+
+function resetForm(){
+  document.getElementById('formCard').style.display='block';
+  document.getElementById('successCard').classList.remove('show');
+  document.querySelectorAll('input,textarea').forEach(function(el){el.value='';});
+  document.querySelectorAll('select').forEach(function(el){el.selectedIndex=0;});
+  selectedPriority='Medium';
+  ['Low','Medium','High'].forEach(function(x){document.getElementById('chip_'+x.toLowerCase()).className='priority-chip';});
+}
+
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3500);}
+
+// Set default priority
+setPriority('Medium');
+tryAuth();
+</script>
+</body>
+</html>
