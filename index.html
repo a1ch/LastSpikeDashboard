@@ -921,12 +921,20 @@
     document.getElementById('modalTask').textContent = tank.Notes || 'No notes recorded.';
     document.getElementById('saveStatus').textContent = '';
     document.getElementById('saveStatus').className = 'save-status';
+    var today = new Date().toISOString().substring(0,10);
+    var prefix = (tank.Title||'').replace(/\s*\d+$/,'').trim().toUpperCase();
+    var typeMap  = {GT:'General Tank',FT:'Fermenter Tank',BBT:'Bright Beer Tank',YT:'Yeast Tank'};
+    var areaMap  = {GT:'Cellar',FT:'Fermentation',BBT:'Bright Beer',YT:'Cellar'};
+    var defaultType = tank.Tank_Type || typeMap[prefix] || '';
+    var defaultArea = tank.Area_Location || areaMap[prefix] || '';
+    var defaultStatus = tank.Status || 'Active';
+    var defaultMaint = tank.Last_Maintained ? tank.Last_Maintained.substring(0,10) : today;
     var editFields = [
-      {label:'Tank Type',     key:'Tank_Type',       type:'text',   val:tank.Tank_Type||''},
+      {label:'Tank Type',     key:'Tank_Type',       type:'text',   val:defaultType},
       {label:'Capacity (hL)', key:'Capacity',         type:'number', val:tank.Capacity!=null?String(tank.Capacity):''},
-      {label:'Area / Location',key:'Area_Location',   type:'text',   val:tank.Area_Location||''},
-      {label:'Status',        key:'Status',           type:'select', val:tank.Status||'', options:['','Active','CIP','Offline','Decommissioned']},
-      {label:'Last Maintained',key:'Last_Maintained', type:'date',   val:tank.Last_Maintained?tank.Last_Maintained.substring(0,10):''},
+      {label:'Area / Location',key:'Area_Location',   type:'text',   val:defaultArea},
+      {label:'Status',        key:'Status',           type:'select', val:defaultStatus, options:['','Active','CIP','Offline','Decommissioned']},
+      {label:'Last Maintained',key:'Last_Maintained', type:'date',   val:defaultMaint},
       {label:'Notes',         key:'Notes',            type:'textarea',val:tank.Notes||''},
     ];
     var html = '';
