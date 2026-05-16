@@ -395,7 +395,7 @@
   var CV_KEY     = 'pkce_cv';
   var accessToken = null;
 
-  // ── FREQUENCY NORMALIZER ──────────────────────────────────────────────────
+  // -- FREQUENCY NORMALIZER --------------------------------------------------
   // Maps all the various frequency strings in SharePoint to canonical keys
   function normalizeFreq(raw) {
     var f = (raw||'').trim().toLowerCase();
@@ -432,7 +432,7 @@
     return FREQ_COLOR[normalizeFreq(raw)] || '#555f73';
   }
 
-  // ── NEXT DATE LOGIC ────────────────────────────────────────────────────────
+  // -- NEXT DATE LOGIC --------------------------------------------------------
   function nextProposedDate(raw) {
     var now = new Date(); now.setHours(0,0,0,0);
     var d = new Date(now);
@@ -464,7 +464,7 @@
       d = new Date(now.getFullYear()+1, 0, 1);
       while ((d.getFullYear() - now.getFullYear()) % 5 !== 0) d.setFullYear(d.getFullYear()+1);
     } else {
-      return null; // Daily, Per CIP, As Per Use — no fixed date
+      return null; // Daily, Per CIP, As Per Use - no fixed date
     }
     return d.toISOString().substring(0,10);
   }
@@ -515,7 +515,7 @@
   var allTasks=[], allWOs=[], currentTab='overdue', sortField='ProposedDate', sortAsc=true, currentView='list';
   var currentTaskId=null;
 
-  // ── AUTO-FILL DATES ────────────────────────────────────────────────────────
+  // -- AUTO-FILL DATES --------------------------------------------------------
   window.autoFillDates = function() {
     var missing = allTasks.filter(function(t){return !t.ProposedDate && t.Frequency;});
     if (!missing.length) { showInfo('All tasks already have a Proposed Date.'); return; }
@@ -541,7 +541,7 @@
 
   function showInfo(msg){var el=document.getElementById('infoBanner');el.textContent=msg;el.style.display='block';setTimeout(function(){el.style.display='none';},5000);}
 
-  // ── DATA LOAD ──────────────────────────────────────────────────────────────
+  // -- DATA LOAD --------------------------------------------------------------
   window.loadData = function() {
     var btn=document.getElementById('refreshBtn'); btn.classList.add('spinning');
     document.getElementById('loadingState').classList.remove('hidden');
@@ -673,12 +673,12 @@
         '<td class="td-task"><div class="task-text">'+(t.Task||'')+'</div></td>'+
         '<td style="color:var(--text2);white-space:nowrap">'+(t.Frequency||'-')+'</td>'+
         '<td><div class="responsible-chip"><div class="resp-avatar">'+ini+'</div>'+(t.Responsible||'-').split('/')[0].trim()+'</div></td>'+
-        '<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'<span style="color:var(--text3)">—</span>')+'</td>'+
+        '<td style="color:var(--text2);white-space:nowrap">'+(t.ProposedDate?t.ProposedDate.substring(0,10):'<span style="color:var(--text3)">-</span>')+'</td>'+
         '<td><span class="days-badge '+bc+'">'+bt+'</span></td></tr>';
     }).join('');
   };
 
-  // ── DETAIL / EDIT MODAL ───────────────────────────────────────────────────
+  // -- DETAIL / EDIT MODAL ---------------------------------------------------
   window.showDetail = function(id){
     currentTaskId = id;
     var t=allTasks.filter(function(x){return x._id===id;})[0];
@@ -702,7 +702,7 @@
     editFields.forEach(function(f){
       html+='<div class="detail-field"><label>'+f.label+'</label>';
       if(f.type==='date') html+='<input type="date" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
-      else if(f.type==='select') html+='<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'— select —')+'</option>';}).join('')+'</select>';
+      else if(f.type==='select') html+='<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'- select -')+'</option>';}).join('')+'</select>';
       else if(f.type==='textarea') html+='<textarea id="ef_'+f.key+'">'+escHtml(f.val)+'</textarea>';
       else html+='<input type="text" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
       html+='</div>';
@@ -748,7 +748,7 @@
 
   function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-  // ── CALENDAR ──────────────────────────────────────────────────────────────
+  // -- CALENDAR --------------------------------------------------------------
   var calMode='month', calDate=new Date(); calDate.setDate(1);
   var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
   var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -784,7 +784,7 @@
       d=new Date(base5); while(d>start)d.setFullYear(d.getFullYear()-5);
       while(d<=end){if(d>=start)dates.push(new Date(d));d.setFullYear(d.getFullYear()+5);}
     }
-    // Daily, Per CIP, As Per Use — skip on calendar (no fixed schedule)
+    // Daily, Per CIP, As Per Use - skip on calendar (no fixed schedule)
     return dates;
   }
 
@@ -983,7 +983,7 @@
           + '<div class="tank-status-badge '+statusSlug+'">'+(status||'Unknown')+'</div>'
           + '<div style="display:flex;gap:6px;margin-top:8px">'
           + '<button onclick="event.stopPropagation();generateQR(location.href.split(\"?\")[0]+\"?tank=\"+encodeURIComponent(t.Title||\"\"),t.Title||\"QR\")" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">QR</button>'
-          + '<button onclick="event.stopPropagation();document.getElementById(\"dt_tankId\").value=\"'+escHtml(t.id||t.Title)+\"\";document.getElementById(\"dt_tank\").value=\"'+escHtml(t.Title||\"\")+\"\";document.getElementById(\"dt_notes_existing\").value=\"'+escHtml(t.Notes||\"\")+\"\";document.getElementById(\"dt_start\").value=todayMT()+\"T06:00\";document.getElementById(\"dtStatus\").textContent=\"\";document.getElementById(\"downtimeOverlay\").classList.add(\"open\")" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">Downtime</button>'
+          + '<button onclick="event.stopPropagation();openDowntime(this)" data-tid="'+escAttr(t.id||t.Title)+'" data-ttitle="'+escAttr(t.Title||'')+'" data-tnotes="'+escAttr(t.Notes||'')+'" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">Downtime</button>'
           + '</div>'
           + '</div>';
       });
@@ -1020,7 +1020,7 @@
     editFields.forEach(function(f){
       html += '<div class="detail-field"><label>'+f.label+'</label>';
       if (f.type==='date')      html += '<input type="date" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
-      else if (f.type==='select') html += '<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'— select —')+'</option>';}).join('')+'</select>';
+      else if (f.type==='select') html += '<select id="ef_'+f.key+'">'+f.options.map(function(o){return'<option value="'+o+'"'+(o===f.val?' selected':'')+'>'+( o||'- select -')+'</option>';}).join('')+'</select>';
       else if (f.type==='textarea') html += '<textarea id="ef_'+f.key+'">'+escHtml(f.val)+'</textarea>';
       else if (f.type==='number')   html += '<input type="number" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
       else html += '<input type="text" id="ef_'+f.key+'" value="'+escHtml(f.val)+'">';
@@ -1058,11 +1058,11 @@
       });
   };
 
-  // ── NEW STATE ─────────────────────────────────────────────────────────────
+  // -- NEW STATE -------------------------------------------------------------
   var allParts = [];
   var PARTS_LIST_ID = 'hopswatch-parts'; // will be created
 
-  // ── ANALYTICS ─────────────────────────────────────────────────────────────
+  // -- ANALYTICS -------------------------------------------------------------
   function renderAnalytics(){
     var now = new Date(), today = todayMT();
     var thisMonth = now.getMonth(), thisYear = now.getFullYear();
@@ -1080,9 +1080,9 @@
 
     // Avg hours
     var hoursWOs = allWOs.filter(function(w){return w.ActualHours!=null&&w.ActualHours>0;});
-    var avgHours = hoursWOs.length ? (hoursWOs.reduce(function(s,w){return s+parseFloat(w.ActualHours||0);},0)/hoursWOs.length).toFixed(1) : '—';
+    var avgHours = hoursWOs.length ? (hoursWOs.reduce(function(s,w){return s+parseFloat(w.ActualHours||0);},0)/hoursWOs.length).toFixed(1) : '-';
 
-    // PM compliance — tasks with ProposedDate in past that have a completed WO
+    // PM compliance - tasks with ProposedDate in past that have a completed WO
     var woRefs={};
     allWOs.filter(function(w){return(w.WOStatus||'').toLowerCase()==='completed';}).forEach(function(w){if(w.PMTaskRef)woRefs[w.PMTaskRef]=true;});
     var pastDue = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow<0;});
@@ -1125,8 +1125,8 @@
           +'<td style="padding:10px 16px;color:var(--text);font-weight:600">'+escHtml(w.Equipment||w.Title||'')+'</td>'
           +'<td style="padding:10px 16px;color:var(--text2)">'+escHtml(w.WOType||'')+'</td>'
           +'<td style="padding:10px 16px;color:var(--text2)">'+escHtml(w.WOStatus||'')+'</td>'
-          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.DateOpened?w.DateOpened.substring(0,10):'—')+'</td>'
-          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.ActualHours!=null?w.ActualHours+'h':'—')+'</td>'
+          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.DateOpened?w.DateOpened.substring(0,10):'-')+'</td>'
+          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.ActualHours!=null?w.ActualHours+'h':'-')+'</td>'
           +'</tr>';
       }).join('')+'</tbody></table>';
   }
@@ -1154,14 +1154,14 @@
 
   function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
 
-  // ── PARTS INVENTORY ───────────────────────────────────────────────────────
+  // -- PARTS INVENTORY -------------------------------------------------------
   // Parts stored as a SharePoint list - create list name in SITE_ID as 'HopswatchParts'
   var PARTS_LIST_NAME = 'HopswatchParts';
 
   function loadParts(){
     var el=document.getElementById('partsLoading');
     if(el)el.classList.remove('hidden');
-    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists?$filter=displayName eq ''+PARTS_LIST_NAME+''')
+    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists?$filter=displayName eq \''+PARTS_LIST_NAME+'\'')
       .then(function(lists){
         if(!lists.length){
           // List doesn't exist yet - show empty state
@@ -1200,14 +1200,14 @@
       var qty=parseInt(p.Quantity)||0, min=parseInt(p.MinStock)||0;
       var statusCls=qty<=min?'parts-status-low':'parts-status-ok';
       var statusTxt=qty<=min?'Low Stock':'OK';
-      return'<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="openEditPart(''+escAttr(p.id||'')+'')">'+
+      return'<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="openEditPart(\''+escAttr(p.id||'')+'\')">'+
         '<td style="padding:12px 16px;font-weight:600;color:var(--text)">'+escHtml(p.Title||'')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.PartNumber||'—')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.Category||'—')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.PartNumber||'-')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.Category||'-')+'</td>'+
         '<td style="padding:12px 16px;font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text)">'+qty+'</td>'+
         '<td style="padding:12px 16px;color:var(--text3)">'+min+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.StorageLocation||'—')+'</td>'+
-        '<td style="padding:12px 16px;color:var(--text2)">'+(p.UnitCost?'$'+parseFloat(p.UnitCost).toFixed(2):'—')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.StorageLocation||'-')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+(p.UnitCost?'$'+parseFloat(p.UnitCost).toFixed(2):'-')+'</td>'+
         '<td style="padding:12px 16px"><span class="'+statusCls+'">'+statusTxt+'</span></td>'+
         '</tr>';
     }).join('');
@@ -1278,7 +1278,7 @@
       .catch(function(e){btn.disabled=false;btn.textContent='Save';document.getElementById('pmStatus').textContent='Error: '+e.message;});
   };
 
-  // ── WO COMMENTS ──────────────────────────────────────────────────────────
+  // -- WO COMMENTS ----------------------------------------------------------
   // Comments stored in a Comments field on WO items (multiline text append)
   function loadWOComments(woId, containerEl){
     containerEl.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Loading comments...</div>';
@@ -1291,15 +1291,13 @@
   }
 
   function renderComments(containerEl, raw, woId){
-    var lines = raw ? raw.split('
----
-').filter(function(l){return l.trim();}) : [];
+    var lines = raw ? raw.split('\n---\n').filter(function(l){return l.trim();}) : [];
     var html = lines.length ? lines.map(function(l){
       return '<div style="background:var(--surface2);border-radius:4px;padding:8px 12px;margin-bottom:6px;font-size:13px;color:var(--text2)">'+escHtml(l)+'</div>';
     }).join('') : '<div style="color:var(--text3);font-size:12px;padding:4px 0">No comments yet</div>';
     html += '<div style="margin-top:10px;display:flex;gap:8px">'
       +'<input type="text" id="commentInput_'+woId+'" placeholder="Add a comment..." style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:4px;font-size:13px;font-family:var(--font-body);outline:none">'
-      +'<button onclick="addComment(''+woId+'',''+escAttr(raw)+'')" style="background:var(--accent);color:#000;border:none;padding:7px 14px;border-radius:4px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Post</button>'
+      +'<button onclick="addComment(\''+woId+'\',\''+escAttr(raw)+'\')" style="background:var(--accent);color:#000;border:none;padding:7px 14px;border-radius:4px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Post</button>'
       +'</div>';
     containerEl.innerHTML=html;
   }
@@ -1310,9 +1308,7 @@
     var user=getUserName();
     var ts=new Date().toLocaleString('en-US',{timeZone:'America/Denver',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
     var newLine=user+' ('+ts+'): '+inp.value.trim();
-    var updated=(existing?existing+'
----
-':'')+newLine;
+    var updated=(existing?existing+'\n---\n':'')+newLine;
     inp.disabled=true;
     graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items/'+woId+'/fields',{FollowUpNotes:updated})
       .then(function(){inp.disabled=false;inp.value='';var container=document.getElementById('comments_'+woId);if(container)renderComments(container,updated,woId);})
@@ -1321,7 +1317,7 @@
 
   function getUserName(){try{var p=accessToken.split('.');var pl=JSON.parse(atob(p[1].replace(/-/g,'+').replace(/_/g,'/')));return pl.name||pl.preferred_username||'User';}catch(e){return 'User';}}
 
-  // ── QR CODE ───────────────────────────────────────────────────────────────
+  // -- QR CODE ---------------------------------------------------------------
   window.generateQR=function(text, title){
     var url='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(text);
     var overlay=document.getElementById('qrOverlay');
@@ -1332,16 +1328,17 @@
   };
   window.closeQR=function(){document.getElementById('qrOverlay').classList.remove('open');};
 
-  // ── DOWNTIME TRACKING ─────────────────────────────────────────────────────
-  window.logDowntime=function(tank){
-    var overlay=document.getElementById('downtimeOverlay');
-    document.getElementById('dt_tank').value=tank.Title||'';
-    document.getElementById('dt_tankId').value=tank.id||'';
+  // -- DOWNTIME TRACKING -----------------------------------------------------
+  window.openDowntime=function(btn){
+    var id=btn.dataset.tid,title=btn.dataset.ttitle,notes=btn.dataset.tnotes;
+    document.getElementById('dt_tankId').value=id||'';
+    document.getElementById('dt_tank').value=title||'';
+    document.getElementById('dt_notes_existing').value=notes||'';
     document.getElementById('dt_start').value=todayMT()+'T06:00';
     document.getElementById('dt_end').value='';
     document.getElementById('dt_reason').value='';
     document.getElementById('dtStatus').textContent='';
-    overlay.classList.add('open');
+    document.getElementById('downtimeOverlay').classList.add('open');
   };
   window.closeDowntime=function(){document.getElementById('downtimeOverlay').classList.remove('open');};
   window.saveDowntime=function(){
@@ -1352,8 +1349,7 @@
     var end=document.getElementById('dt_end').value;
     var durationH=end&&start?((new Date(end)-new Date(start))/3600000).toFixed(1):null;
     var note='DOWNTIME: '+start+(end?' to '+end:' (ongoing)')+' | Reason: '+reason+(durationH?' | Duration: '+durationH+'h':'');
-    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tankId+'/fields',{Notes:(document.getElementById('dt_notes_existing').value?document.getElementById('dt_notes_existing').value+'
-':'')+'['+todayMT()+'] '+note})
+    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tankId+'/fields',{Notes:(document.getElementById('dt_notes_existing').value?document.getElementById('dt_notes_existing').value+'\n':'')+'['+todayMT()+'] '+note})
       .then(function(){closeDowntime();allTanks=[];loadTanks();})
       .catch(function(e){document.getElementById('dtStatus').textContent='Error: '+e.message;});
   };
@@ -1376,7 +1372,7 @@
         <div class="detail-field"><label>Equipment / Asset <span style="color:var(--accent)">*</span></label><input type="text" id="npm_title" placeholder="e.g. Glycol Pump A"></div>
         <div class="detail-field"><label>Area</label>
           <select id="npm_area">
-            <option value="">— Select —</option>
+            <option value="">- Select -</option>
             <option>Brewhouse</option><option>Fermentation</option><option>Bright Beer</option>
             <option>Packaging</option><option>Cold Room</option><option>Boiler Room</option>
             <option>MBH</option><option>Cellar</option><option>Lab</option><option>General</option>
@@ -1385,7 +1381,7 @@
         <div class="detail-field"><label>Vessel ID</label><input type="text" id="npm_vessel" placeholder="e.g. GT 04"></div>
         <div class="detail-field"><label>Frequency <span style="color:var(--accent)">*</span></label>
           <select id="npm_freq">
-            <option value="">— Select —</option>
+            <option value="">- Select -</option>
             <option>Weekly</option><option>Monthly</option><option>Quarterly</option>
             <option>Semi-Annual</option><option>Annual</option><option>2 Month Cycle</option>
             <option>3 Year Cycle</option><option>5 Year Cycle</option><option>Daily</option>
@@ -1394,11 +1390,11 @@
         </div>
         <div class="detail-field"><label>Responsible</label><input type="text" id="npm_resp" placeholder="e.g. Shawn"></div>
         <div class="detail-field"><label>Internal / Outsourced</label>
-          <select id="npm_intout"><option value="">— Select —</option><option>Internal</option><option>Outsourced</option></select>
+          <select id="npm_intout"><option value="">- Select -</option><option>Internal</option><option>Outsourced</option></select>
         </div>
         <div class="detail-field"><label>Proposed Date</label><input type="date" id="npm_date"></div>
         <div class="detail-field"><label>Food Contact</label>
-          <select id="npm_food"><option value="">— Select —</option><option value="Y">Yes</option><option value="N">No</option></select>
+          <select id="npm_food"><option value="">- Select -</option><option value="Y">Yes</option><option value="N">No</option></select>
         </div>
         <div class="detail-field" style="grid-column:1/-1"><label>Task Description</label><textarea id="npm_task" rows="3" placeholder="Describe the maintenance task..."></textarea></div>
       </div>
@@ -1422,7 +1418,7 @@
         <div class="detail-field"><label>Equipment / Asset <span style="color:var(--accent)">*</span></label><input type="text" id="nwo_equip" placeholder="e.g. FT 05, Glycol Pump A"></div>
         <div class="detail-field"><label>Area</label>
           <select id="nwo_area">
-            <option value="">— Select —</option>
+            <option value="">- Select -</option>
             <option>Brewhouse</option><option>Fermentation</option><option>Bright Beer</option>
             <option>Packaging</option><option>Cold Room</option><option>Boiler Room</option>
             <option>MBH</option><option>Cellar</option><option>Lab</option><option>General</option>
@@ -1432,7 +1428,7 @@
           <select id="nwo_type"><option value="Unplanned">Unplanned</option><option value="Planned">Planned</option></select>
         </div>
         <div class="detail-field"><label>Priority</label>
-          <select id="nwo_priority"><option value="">— Select —</option><option>Low</option><option>Medium</option><option>High</option></select>
+          <select id="nwo_priority"><option value="">- Select -</option><option>Low</option><option>Medium</option><option>High</option></select>
         </div>
         <div class="detail-field"><label>Vessel ID</label><input type="text" id="nwo_vessel" placeholder="e.g. FT 05"></div>
         <div class="detail-field"><label>Assigned To</label><input type="text" id="nwo_assigned" placeholder="e.g. Shawn"></div>
@@ -1453,7 +1449,7 @@
 </div>
 
 <script>
-  // ── NEW PM ──────────────────────────────────────────────────────────────
+  // -- NEW PM --------------------------------------------------------------
   window.openNewPM = function() {
     var overlay = document.getElementById('newPMOverlay');
     overlay.classList.add('open');
@@ -1498,7 +1494,7 @@
     var el=document.getElementById('npmStatus'); el.textContent=msg; el.className='save-status '+(cls||'');
   }
 
-  // ── NEW WO ──────────────────────────────────────────────────────────────
+  // -- NEW WO --------------------------------------------------------------
   window.openNewWO = function() {
     var overlay = document.getElementById('newWOOverlay');
     overlay.classList.add('open');
@@ -1601,7 +1597,7 @@
         <div class="detail-field"><label>End Time (leave blank if ongoing)</label><input type="datetime-local" id="dt_end"></div>
         <div class="detail-field"><label>Reason <span style="color:var(--accent)">*</span></label>
           <select id="dt_reason">
-            <option value="">— Select reason —</option>
+            <option value="">- Select reason -</option>
             <option>Mechanical failure</option><option>Scheduled maintenance</option>
             <option>CIP</option><option>Electrical fault</option>
             <option>Awaiting parts</option><option>Operator error</option><option>Other</option>
