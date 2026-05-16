@@ -175,7 +175,27 @@
     .tank-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 18px;text-align:center}
     .ts-value{font-family:var(--font-head);font-size:36px;font-weight:800;line-height:1}.ts-label{font-family:var(--font-head);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-top:4px}
     .ts-active .ts-value{color:var(--ok)}.ts-cip .ts-value{color:var(--warning)}.ts-offline .ts-value{color:var(--overdue)}.ts-total .ts-value{color:var(--text2)}
-    .last-maint-ok{color:var(--ok)}.last-maint-warn{color:var(--warning)}.last-maint-over{color:var(--overdue)}.last-maint-none{color:var(--text3)}</style>
+    .last-maint-ok{color:var(--ok)}.last-maint-warn{color:var(--warning)}.last-maint-over{color:var(--overdue)}.last-maint-none{color:var(--text3)}
+    /* ANALYTICS */
+    .analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px}
+    .stat-label{font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+    .stat-value{font-family:var(--font-head);font-size:42px;font-weight:800;line-height:1;color:var(--accent)}
+    .stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+    .analytics-section-head{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:24px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+    .an-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px}
+    .an-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .an-bar-label{font-size:13px;color:var(--text2);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .an-bar-track{flex:1;background:var(--surface2);border-radius:3px;height:18px;position:relative}
+    .an-bar-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .4s ease}
+    .an-bar-count{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text2);width:30px;text-align:right;flex-shrink:0}
+    /* PARTS */
+    .parts-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+    .parts-status-low{color:var(--danger);font-weight:700}
+    .parts-status-ok{color:var(--ok)}
+    @media(max-width:900px){.analytics-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.analytics-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
@@ -241,6 +261,8 @@
         <div class="nav-tab" id="tab-all" onclick="setTab('all')">All Tasks <span class="nav-tab-count" id="tc-all">0</span></div>
         <div class="nav-tab" id="tab-tanks" onclick="setTab('tanks')">&#9956; Tank Register</div>
         <div class="nav-tab" id="tab-calendar" onclick="setTab('calendar')">&#128197; Calendar</div>
+        <div class="nav-tab" id="tab-analytics" onclick="setTab('analytics')">&#128200; Analytics</div>
+        <div class="nav-tab" id="tab-parts" onclick="setTab('parts')">&#128230; Parts</div>
       </div>
       <div id="tankView" class="hidden">
       <div class="tank-summary-cards">
@@ -308,7 +330,11 @@
       <div class="detail-task" id="modalTask"></div>
       <div class="detail-grid" id="modalGrid"></div>
     </div>
-    <div class="modal-footer">
+    <div style="padding:16px 24px;border-top:1px solid var(--border)">
+        <div style="font-family:var(--font-head);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Comments</div>
+        <div id="commentsContainer"></div>
+      </div>
+      <div class="modal-footer">
       <div class="save-status" id="saveStatus"></div>
       <button class="save-btn" id="saveBtn" onclick="saveTask()">Save Changes</button>
     </div>
@@ -501,6 +527,7 @@
         return Object.assign({},f,{_id:i.id,_daysFromNow:dn});
       });
       allWOs=wi.map(function(i){return i.fields||{};});
+      if(currentTab==='analytics')renderAnalytics();
       var woRefs={};
       allWOs.filter(function(w){return['completed','in progress'].indexOf((w.WOStatus||'').toLowerCase())>=0;}).forEach(function(w){if(w.PMTaskRef)woRefs[w.PMTaskRef]=true;});
       var tm=today.getMonth(),ty=today.getFullYear();
@@ -558,20 +585,23 @@
     currentTab=tab;
     document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+tab).classList.add('active');
-    var isTank = tab === 'tanks';
-    var isCal = tab === 'calendar';
-    document.getElementById('tankView').classList.toggle('hidden', !isTank);
-    document.getElementById('calendarView').classList.toggle('hidden', !isCal);
-    var filtersEl = document.querySelector('.filters');
-    if(filtersEl) filtersEl.style.display = (isTank||isCal) ? 'none' : '';
-    var tableWrap = document.querySelector('.table-wrap');
-    if(tableWrap) tableWrap.style.display = (isTank||isCal) ? 'none' : '';
-    if(isTank){ if(!allTanks.length) loadTanks(); else { updateTankSummary(); renderTanks(); } }
-    else if(isCal) renderCal();
+    var isTank=tab==='tanks',isCal=tab==='calendar',isAn=tab==='analytics',isParts=tab==='parts';
+    var isSpecial=isTank||isCal||isAn||isParts;
+    document.getElementById('tankView').classList.toggle('hidden',!isTank);
+    document.getElementById('calendarView').classList.toggle('hidden',!isCal);
+    document.getElementById('analyticsView').classList.toggle('hidden',!isAn);
+    document.getElementById('partsView').classList.toggle('hidden',!isParts);
+    var filtersEl=document.querySelector('.filters');
+    if(filtersEl)filtersEl.style.display=isSpecial?'none':'';
+    var tableWrap=document.querySelector('.table-wrap');
+    if(tableWrap)tableWrap.style.display=isSpecial?'none':'';
+    if(isTank){if(!allTanks.length)loadTanks();else{updateTankSummary();renderTanks();}}
+    else if(isCal)renderCal();
+    else if(isAn)renderAnalytics();
+    else if(isParts){if(!allParts.length)loadParts();else renderParts();}
     else renderTable();
   };
-
-  window.sortBy = function(field){
+    window.sortBy = function(field){
     if(sortField===field)sortAsc=!sortAsc;else{sortField=field;sortAsc=true;}
     document.querySelectorAll('th').forEach(function(t){t.classList.remove('sorted');});
     renderTable();
@@ -647,6 +677,9 @@
     roFields.forEach(function(f){html+='<div class="detail-field"><label>'+f[0]+'</label><value>'+escHtml(f[1])+'</value></div>';});
     document.getElementById('modalGrid').innerHTML=html;
     document.getElementById('modalOverlay').classList.add('open');
+    // Load comments
+    var cc=document.getElementById('commentsContainer');
+    if(cc){cc.innerHTML='<div style="color:var(--text3);font-size:12px">Loading...</div>';loadWOComments(id,cc);}
   };
 
   window.saveTask = function(){
@@ -915,6 +948,10 @@
           + '<div class="tank-meta-row '+maintClass+'"><span>Last Maint.</span> '+escHtml(maintText)+'</div>'
           + '</div>'
           + '<div class="tank-status-badge '+statusSlug+'">'+(status||'Unknown')+'</div>'
+          + '<div style="display:flex;gap:6px;margin-top:8px">'
+          + '<button onclick="event.stopPropagation();generateQR(location.href.split(\"?\")[0]+\"?tank=\"+encodeURIComponent(t.Title||\"\"),t.Title||\"QR\")" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">QR</button>'
+          + '<button onclick="event.stopPropagation();document.getElementById(\"dt_tankId\").value=\"'+escHtml(t.id||t.Title)+\"\";document.getElementById(\"dt_tank\").value=\"'+escHtml(t.Title||\"\")+\"\";document.getElementById(\"dt_notes_existing\").value=\"'+escHtml(t.Notes||\"\")+\"\";document.getElementById(\"dt_start\").value=todayMT()+\"T06:00\";document.getElementById(\"dtStatus\").textContent=\"\";document.getElementById(\"downtimeOverlay\").classList.add(\"open\")" style="flex:1;padding:4px 0;background:var(--surface2);border:1px solid var(--border);color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--font-head);letter-spacing:.04em">Downtime</button>'
+          + '</div>'
           + '</div>';
       });
       html += '</div>';
@@ -987,6 +1024,308 @@
         status.textContent = 'Error: '+err.message; status.className = 'save-status err';
       });
   };
+
+  // ── NEW STATE ─────────────────────────────────────────────────────────────
+  var allParts = [];
+  var PARTS_LIST_ID = 'hopswatch-parts'; // will be created
+
+  // ── ANALYTICS ─────────────────────────────────────────────────────────────
+  function renderAnalytics(){
+    var now = new Date(), today = todayMT();
+    var thisMonth = now.getMonth(), thisYear = now.getFullYear();
+
+    // WOs this month / year
+    var woMonth = allWOs.filter(function(w){
+      if(!w.DateOpened)return false;
+      var d=new Date(w.DateOpened);
+      return d.getMonth()===thisMonth&&d.getFullYear()===thisYear;
+    }).length;
+    var woYear = allWOs.filter(function(w){
+      if(!w.DateOpened)return false;
+      return new Date(w.DateOpened).getFullYear()===thisYear;
+    }).length;
+
+    // Avg hours
+    var hoursWOs = allWOs.filter(function(w){return w.ActualHours!=null&&w.ActualHours>0;});
+    var avgHours = hoursWOs.length ? (hoursWOs.reduce(function(s,w){return s+parseFloat(w.ActualHours||0);},0)/hoursWOs.length).toFixed(1) : '—';
+
+    // PM compliance — tasks with ProposedDate in past that have a completed WO
+    var woRefs={};
+    allWOs.filter(function(w){return(w.WOStatus||'').toLowerCase()==='completed';}).forEach(function(w){if(w.PMTaskRef)woRefs[w.PMTaskRef]=true;});
+    var pastDue = allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow<0;});
+    var compliant = pastDue.filter(function(t){return woRefs[t._id];}).length;
+    var compRate = pastDue.length ? Math.round(compliant/pastDue.length*100)+'%' : 'N/A';
+
+    // Overdue rate
+    var overdueRate = allTasks.length ? Math.round(allTasks.filter(function(t){return t._daysFromNow!==null&&t._daysFromNow<0;}).length/allTasks.length*100)+'%' : '0%';
+
+    // Planned vs unplanned
+    var planned = allWOs.filter(function(w){return w.WOType==='Planned';}).length;
+    var unplanned = allWOs.filter(function(w){return w.WOType==='Unplanned';}).length;
+
+    setText('an-woMonth',String(woMonth));
+    setText('an-woYear',String(woYear));
+    setText('an-avgHours',avgHours+'h');
+    setText('an-pmComp',compRate);
+    setText('an-overdueRate',overdueRate);
+    setText('an-planned',planned+' Planned');
+    setText('an-unplanned',unplanned+' Unplanned');
+
+    // Bar charts
+    renderBarChart('an-byAssignee', countBy(allWOs,'AssignedTo'));
+    renderBarChart('an-byArea', countBy(allWOs,'Area'));
+    renderBarChart('an-byStatus', countBy(allWOs,'WOStatus'));
+
+    // Recent WOs table
+    var recent = allWOs.slice().sort(function(a,b){return (b.DateOpened||'').localeCompare(a.DateOpened||'');}).slice(0,10);
+    var el = document.getElementById('an-recentWOs');
+    if(!recent.length){el.innerHTML='<div class="state-box"><p>No work orders yet</p></div>';return;}
+    el.innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--surface2);border-bottom:1px solid var(--border)">'
+      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Equipment</th>'
+      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Type</th>'
+      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Status</th>'
+      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Date</th>'
+      +'<th style="padding:10px 16px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Hours</th>'
+      +'</tr></thead><tbody>'
+      +recent.map(function(w){
+        return'<tr style="border-bottom:1px solid var(--border)">'
+          +'<td style="padding:10px 16px;color:var(--text);font-weight:600">'+escHtml(w.Equipment||w.Title||'')+'</td>'
+          +'<td style="padding:10px 16px;color:var(--text2)">'+escHtml(w.WOType||'')+'</td>'
+          +'<td style="padding:10px 16px;color:var(--text2)">'+escHtml(w.WOStatus||'')+'</td>'
+          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.DateOpened?w.DateOpened.substring(0,10):'—')+'</td>'
+          +'<td style="padding:10px 16px;color:var(--text2)">'+(w.ActualHours!=null?w.ActualHours+'h':'—')+'</td>'
+          +'</tr>';
+      }).join('')+'</tbody></table>';
+  }
+
+  function countBy(arr, key){
+    var counts={};
+    arr.forEach(function(item){var v=item[key]||'Unknown';counts[v]=(counts[v]||0)+1;});
+    return counts;
+  }
+
+  function renderBarChart(elId, counts){
+    var el=document.getElementById(elId);
+    var entries=Object.entries(counts).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+    var max=entries.length?entries[0][1]:1;
+    if(!entries.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:12px">No data</div>';return;}
+    el.innerHTML=entries.map(function(e){
+      var pct=Math.round(e[1]/max*100);
+      return'<div class="an-bar-row">'
+        +'<div class="an-bar-label" title="'+escHtml(e[0])+'">'+escHtml(e[0])+'</div>'
+        +'<div class="an-bar-track"><div class="an-bar-fill" style="width:'+pct+'%"></div></div>'
+        +'<div class="an-bar-count">'+e[1]+'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
+
+  // ── PARTS INVENTORY ───────────────────────────────────────────────────────
+  // Parts stored as a SharePoint list - create list name in SITE_ID as 'HopswatchParts'
+  var PARTS_LIST_NAME = 'HopswatchParts';
+
+  function loadParts(){
+    var el=document.getElementById('partsLoading');
+    if(el)el.classList.remove('hidden');
+    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists?$filter=displayName eq ''+PARTS_LIST_NAME+''')
+      .then(function(lists){
+        if(!lists.length){
+          // List doesn't exist yet - show empty state
+          allParts=[];
+          document.getElementById('partsLoading').classList.add('hidden');
+          document.getElementById('partsEmpty').classList.remove('hidden');
+          return;
+        }
+        window.PARTS_LIST_ID = lists[0].id;
+        return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items?$expand=fields&$top=500');
+      })
+      .then(function(items){
+        if(!items)return;
+        allParts=items.map(function(i){var f=i.fields||{};f.id=i.id;return f;});
+        document.getElementById('partsLoading').classList.add('hidden');
+        renderParts();
+      })
+      .catch(function(){
+        document.getElementById('partsLoading').classList.add('hidden');
+        document.getElementById('partsEmpty').classList.remove('hidden');
+      });
+  }
+
+  function renderParts(){
+    var srch=(document.getElementById('partsSearch').value||'').toLowerCase();
+    var filtered=allParts.filter(function(p){
+      return !srch||(p.Title||'').toLowerCase().indexOf(srch)>=0||(p.PartNumber||'').toLowerCase().indexOf(srch)>=0||(p.Category||'').toLowerCase().indexOf(srch)>=0;
+    });
+    var tbody=document.getElementById('partsBody');
+    var tbl=document.getElementById('partsTable');
+    var empty=document.getElementById('partsEmpty');
+    if(!filtered.length){if(tbl)tbl.classList.add('hidden');if(empty)empty.classList.remove('hidden');return;}
+    if(tbl)tbl.classList.remove('hidden');
+    if(empty)empty.classList.add('hidden');
+    if(tbody)tbody.innerHTML=filtered.map(function(p){
+      var qty=parseInt(p.Quantity)||0, min=parseInt(p.MinStock)||0;
+      var statusCls=qty<=min?'parts-status-low':'parts-status-ok';
+      var statusTxt=qty<=min?'Low Stock':'OK';
+      return'<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="openEditPart(''+escAttr(p.id||'')+'')">'+
+        '<td style="padding:12px 16px;font-weight:600;color:var(--text)">'+escHtml(p.Title||'')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.PartNumber||'—')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.Category||'—')+'</td>'+
+        '<td style="padding:12px 16px;font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text)">'+qty+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text3)">'+min+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+escHtml(p.StorageLocation||'—')+'</td>'+
+        '<td style="padding:12px 16px;color:var(--text2)">'+(p.UnitCost?'$'+parseFloat(p.UnitCost).toFixed(2):'—')+'</td>'+
+        '<td style="padding:12px 16px"><span class="'+statusCls+'">'+statusTxt+'</span></td>'+
+        '</tr>';
+    }).join('');
+  }
+
+  window.openNewPart = function(){
+    openPartModal(null);
+  };
+  window.openEditPart = function(id){
+    var part=allParts.filter(function(p){return p.id===id;})[0];
+    openPartModal(part);
+  };
+
+  function openPartModal(part){
+    var overlay=document.getElementById('partModalOverlay');
+    var isEdit=!!part;
+    document.getElementById('partModalTitle').textContent=isEdit?'Edit Part':'New Part';
+    document.getElementById('pm_name').value=part?part.Title||''  :'';
+    document.getElementById('pm_number').value=part?part.PartNumber||'':'';
+    document.getElementById('pm_category').value=part?part.Category||'':'';
+    document.getElementById('pm_qty').value=part?part.Quantity||'':'';
+    document.getElementById('pm_min').value=part?part.MinStock||'':'';
+    document.getElementById('pm_location').value=part?part.StorageLocation||'':'';
+    document.getElementById('pm_cost').value=part?part.UnitCost||'':'';
+    document.getElementById('pm_notes').value=part?part.Notes||'':'';
+    document.getElementById('pmSaveBtn').dataset.partId=part?part.id:'';
+    document.getElementById('pmStatus').textContent='';
+    overlay.classList.add('open');
+  }
+  window.closePartModal=function(){document.getElementById('partModalOverlay').classList.remove('open');};
+
+  window.savePart=function(){
+    var btn=document.getElementById('pmSaveBtn');
+    var partId=btn.dataset.partId;
+    var fields={
+      Title:document.getElementById('pm_name').value.trim(),
+      PartNumber:document.getElementById('pm_number').value.trim()||null,
+      Category:document.getElementById('pm_category').value.trim()||null,
+      Quantity:document.getElementById('pm_qty').value?parseInt(document.getElementById('pm_qty').value):null,
+      MinStock:document.getElementById('pm_min').value?parseInt(document.getElementById('pm_min').value):null,
+      StorageLocation:document.getElementById('pm_location').value.trim()||null,
+      UnitCost:document.getElementById('pm_cost').value?parseFloat(document.getElementById('pm_cost').value):null,
+      Notes:document.getElementById('pm_notes').value.trim()||null,
+    };
+    if(!fields.Title){document.getElementById('pmStatus').textContent='Part name is required';return;}
+    Object.keys(fields).forEach(function(k){if(fields[k]===null)delete fields[k];});
+    btn.disabled=true;btn.textContent='Saving...';
+    if(!window.PARTS_LIST_ID){
+      document.getElementById('pmStatus').textContent='Parts list not set up in SharePoint yet. Create a list named "HopswatchParts" first.';
+      btn.disabled=false;btn.textContent='Save';return;
+    }
+    var url,method;
+    if(partId){
+      url=GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items/'+partId+'/fields';
+      method='PATCH';
+    } else {
+      url=GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items';
+      method='POST';
+    }
+    fetch(url,{method:method,headers:{Authorization:'Bearer '+accessToken,'Content-Type':'application/json'},body:JSON.stringify(partId?fields:{fields:fields})})
+      .then(function(r){return r.json();})
+      .then(function(res){
+        btn.disabled=false;btn.textContent='Save';
+        if(res.error){document.getElementById('pmStatus').textContent='Error: '+(res.error.message||'Unknown');return;}
+        closePartModal();
+        allParts=[];loadParts();
+      })
+      .catch(function(e){btn.disabled=false;btn.textContent='Save';document.getElementById('pmStatus').textContent='Error: '+e.message;});
+  };
+
+  // ── WO COMMENTS ──────────────────────────────────────────────────────────
+  // Comments stored in a Comments field on WO items (multiline text append)
+  function loadWOComments(woId, containerEl){
+    containerEl.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Loading comments...</div>';
+    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items/'+woId+'?$expand=fields')
+      .then(function(item){
+        var comments = (item.fields&&item.fields.FollowUpNotes)||'';
+        renderComments(containerEl, comments, woId);
+      })
+      .catch(function(){containerEl.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Could not load comments</div>';});
+  }
+
+  function renderComments(containerEl, raw, woId){
+    var lines = raw ? raw.split('
+---
+').filter(function(l){return l.trim();}) : [];
+    var html = lines.length ? lines.map(function(l){
+      return '<div style="background:var(--surface2);border-radius:4px;padding:8px 12px;margin-bottom:6px;font-size:13px;color:var(--text2)">'+escHtml(l)+'</div>';
+    }).join('') : '<div style="color:var(--text3);font-size:12px;padding:4px 0">No comments yet</div>';
+    html += '<div style="margin-top:10px;display:flex;gap:8px">'
+      +'<input type="text" id="commentInput_'+woId+'" placeholder="Add a comment..." style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:4px;font-size:13px;font-family:var(--font-body);outline:none">'
+      +'<button onclick="addComment(''+woId+'',''+escAttr(raw)+'')" style="background:var(--accent);color:#000;border:none;padding:7px 14px;border-radius:4px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Post</button>'
+      +'</div>';
+    containerEl.innerHTML=html;
+  }
+
+  window.addComment=function(woId, existing){
+    var inp=document.getElementById('commentInput_'+woId);
+    if(!inp||!inp.value.trim())return;
+    var user=getUserName();
+    var ts=new Date().toLocaleString('en-US',{timeZone:'America/Denver',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    var newLine=user+' ('+ts+'): '+inp.value.trim();
+    var updated=(existing?existing+'
+---
+':'')+newLine;
+    inp.disabled=true;
+    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+WO_LIST_ID+'/items/'+woId+'/fields',{FollowUpNotes:updated})
+      .then(function(){inp.disabled=false;inp.value='';var container=document.getElementById('comments_'+woId);if(container)renderComments(container,updated,woId);})
+      .catch(function(){inp.disabled=false;});
+  };
+
+  function getUserName(){try{var p=accessToken.split('.');var pl=JSON.parse(atob(p[1].replace(/-/g,'+').replace(/_/g,'/')));return pl.name||pl.preferred_username||'User';}catch(e){return 'User';}}
+
+  // ── QR CODE ───────────────────────────────────────────────────────────────
+  window.generateQR=function(text, title){
+    var url='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(text);
+    var overlay=document.getElementById('qrOverlay');
+    document.getElementById('qrTitle').textContent=title||'QR Code';
+    document.getElementById('qrImg').src=url;
+    document.getElementById('qrLink').href=url;
+    overlay.classList.add('open');
+  };
+  window.closeQR=function(){document.getElementById('qrOverlay').classList.remove('open');};
+
+  // ── DOWNTIME TRACKING ─────────────────────────────────────────────────────
+  window.logDowntime=function(tank){
+    var overlay=document.getElementById('downtimeOverlay');
+    document.getElementById('dt_tank').value=tank.Title||'';
+    document.getElementById('dt_tankId').value=tank.id||'';
+    document.getElementById('dt_start').value=todayMT()+'T06:00';
+    document.getElementById('dt_end').value='';
+    document.getElementById('dt_reason').value='';
+    document.getElementById('dtStatus').textContent='';
+    overlay.classList.add('open');
+  };
+  window.closeDowntime=function(){document.getElementById('downtimeOverlay').classList.remove('open');};
+  window.saveDowntime=function(){
+    var tankId=document.getElementById('dt_tankId').value;
+    var start=document.getElementById('dt_start').value;
+    var reason=document.getElementById('dt_reason').value.trim();
+    if(!reason){document.getElementById('dtStatus').textContent='Reason is required';return;}
+    var end=document.getElementById('dt_end').value;
+    var durationH=end&&start?((new Date(end)-new Date(start))/3600000).toFixed(1):null;
+    var note='DOWNTIME: '+start+(end?' to '+end:' (ongoing)')+' | Reason: '+reason+(durationH?' | Duration: '+durationH+'h':'');
+    graphPatch(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items/'+tankId+'/fields',{Notes:(document.getElementById('dt_notes_existing').value?document.getElementById('dt_notes_existing').value+'
+':'')+'['+todayMT()+'] '+note})
+      .then(function(){closeDowntime();allTanks=[];loadTanks();})
+      .catch(function(e){document.getElementById('dtStatus').textContent='Error: '+e.message;});
+  };
+
+
   parseToken().then(function(ok){
     if(ok){document.getElementById('authScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');loadData();}
     else{document.getElementById('authScreen').classList.remove('hidden');document.getElementById('dashboard').classList.add('hidden');}
@@ -1173,6 +1512,78 @@
     var el=document.getElementById('nwoStatus'); el.textContent=msg; el.className='save-status '+(cls||'');
   }
 </script>
+<!-- PART MODAL -->
+<div class="modal-overlay" id="partModalOverlay" onclick="if(event.target===this)closePartModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-title" id="partModalTitle">New Part</div></div>
+      <button class="modal-close" onclick="closePartModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-field"><label>Part Name <span style="color:var(--accent)">*</span></label><input type="text" id="pm_name" placeholder="e.g. Pump Seal Kit"></div>
+        <div class="detail-field"><label>Part Number</label><input type="text" id="pm_number" placeholder="e.g. SK-2234"></div>
+        <div class="detail-field"><label>Category</label><input type="text" id="pm_category" placeholder="e.g. Seals, Fittings, Filters"></div>
+        <div class="detail-field"><label>Quantity on Hand</label><input type="number" id="pm_qty" placeholder="0" min="0"></div>
+        <div class="detail-field"><label>Min Stock Level</label><input type="number" id="pm_min" placeholder="0" min="0"></div>
+        <div class="detail-field"><label>Storage Location</label><input type="text" id="pm_location" placeholder="e.g. Maintenance Room Shelf B"></div>
+        <div class="detail-field"><label>Unit Cost ($)</label><input type="number" id="pm_cost" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="detail-field"><label>Notes</label><input type="text" id="pm_notes" placeholder="Supplier, lead time, etc."></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="save-status" id="pmStatus"></div>
+      <button class="save-btn" id="pmSaveBtn" onclick="savePart()">Save Part</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()" style="z-index:300">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <div class="modal-header">
+      <div><div class="modal-title" id="qrTitle">QR Code</div></div>
+      <button class="modal-close" onclick="closeQR()">&#x2715;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:24px">
+      <img id="qrImg" src="" style="width:200px;height:200px;border:4px solid var(--border);border-radius:8px;margin-bottom:16px" alt="QR Code">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Scan to open equipment record</p>
+      <a id="qrLink" href="" download="qr.png" class="save-btn" style="display:inline-block;text-decoration:none;padding:10px 24px">Download QR</a>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNTIME MODAL -->
+<div class="modal-overlay" id="downtimeOverlay" onclick="if(event.target===this)closeDowntime()">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div><div class="modal-title">Log Downtime</div></div>
+      <button class="modal-close" onclick="closeDowntime()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dt_tankId">
+      <div class="detail-grid" style="grid-template-columns:1fr">
+        <div class="detail-field"><label>Tank</label><input type="text" id="dt_tank" readonly style="opacity:.6"></div>
+        <div class="detail-field"><label>Start Time</label><input type="datetime-local" id="dt_start"></div>
+        <div class="detail-field"><label>End Time (leave blank if ongoing)</label><input type="datetime-local" id="dt_end"></div>
+        <div class="detail-field"><label>Reason <span style="color:var(--accent)">*</span></label>
+          <select id="dt_reason">
+            <option value="">— Select reason —</option>
+            <option>Mechanical failure</option><option>Scheduled maintenance</option>
+            <option>CIP</option><option>Electrical fault</option>
+            <option>Awaiting parts</option><option>Operator error</option><option>Other</option>
+          </select>
+        </div>
+        <input type="hidden" id="dt_notes_existing">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="save-status" id="dtStatus"></div>
+      <button class="save-btn" onclick="saveDowntime()">Log Downtime</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
