@@ -265,8 +265,8 @@ function bootApp(){
   document.getElementById('app').style.display='block';
   document.getElementById('bottomNav').style.display='flex';
   document.getElementById('headerUser').innerHTML='<strong>'+escHtml(getUserName())+'</strong>Maintainer';
-  document.getElementById('fDateOpened').value=new Date().toISOString().substring(0,10);
-  document.getElementById('fDateCompleted').value=new Date().toISOString().substring(0,10);
+  document.getElementById('fDateOpened').value=new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});
+  document.getElementById('fDateCompleted').value=new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});
   loadPMTasks();
 }
 function graphGet(path){
@@ -297,7 +297,7 @@ function selectPMTask(id){
   document.getElementById('pmSearch').value='';
   document.getElementById('pmSelected').innerHTML='<div class="pm-badge">'+escHtml(task.Title||'')+'<span style="opacity:.5;margin-left:4px">&times;</span></div>';
   document.getElementById('pmSelected').querySelector('.pm-badge').onclick=function(){selectedPMTask=null;document.getElementById('pmSelected').innerHTML='';};
-  var today=new Date().toISOString().substring(0,10);
+  var today=new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});
   document.getElementById('fEquipment').value=task.Title||'';
   document.getElementById('fArea').value=task.Area||'';
   document.getElementById('fVesselID').value=task.VesselID||'';
@@ -424,8 +424,8 @@ function resetForm(){
   document.querySelectorAll('#formWrap input,#formWrap textarea').forEach(function(el){el.value='';});
   document.querySelectorAll('#formWrap select').forEach(function(el){el.selectedIndex=0;});
   document.getElementById('fStatus').value='Open';
-  document.getElementById('fDateOpened').value=new Date().toISOString().substring(0,10);
-  document.getElementById('fDateCompleted').value=new Date().toISOString().substring(0,10);
+  document.getElementById('fDateOpened').value=new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});
+  document.getElementById('fDateCompleted').value=new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});
   document.getElementById('cardPlanned').className='type-card';
   document.getElementById('cardUnplanned').className='type-card';
   document.getElementById('pmTaskSection').style.display='none';
