@@ -402,6 +402,7 @@
     return d.toISOString().substring(0,10);
   }
 
+  function todayMT(){return new Date().toLocaleDateString('en-CA',{timeZone:'America/Denver'});}
   function b64url(buf){return btoa(String.fromCharCode.apply(null,new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
   function genVerifier(){return b64url(crypto.getRandomValues(new Uint8Array(32)));}
   function genChallenge(cv){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(cv)).then(function(dig){return b64url(dig);});}
@@ -510,7 +511,7 @@
       if (missingCount>0) afBtn.innerHTML = '&#10024; Auto-fill '+missingCount+' Dates';
       buildLegend();
       populateFilters();
-      document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-US',{timeZone:'America/Denver',hour:'2-digit',minute:'2-digit'});
       renderTable();
       if (currentView==='calendar') renderCal();
     }).catch(function(err){
@@ -921,7 +922,7 @@
     document.getElementById('modalTask').textContent = tank.Notes || 'No notes recorded.';
     document.getElementById('saveStatus').textContent = '';
     document.getElementById('saveStatus').className = 'save-status';
-    var today = new Date().toISOString().substring(0,10);
+    var today = todayMT();
     var prefix = (tank.Title||'').replace(/\s*\d+$/,'').trim().toUpperCase();
     var typeMap  = {GT:'General Tank',FT:'Fermenter Tank',BBT:'Bright Beer Tank',YT:'Yeast Tank'};
     var areaMap  = {GT:'Cellar',FT:'Fermentation',BBT:'Bright Beer',YT:'Cellar'};
