@@ -621,7 +621,7 @@
     var roFields = [['Type',t.Type0||'-'],['Food Contact',t.FoodContact==='Y'?'\u2713 Yes':'No'],['Internal / Outsourced',t.InternalOrOutsourced||'-'],['Vessel ID',t.VesselID||'-']];
     var editFields = [
       {label:'Proposed Date',key:'ProposedDate',type:'date',val:suggestedDate},
-      {label:'Performed Date',key:'PerformedDate',type:'date',val:t.PerformedDate?t.PerformedDate.substring(0,10):''},
+      {label:'Performed Date',key:'PerformedDate',type:'date',val:t.PerformedDate?t.PerformedDate.substring(0,10):todayMT()},
       {label:'Responsible',key:'Responsible',type:'text',val:t.Responsible||''},
       {label:'Status',key:'Status',type:'select',val:t.Status||'',options:['','Active','Completed','Deferred','In Progress']},
       {label:'Outsourced To',key:'OutsourcedTo',type:'text',val:t.OutsourcedTo||''},
