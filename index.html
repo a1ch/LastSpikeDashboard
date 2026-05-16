@@ -203,7 +203,7 @@
   <div class="auth-card">
     <div class="auth-logo">Hopswatch</div>
     <div class="auth-version">v12 &mdash; client 14755f84</div>
-    <div class="auth-sub">Last Spike Brewery <div class="auth-sub">Last Spike Brewery &mdash; Maintenance Dashboard</div>mdash; Maintenance Dashboard</div>
+    <div class="auth-sub">Last Spike Brewery &mdash; Maintenance Dashboard</div>
     <button class="auth-btn" id="signInBtn">Sign in with Microsoft</button>
     <div class="auth-error" id="authError"></div>
   </div>
@@ -313,6 +313,39 @@
         <div id="calBody"></div>
       </div>
     </div>
+
+      <div id="analyticsView" class="hidden">
+        <div class="analytics-grid">
+          <div class="stat-card"><div class="stat-label">WOs This Month</div><div class="stat-value" id="an-woMonth">-</div></div>
+          <div class="stat-card"><div class="stat-label">WOs This Year</div><div class="stat-value" id="an-woYear">-</div></div>
+          <div class="stat-card"><div class="stat-label">Avg Hours / WO</div><div class="stat-value" id="an-avgHours">-</div></div>
+          <div class="stat-card"><div class="stat-label">PM Compliance</div><div class="stat-value" id="an-pmComp">-</div><div class="stat-sub">completed on time</div></div>
+          <div class="stat-card"><div class="stat-label">Overdue Rate</div><div class="stat-value" id="an-overdueRate">-</div></div>
+          <div class="stat-card"><div class="stat-label">Planned</div><div class="stat-value" id="an-planned">-</div><div class="stat-sub" id="an-unplanned"></div></div>
+        </div>
+        <div class="analytics-section-head">Work Orders by Assignee</div>
+        <div id="an-byAssignee" class="an-bar-wrap"></div>
+        <div class="analytics-section-head">Work Orders by Area</div>
+        <div id="an-byArea" class="an-bar-wrap"></div>
+        <div class="analytics-section-head">By Status</div>
+        <div id="an-byStatus" class="an-bar-wrap"></div>
+        <div class="analytics-section-head">Recent Work Orders</div>
+        <div id="an-recentWOs"></div>
+      </div>
+
+      <div id="partsView" class="hidden">
+        <div class="parts-toolbar">
+          <input class="search-input" id="partsSearch" type="text" placeholder="Search parts..." oninput="renderParts()" style="max-width:300px">
+          <button class="refresh-btn accent-btn" onclick="openNewPart()">+ Add Part</button>
+        </div>
+        <div class="table-wrap">
+          <div class="state-box" id="partsLoading"><div class="loader"></div><p>Loading parts...</p></div>
+          <table id="partsTable" class="hidden"><thead><tr>
+            <th>Part Name</th><th>Part Number</th><th>Category</th><th>Qty</th><th>Min Stock</th><th>Location</th><th>Unit Cost</th><th>Status</th>
+          </tr></thead><tbody id="partsBody"></tbody></table>
+          <div id="partsEmpty" class="state-box hidden"><p>No parts found. Add your first part with the button above.</p></div>
+        </div>
+      </div>
 
   </div>
 </div>
