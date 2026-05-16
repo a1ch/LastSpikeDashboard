@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hopswatch — Frequently Asked Questions</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f5f7;color:#1a1f2e;font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6}
+.header{background:#1a1f2e;border-bottom:3px solid #e8a020;padding:24px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#e8a020;text-transform:uppercase;letter-spacing:.04em}
+.logo span{color:#8892a4;font-weight:600}
+.header-sub{font-size:13px;color:#555f73}
+.hero{background:#1a1f2e;padding:48px 40px;text-align:center}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:#fff;margin-bottom:12px}
+.hero h1 span{color:#e8a020}
+.hero p{color:#8892a4;font-size:17px;max-width:560px;margin:0 auto}
+.container{max-width:900px;margin:0 auto;padding:48px 24px}
+.section-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#e8a020;margin-bottom:20px;padding-bottom:8px;border-bottom:2px solid #e8a020;display:inline-block}
+.faq-group{margin-bottom:48px}
+.faq-group h2{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:#1a1f2e;margin-bottom:20px}
+.faq-item{background:#fff;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;overflow:hidden;transition:box-shadow .15s}
+.faq-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.faq-q{padding:18px 24px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;user-select:none}
+.faq-q-text{font-weight:600;font-size:16px;color:#1a1f2e;flex:1}
+.faq-icon{font-size:20px;color:#e8a020;flex-shrink:0;transition:transform .2s;font-weight:300}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{display:none;padding:0 24px 20px;color:#4a5568;font-size:15px;line-height:1.7;border-top:1px solid #f3f4f6}
+.faq-item.open .faq-a{display:block}
+.faq-a p{margin-bottom:10px}
+.faq-a p:last-child{margin-bottom:0}
+.faq-a ul{margin:8px 0 10px 20px}
+.faq-a ul li{margin-bottom:4px}
+.faq-a code{background:#f3f4f6;padding:2px 6px;border-radius:3px;font-size:13px;font-family:'Courier New',monospace;color:#1a1f2e}
+.faq-a a{color:#e8a020;text-decoration:none;font-weight:500}
+.faq-a a:hover{text-decoration:underline}
+.tip{background:#fef3c7;border-left:3px solid #e8a020;padding:12px 16px;border-radius:0 6px 6px 0;margin:10px 0;font-size:14px;color:#78350f}
+.tip strong{color:#92400e}
+.contact{background:#1a1f2e;color:#e8eaf0;padding:40px;text-align:center;margin-top:0}
+.contact h3{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#e8a020}
+.contact p{color:#8892a4;font-size:14px}
+@media(max-width:600px){.header{padding:16px 20px}.hero{padding:32px 20px}.container{padding:32px 16px}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Hops<span>watch</span></div>
+  <div class="header-sub">Last Spike Brewery — Maintenance Management</div>
+</div>
+
+<div class="hero">
+  <h1>Frequently Asked <span>Questions</span></h1>
+  <p>Everything you need to know about using Hopswatch at Last Spike Brewery.</p>
+</div>
+
+<div class="container">
+
+  <div class="faq-group">
+    <div class="section-label">Getting Started</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">How do I log in to Hopswatch?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Go to <a href="https://hopswatch.lastspikebrewery.com">hopswatch.lastspikebrewery.com</a> and click <strong>Sign in with Microsoft</strong>. Use your Last Spike email and password — the same credentials you use for Outlook, Teams, and SharePoint.</p>
+        <p>If you're already signed into a Microsoft app on that device, Hopswatch may log you in automatically without prompting for a password.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">Can I use Hopswatch on my phone?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Yes. Open your phone's browser and go to <a href="https://hopswatch.lastspikebrewery.com/log.html">hopswatch.lastspikebrewery.com/log.html</a> — this is the mobile-optimized Work Order Logger designed for use on the floor.</p>
+        <p>Bookmark it on your home screen for one-tap access. No app install required.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">What if I don't have a Last Spike Microsoft account?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>You need a Last Spike Microsoft account to access the dashboard and logger. Contact your manager or IT to get one set up.</p>
+        <p>If you just need to submit a maintenance request (not log work yourself), anyone can use the public request portal at <a href="https://hopswatch.lastspikebrewery.com/request.html">hopswatch.lastspikebrewery.com/request.html</a> — it does require a Microsoft sign-in but will work with any valid Last Spike account.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">Is Hopswatch secure? Who can see my data?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Yes. Authentication is handled entirely by Microsoft — your credentials never touch Hopswatch directly. Access requires a valid Last Spike Microsoft account, so nobody outside your organization can log in.</p>
+        <p>All data is stored in Last Spike's own SharePoint tenant. You own it — there's no third-party vendor holding your maintenance records.</p>
+        <div class="tip"><strong>Note:</strong> Anyone with a valid Last Spike Microsoft account can access the dashboard. There are currently no role-based restrictions between staff members.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-group">
+    <div class="section-label">PM Schedule & Tasks</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">What does "Overdue" mean — does it mean nobody did the maintenance?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Not necessarily. It means a task's Proposed Date has passed and no Work Order has been logged against it. If the work was done but not logged, the task will appear overdue.</p>
+        <p>Always log a Work Order when you complete a PM task — even a quick one. This is what Hopswatch uses to track compliance and remove tasks from the Overdue list.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">How do I mark a PM task as completed?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Click the task row to open the detail modal. Enter the <strong>Performed Date</strong> (it defaults to today) and set the <strong>Status</strong> to Completed. Click Save Changes.</p>
+        <p>For a full record, also log a Work Order using the + New WO button or the mobile logger — this links the actual work to the PM task and tracks hours and parts used.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">A task is overdue but we've decided to defer it — what do I do?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Click the task and update the <strong>Proposed Date</strong> to the new target date, and set the <strong>Status</strong> to Deferred. This removes it from the Overdue count and gives it a new deadline.</p>
+        <div class="tip"><strong>Best practice:</strong> Add a note in the Comments field explaining why it was deferred.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">Lots of tasks don't have a Proposed Date — what's the Auto-fill button?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>If tasks have a Frequency set but no Proposed Date, a gold <strong>Auto-fill Dates</strong> button appears in the top bar showing how many are missing. Click it and Hopswatch will calculate and fill in dates for all of them based on their frequency.</p>
+        <p>Frequencies supported: Weekly, Monthly, Quarterly, Semi-Annual, Annual, 2-Month, 3-Year, 5-Year, Daily, Per CIP Cycle, and As Per Use.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">How do I add a brand new piece of equipment to the PM schedule?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Click <strong>+ New PM</strong> in the top bar. Fill in the equipment name, area, frequency, responsible person, and task description. Set a proposed date and click Create PM Task. The task will appear immediately in the schedule.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-group">
+    <div class="section-label">Work Orders</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">What's the difference between Planned and Unplanned work orders?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p><strong>Planned</strong> — work that was scheduled. Links to a PM Schedule task. Use this when you're doing a regular inspection, cleaning, or preventive task.</p>
+        <p><strong>Unplanned</strong> — reactive work that wasn't scheduled. Use this for breakdowns, urgent repairs, or anything that came up unexpectedly.</p>
+        <p>Tracking the ratio of planned vs unplanned work is one of the key metrics on the Analytics tab — higher planned rates generally mean better reliability.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">I made a mistake on a work order — can I edit it?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Yes. On the mobile logger, go to the <strong>History</strong> tab, tap the work order you want to fix, and the form will prefill with all its data. Make your corrections and tap <strong>Update Work Order</strong>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">What is the Food Safety flag for?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>The Food Safety flag marks any work order where the equipment is food or beverage contact. This creates an audit trail for food safety inspections — you can quickly show that food contact equipment maintenance is being tracked and documented.</p>
+        <p>A green dot appears next to food-contact equipment in the PM schedule list.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">How do I submit a maintenance request if I'm not part of the maintenance team?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Go to <a href="https://hopswatch.lastspikebrewery.com/request.html">hopswatch.lastspikebrewery.com/request.html</a>. Enter your name, describe the issue, select the area and priority. Your request is logged as a work order and the maintenance team is notified.</p>
+        <p>You don't need training on the full dashboard to submit a request.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-group">
+    <div class="section-label">Tank Register</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">Why are all the tank fields blank when I open a tank?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Tank details haven't been filled in yet. Hopswatch applies smart defaults based on the tank name prefix (GT, FT, BBT, YT) — so Tank Type, Area, and Status will pre-populate. Fill in the remaining fields and click Save Changes.</p>
+        <p>You only need to do this once per tank — after saving, the details will always be there when you open it.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">What does the QR code on the tank card do?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Clicking QR generates a scannable QR code for that tank. Print it and stick it on the vessel. Anyone who scans it will be taken directly to that tank's record in Hopswatch.</p>
+        <p>You can also download the QR image to print it at a larger size.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">How do I record that a tank went offline?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Click the <strong>Downtime</strong> button on the tank card. Select the reason (Mechanical failure, CIP, Awaiting parts, etc.), enter the start time and end time (leave end blank if the tank is still offline). Hopswatch calculates the duration automatically and timestamps the entry in the tank's notes.</p>
+        <p>Also update the tank's <strong>Status</strong> to Offline so it shows correctly on the Tank Register summary.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-group">
+    <div class="section-label">Email Alerts</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">When do I get email alerts?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <ul>
+          <li><strong>Monthly summary</strong> — on the 1st of every month, you receive a list of your PM tasks due in the coming 30 days.</li>
+          <li><strong>Daily overdue reminder</strong> — if you have overdue tasks, you receive a reminder every day until they're logged.</li>
+          <li><strong>Escalation</strong> — tasks that are 5 or more days overdue trigger an additional email to the maintenance manager.</li>
+        </ul>
+        <p>Alerts come from <code>Maintenance@lastspikebrewery.com</code></p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">I'm not getting any email alerts — what's wrong?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Check a few things:</p>
+        <ul>
+          <li>Make sure your name in the PM Schedule matches how it's entered in the Responsible field — alerts are matched by name.</li>
+          <li>Check your junk/spam folder for emails from <code>Maintenance@lastspikebrewery.com</code>.</li>
+          <li>If you have no overdue or upcoming tasks, you won't receive a daily alert — that's expected.</li>
+        </ul>
+        <p>If alerts still aren't arriving after checking these, contact your Hopswatch administrator.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-group">
+    <div class="section-label">Analytics & Reports</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">What is PM compliance rate and why does it matter?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>PM compliance rate is the percentage of overdue tasks that had a Work Order logged against them — essentially, how many scheduled tasks actually got done and recorded.</p>
+        <p>A rate above 85% is healthy. Below 70% suggests either tasks aren't being completed or work is being done but not logged. Either way it's worth investigating.</p>
+        <div class="tip"><strong>Remember:</strong> The compliance rate only counts tasks where a WO was logged. Doing the work without logging it counts as non-compliant.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">The Analytics tab shows no data — why?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Analytics pulls from your Work Orders list. If no work orders have been logged yet, all values will show zero or dashes. Start logging WOs and the analytics will populate automatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-group">
+    <div class="section-label">Parts Inventory</div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">The Parts tab isn't loading anything — what do I do?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>The Parts tab requires a SharePoint list named <code>HopswatchParts</code> to be created in your tenant. If the list doesn't exist yet, the tab will show an empty state.</p>
+        <p>Contact your Hopswatch administrator to get the list created. Once it's set up, you can start adding parts right away.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <div class="faq-q-text">How does low stock alerting work?</div>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-a">
+        <p>Each part has a <strong>Min Stock Level</strong>. When the <strong>Quantity on Hand</strong> is at or below that level, the part is flagged as <strong>Low Stock</strong> in red on the Parts tab.</p>
+        <p>There are no automated email alerts for low stock yet — it's a visual indicator only. Check the Parts tab regularly as part of your maintenance routine.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="contact">
+  <h3>Still have questions?</h3>
+  <p>Contact your Hopswatch administrator or reach out to the maintenance team at <strong>Maintenance@lastspikebrewery.com</strong></p>
+</div>
+
+<script>
+function toggle(el) {
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
