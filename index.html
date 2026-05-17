@@ -297,9 +297,8 @@
           <tbody id="tableBody"></tbody>
         </table>
       </div>
-    </div>
 
-    <div id="calendarView" class="hidden">
+      <div id="calendarView" class="hidden">
       <div class="cal-wrap">
         <div class="cal-header">
           <div class="cal-title" id="calTitle"></div>
@@ -934,12 +933,18 @@
   var allTanks = [];
 
   function loadTanks() {
+    var tb = document.getElementById('tankBody');
     return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+TANK_LIST_ID+'/items?$expand=fields&$top=500')
       .then(function(items) {
+        console.log('[Tanks] items returned:', items.length);
         allTanks = items.map(function(i){ return Object.assign({}, i.fields||{}, {_id: i.id}); });
         populateTankTypeFilter();
         updateTankSummary();
         renderTanks();
+      })
+      .catch(function(err) {
+        console.error('[Tanks] loadTanks error:', err);
+        if(tb) tb.innerHTML = '<div class="state-box"><p style="color:var(--overdue)">Error loading tanks: ' + escHtml(err.message||String(err)) + '</p></div>';
       });
   }
 
