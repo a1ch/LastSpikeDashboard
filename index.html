@@ -335,6 +335,23 @@
         <div id="an-recentWOs"></div>
       </div>
 
+      <div id="woView" class="hidden">
+        <div class="state-box hidden" id="woLoading"><div class="loader"></div><p>Loading work orders...</p></div>
+        <div id="woEmpty" class="state-box hidden"><div class="icon">&#128196;</div><p>No work orders found</p></div>
+        <div id="woTable" class="table-wrap hidden">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="padding:10px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left">Equipment</th>
+              <th style="padding:10px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left">Type</th>
+              <th style="padding:10px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left">Task</th>
+              <th style="padding:10px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left">Status</th>
+              <th style="padding:10px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left">Assigned</th>
+              <th style="padding:10px 14px;font-family:var(--font-head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);background:var(--surface2);text-align:left">Date</th>
+            </tr></thead>
+            <tbody id="woBody"></tbody>
+          </table>
+        </div>
+      </div>
       <div id="partsView" class="hidden">
         <div class="parts-toolbar">
           <input class="search-input" id="partsSearch" type="text" placeholder="Search parts..." oninput="renderParts()" style="max-width:300px">
@@ -1161,22 +1178,14 @@
 
   // -- PARTS INVENTORY -------------------------------------------------------
   // Parts stored as a SharePoint list - create list name in SITE_ID as 'HopswatchParts'
-  var PARTS_LIST_NAME = 'HopswatchParts';
+  var PARTS_LIST_NAME = 'Parts'; var PARTS_LIST_ID_HARD = 'b51b9a87-290e-4168-a98f-b1132750dd86';
 
   function loadParts(){
     var el=document.getElementById('partsLoading');
     if(el)el.classList.remove('hidden');
-    graphGet(GRAPH+'/sites/'+SITE_ID+'/lists?$filter=displayName eq \''+PARTS_LIST_NAME+'\'')
-      .then(function(lists){
-        if(!lists.length){
-          // List doesn't exist yet - show empty state
-          allParts=[];
-          document.getElementById('partsLoading').classList.add('hidden');
-          document.getElementById('partsEmpty').classList.remove('hidden');
-          return;
-        }
-        window.PARTS_LIST_ID = lists[0].id;
-        return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/'+window.PARTS_LIST_ID+'/items?$expand=fields&$top=500');
+    Promise.resolve()
+      .then(function(){
+        return graphGet(GRAPH+'/sites/'+SITE_ID+'/lists/b51b9a87-290e-4168-a98f-b1132750dd86/items?$expand=fields&$top=500');
       })
       .then(function(items){
         if(!items)return;
