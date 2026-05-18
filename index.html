@@ -248,12 +248,49 @@
     </div>
 
     <div id="listView">
-      <div class="filters">
-        <span class="filter-label">Filter</span>
-        <select class="filter-select" id="filterArea" onchange="renderTable()"><option value="">All Areas</option></select>
-        <select class="filter-select" id="filterResp" onchange="renderTable()"><option value="">All Responsible</option></select>
-        <select class="filter-select" id="filterFreq" onchange="renderTable()"><option value="">All Frequencies</option></select>
-        <input class="search-input" id="searchInput" type="text" placeholder="Search equipment or task..." oninput="renderTable()">
+      <div class="filters" id="unifiedFilters">
+        <!-- PM task filters (overdue/month/upcoming/all) -->
+        <div id="filtersPM" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+          <span class="filter-label">Filter</span>
+          <select class="filter-select" id="filterArea" onchange="renderTable()"><option value="">All Areas</option></select>
+          <select class="filter-select" id="filterResp" onchange="renderTable()"><option value="">All Responsible</option></select>
+          <select class="filter-select" id="filterFreq" onchange="renderTable()"><option value="">All Frequencies</option></select>
+          <input class="search-input" id="searchInput" type="text" placeholder="Search equipment or task..." oninput="renderTable()">
+        </div>
+        <!-- Tank filters -->
+        <div id="filtersTanks" style="display:none;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+          <span class="filter-label">Filter</span>
+          <select class="filter-select" id="tankFilterType" onchange="renderTanks()"><option value="">All Types</option></select>
+          <select class="filter-select" id="tankFilterStatus" onchange="renderTanks()"><option value="">All Statuses</option><option>Active</option><option>CIP</option><option>Offline</option><option>Decommissioned</option></select>
+          <input class="search-input" id="tankSearch" type="text" placeholder="Search tanks..." oninput="renderTanks()">
+        </div>
+        <!-- WO filters -->
+        <div id="filtersWO" style="display:none;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+          <span class="filter-label">Filter</span>
+          <select class="filter-select" id="woFilterType" onchange="renderWOs()"><option value="">All Types</option><option>Planned</option><option>Unplanned</option></select>
+          <select class="filter-select" id="woFilterStatus" onchange="renderWOs()"><option value="">All Statuses</option><option>Completed</option><option>In Progress</option><option>Open</option></select>
+          <input class="search-input" id="woSearch" type="text" placeholder="Search work orders..." oninput="renderWOs()">
+        </div>
+        <!-- Parts filters -->
+        <div id="filtersParts" style="display:none;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+          <span class="filter-label">Filter</span>
+          <input class="search-input" id="partsSearch" type="text" placeholder="Search parts..." oninput="renderParts()" style="max-width:320px">
+        </div>
+        <!-- Analytics filters (empty but keeps height) -->
+        <div id="filtersAnalytics" style="display:none;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+          <span class="filter-label">Analytics</span>
+          <span style="color:var(--text3);font-size:12px">Work order data by area, assignee, and month</span>
+        </div>
+        <!-- Calendar filters -->
+        <div id="filtersCalendar" style="display:none;align-items:center;gap:14px;flex-wrap:wrap;width:100%">
+          <span class="filter-label">Calendar</span>
+          <button class="cal-btn active" id="btnMonth" onclick="setCalMode('month')">Month</button>
+          <button class="cal-btn" id="btnWeek" onclick="setCalMode('week')">Week</button>
+          <button class="cal-nav" onclick="calNav(-1)">&#8249;</button>
+          <button class="cal-btn" onclick="calToday()">Today</button>
+          <button class="cal-nav" onclick="calNav(1)">&#8250;</button>
+          <span class="filter-label" id="calTitleInline" style="margin-left:8px;font-size:14px;color:var(--text)"></span>
+        </div>
       </div>
       <div class="nav-tabs">
         <div class="nav-tab active" id="tab-overdue" onclick="setTab('overdue')">Overdue <span class="nav-tab-count" id="tc-overdue">0</span></div>
@@ -272,12 +309,6 @@
         <div class="tank-summary-card ts-cip"><div class="ts-value" id="tsc-cip">-</div><div class="ts-label">CIP</div></div>
         <div class="tank-summary-card ts-offline"><div class="ts-value" id="tsc-offline">-</div><div class="ts-label">Offline</div></div>
         <div class="tank-summary-card ts-total"><div class="ts-value" id="tsc-total">-</div><div class="ts-label">Total Tanks</div></div>
-      </div>
-      <div class="tank-filters">
-        <span class="filter-label">Filter</span>
-        <select class="filter-select" id="tankFilterType" onchange="renderTanks()"><option value="">All Types</option></select>
-        <select class="filter-select" id="tankFilterStatus" onchange="renderTanks()"><option value="">All Statuses</option><option>Active</option><option>CIP</option><option>Offline</option><option>Decommissioned</option></select>
-        <input class="search-input" id="tankSearch" type="text" placeholder="Search tanks..." oninput="renderTanks()">
       </div>
       <div id="tankBody"><div class="state-box"><div class="loader"></div><p>Loading tank data...</p></div></div>
     </div>
@@ -302,14 +333,7 @@
       <div class="cal-wrap">
         <div class="cal-header">
           <div class="cal-title" id="calTitle"></div>
-          <div class="cal-controls">
-            <button class="cal-btn active" id="btnMonth" onclick="setCalMode('month')">Month</button>
-            <button class="cal-btn" id="btnWeek" onclick="setCalMode('week')">Week</button>
-            <button class="cal-nav" onclick="calNav(-1)">&#8249;</button>
-            <button class="cal-btn" onclick="calToday()">Today</button>
-            <button class="cal-nav" onclick="calNav(1)">&#8250;</button>
           </div>
-        </div>
         <div class="cal-legend" id="calLegend"></div>
         <div id="calBody"></div>
       </div>
@@ -352,10 +376,6 @@
         </div>
       </div>
       <div id="partsView" class="hidden">
-        <div class="parts-toolbar">
-          <input class="search-input" id="partsSearch" type="text" placeholder="Search parts..." oninput="renderParts()" style="max-width:300px">
-          <button class="refresh-btn accent-btn" onclick="openNewPart()">+ Add Part</button>
-        </div>
         <div class="table-wrap">
           <div class="state-box" id="partsLoading"><div class="loader"></div><p>Loading parts...</p></div>
           <table id="partsTable" class="hidden"><thead><tr>
@@ -643,10 +663,16 @@
     document.getElementById('analyticsView').classList.toggle('hidden',!isAn);
     document.getElementById('partsView').classList.toggle('hidden',!isParts);
     document.getElementById('woView').classList.toggle('hidden',!isWO);
-    var filtersEl=document.querySelector('.filters');
-    if(filtersEl)filtersEl.style.display=isSpecial?'none':'';
+    // Swap filter panels - always show the bar, just swap contents
+    var filterMap = {overdue:'PM',month:'PM',upcoming:'PM',all:'PM',tanks:'Tanks',wo:'WO',parts:'Parts',analytics:'Analytics',calendar:'Calendar'};
+    ['PM','Tanks','WO','Parts','Analytics','Calendar'].forEach(function(name){
+      var el = document.getElementById('filters'+name);
+      if(el) el.style.display = (filterMap[tab]===name) ? 'flex' : 'none';
+    });
     var tableWrap=document.getElementById('pmTableWrap');
     if(tableWrap)tableWrap.style.display=isSpecial?'none':'';
+    // Sync calendar title in unified bar
+    if(tab==='calendar'){var ct=document.getElementById('calTitle');var ci=document.getElementById('calTitleInline');if(ct&&ci)ci.textContent=ct.textContent;}
     if(isTank){if(!allTanks.length)loadTanks();else{updateTankSummary();renderTanks();}}
     else if(isCal)renderCal();
     else if(isAn)renderAnalytics();
@@ -766,7 +792,8 @@
 
   window.closeModal=function(e){if(e&&e.target!==document.getElementById('modalOverlay'))return;document.getElementById('modalOverlay').classList.remove('open'); document.getElementById('saveBtn').onclick=saveTask;};
 
-  function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function syncCalTitle(){var t=document.getElementById('calTitle');var i=document.getElementById('calTitleInline');if(t&&i)i.textContent=t.textContent;}
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   function escAttr(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
   // -- CALENDAR --------------------------------------------------------------
@@ -832,7 +859,7 @@
 
   function renderMonth(){
     var year=calDate.getFullYear(),month=calDate.getMonth();
-    document.getElementById('calTitle').textContent=MONTHS[month]+' '+year;
+    document.getElementById('calTitle').textContent=MONTHS[month]+' '+year;syncCalTitle();
     var firstDay=new Date(year,month,1).getDay(),daysInMonth=new Date(year,month+1,0).getDate();
     var today=new Date();today.setHours(0,0,0,0);
     var eventMap=buildEventMap(new Date(year,month,1),new Date(year,month,daysInMonth));
@@ -864,7 +891,7 @@
     var today=new Date();today.setHours(0,0,0,0);
     var rangeEnd=new Date(weekDays[6]);rangeEnd.setHours(23,59,59);
     var eventMap=buildEventMap(monday,rangeEnd);
-    document.getElementById('calTitle').textContent='Week of '+MONTHS[monday.getMonth()].substring(0,3)+' '+monday.getDate()+' \u2013 '+MONTHS[weekDays[6].getMonth()].substring(0,3)+' '+weekDays[6].getDate()+', '+weekDays[6].getFullYear();
+    document.getElementById('calTitle').textContent='Week of '+MONTHS[monday.getMonth()].substring(0,3)+' '+monday.getDate()+' \u2013 '+MONTHS[weekDays[6].getMonth()].substring(0,3)+' '+weekDays[6].getDate()+', '+weekDays[6].getFullYear();syncCalTitle();
     var headHtml='<div class="cal-week-head"><div class="cal-week-day-head"></div>'+weekDays.map(function(wd){
       var isToday=isSameDay(wd,today);
       return'<div class="cal-week-day-head'+(isToday?' today-col':'')+'">'+DAYS[wd.getDay()]+'<br><strong>'+wd.getDate()+'</strong></div>';
