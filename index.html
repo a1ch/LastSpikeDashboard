@@ -281,7 +281,7 @@
       </div>
       <div id="tankBody"><div class="state-box"><div class="loader"></div><p>Loading tank data...</p></div></div>
     </div>
-      <div class="table-wrap">
+      <div class="table-wrap" id="pmTableWrap">
         <div class="state-box" id="loadingState"><div class="loader"></div><p>Loading maintenance data...</p></div>
         <div id="emptyState" class="state-box hidden"><div class="icon">&#10003;</div><p>No tasks match the current filter</p></div>
         <table id="mainTable" class="hidden">
@@ -645,7 +645,7 @@
     document.getElementById('woView').classList.toggle('hidden',!isWO);
     var filtersEl=document.querySelector('.filters');
     if(filtersEl)filtersEl.style.display=isSpecial?'none':'';
-    var tableWrap=document.querySelector('.table-wrap');
+    var tableWrap=document.getElementById('pmTableWrap');
     if(tableWrap)tableWrap.style.display=isSpecial?'none':'';
     if(isTank){if(!allTanks.length)loadTanks();else{updateTankSummary();renderTanks();}}
     else if(isCal)renderCal();
