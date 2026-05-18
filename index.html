@@ -793,7 +793,7 @@
   window.closeModal=function(e){if(e&&e.target!==document.getElementById('modalOverlay'))return;document.getElementById('modalOverlay').classList.remove('open'); document.getElementById('saveBtn').onclick=saveTask;};
 
   function syncCalTitle(){var t=document.getElementById('calTitle');var i=document.getElementById('calTitleInline');if(t&&i)i.textContent=t.textContent;}
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   function escAttr(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
   // -- CALENDAR --------------------------------------------------------------
